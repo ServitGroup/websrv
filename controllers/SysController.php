@@ -5,6 +5,11 @@ use \Servit\Restsrv\RestServer\RestController as BaseController;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Servit\Restsrv\Libs\Request;
 
+use Servit\Restsrv\Libs\Mobile_Detect; // check device
+use Servit\Restsrv\Libs\Linenotify;
+
+ //line notify
+
 class SysController extends BaseController
 {
 
@@ -15,63 +20,6 @@ class SysController extends BaseController
     // }
 
     
-    /**
-     * @noAuth
-     * @url GET  /test
-     * @url GET  /test/$id
-     * @url GET  /test/$id/$a
-     * @url GET  /test/$id/$a/$b
-     * @url GET  /test/$id/$a/$b/$c
-     * @url POST  /test
-     * @url POST  /test/$id
-     * @url POST  /test/$id/$a
-     * @url POST  /test/$id/$a/$b
-     * @url POST  /test/$id/$a/$b/$c
-     */
-    public function postTest($id = null, $a = null, $b = null, $c = null)
-    {
-
-        echo 'test';
-        dump($this);
-        // $this->input->test = 'xxxxx';
-        // $this->input->user = 'aaaa';
-        // dump($this);
-        // require_once $this->server->serverpath.'/page/themes/web/index.php';
-        // $user = User::find(3);
-        // $cols = $user->getTableColumns();
-        // dump($this,$user,$cols);
-        // $this->server->setConnection('sys_');
-        // $user = User::find(3);
-        // $cols = $user->getTableColumns();
-        // dump($this,$user,$cols);
-
-        // if($this->server->mode == 'debug'){
-        //     $o = new stdClass();
-        //     $o->hasRole = $this->rbac->hasRole('admin');
-        //     $o->rbac = $this->rbac;
-        //     $o->this = $this;
-        //     $o->url = $this->server->url;
-        //     $o->method = $this->server->method;
-        //     $o->params = $this->server->params;
-        //     $o->getStatus = $this->jwt->getStatus();
-        //     $o->getJwt = $this->jwt->getJwt();
-        //     $o->token = $this->jwt->getToken();
-        //     $o->getJwtobjdata = $this->jwt->getJwtobjdata();
-        //     $o->tokenverify = $this->jwt->tokenverify();
-        //     $o->chkauto = $this->jwt->chkauth();
-        //     $o->jwtrefreshobj = $this->jwt->jwtrefreshobj();
-        //     $o->data = 'tlen work';
-        //     $o->format = $this->server->format;
-        //     $o->status = 'success';
-        //     $o->id = $id;
-        //     $o->a = $a;
-        //     $o->b = $b;
-        //     $o->c = $c;
-        //     $o->gentokentest =  $this->jwt->token(json_decode('{"username":"","id":1,"role":"admin","level":"FF"}'));
-        //     // dump($this,$o);
-        //     return $o;
-        // }
-    }
 
     /**
      * @noAuth
@@ -89,7 +37,7 @@ class SysController extends BaseController
      */
     public function getRoutes($info = null, $controller = null)
     {
-        // dump($this,$info,$controller);
+        // dump($this, $info, $controller);
         // $this->info($info);
         if ($this->server->mode == 'debug' || $info == 'tlen') {
             echo '<style> .divline { width:100%; text-align:center; border-bottom: 1px dashed #000; line-height:0.1em; margin:10px 0 20px; } 
@@ -110,7 +58,7 @@ class SysController extends BaseController
                                     echo "<tr><td>".($routekey =='GET' ? '<a href="http://'.$_SERVER['HTTP_HOST'].'/'.$key.'">'.( empty($key) ? '/' : $key ).'</a>'    : $key)."</td><td>$value[0]</td><td>$value[1]</td><td><pre>".json_encode($value[2])."</pre></td><td>".json_encode($value[3])."</td><td>".json_encode($value[4])."</td></tr>";
                                 }
                             } else {
-                                echo "<tr><td>".($routekey =='GET' ? '<a href="http://'.$_SERVER['HTTP_HOST'].'/'.$key.'">'.( empty($key) ? '/' : $key ).'</a>'    : $key)."</td><td>$value[0]</td><td>$value[1]</td><td><pre>".json_encode($value[2])."</pre></td><td>".json_encode($value[3])."</td><td>".json_encode($value[4])."</td></tr>";
+                                echo "<tr><td>".($routekey =='GET' ? '<a href="http://'.$_SERVER['HTTP_HOST'].$this->server->root.$key.'">'.( empty($key) ? '/' : $key ).'</a>'    : $key)."</td><td>$value[0]</td><td>$value[1]</td><td><pre>".json_encode($value[2])."</pre></td><td>".json_encode($value[3])."</td><td>".json_encode($value[4])."</td></tr>";
                             }
                         }
                         break;
@@ -161,9 +109,12 @@ class SysController extends BaseController
     public function homeinfo($info = null)
     {
         $this->info($info);
-        echo '<center>';
-        require __DIR__.'/../home/magic.html';
-        echo '</center>';
+        $magic = __DIR__.'/../home/magic.html';
+        if (file_exists($magic)) {
+            echo '<center>';
+                require $magic;
+            echo '</center>';
+        }
         exit(0);
     }
 
@@ -183,6 +134,7 @@ class SysController extends BaseController
     /**
      * Throws an error
      * @noAuth
+     * @Test
      * @url GET /error
      */
     public function throwError()
@@ -197,7 +149,12 @@ class SysController extends BaseController
      */
     public function myadmin()
     {
-        require_once __DIR__.'/../utils/mysqladmin.php';
+        $myadmin = __DIR__.'/../utils/mysqladmin.php';
+        if (file_exists($myadmin) && $this->server->mode == 'debug') {
+            require_once $myadmin;
+        } else {
+            echo 'MyAdmin No Found';
+        }
     }
 
     /**
@@ -207,6 +164,11 @@ class SysController extends BaseController
      */
     public function phpexplorer()
     {
-        require_once __DIR__.'/../utils/phpexplorer.php';
+        $phpexp = __DIR__.'/../utils/phpexplorer.php';
+        if (file_exists($phpexp) && $this->server->mode == 'debug') {
+            require_once $phpexp;
+        } else {
+            echo 'Explorer Not Found!';
+        }
     }
 }

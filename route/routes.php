@@ -1,8 +1,14 @@
 <?php
-$server->addThemeClass('AdminThemeController');
-$server->addThemeClass('SystemThemeController');
-$server->addClass('AdminController', '/admin');  // fortest
-$server->addClass('SystemController', '/system');  // fortest
+if (APPMODE=='debug') {
+    $server->addClass('TestController', '/');
+}
+    $server->addClass('LineServiceController', '/line');
+// $server->addThemeClass('RootThemeController');
+// $server->addThemeClass('AdminThemeController');
+// $server->addThemeClass('SystemThemeController');
+// $server->addClass('AdminController', '/admin');  // fortest
+// $server->addClass('SystemController', '/system');  // fortest
+// $server->addClass('BookController', '/books');  // fortest
 // $server->addClass('QuestionController','/api/v1/q');  // fortest
 // $server->addClass('AnswerController','/api/v1/answer'); // fortest
 // $server->addClass('UserController','/user'); // fortest
