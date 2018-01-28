@@ -11,9 +11,9 @@ class LineServiceController extends BaseController
 {
 
     /**
-    *@noAuth
-    *@url GET /
-    */
+     *@noAuth
+     *@url GET /
+     */
     public function index()
     {
         echo "Line Notify Service";
@@ -21,50 +21,50 @@ class LineServiceController extends BaseController
 
 
     /**
-    *@noAuth
-    *@url GET /send/$msg
-    */
+     *@noAuth
+     *@url GET /send/$msg
+     */
     public function send($msg)
     {
         $token = null;
         $this->sendmsg($msg, $token);
     }
-  
+
 
     /**
-    *@noAuth
-    *@url GET /register/
-    */
+     *@noAuth
+     *@url GET /register/
+     */
     public function register()
     {
         $queryStrings = [
-        'response_type' => 'code',
-        'client_id' => env('LINESERVICE_ID'),
-        'redirect_uri' => env('LINESERVICE_REDIRECTURL'),
-        'scope' => 'notify',
-        'state' => 'csrf'
+            'response_type' => 'code',
+            'client_id' => env('LINESERVICE_ID'),
+            'redirect_uri' => env('LINESERVICE_REDIRECTURL'),
+            'scope' => 'notify',
+            'state' => 'csrf'
         ];
 
-        $queryStringhttp = env('LINESERVICE_api').http_build_query($queryStrings);
-        echo '<a href="'.$queryStringhttp.'">subscribe เพื่อรับข้อความจาก Line Notify</a>';
+        $queryStringhttp = env('LINESERVICE_api') . http_build_query($queryStrings);
+        echo '<a href="' . $queryStringhttp . '">subscribe เพื่อรับข้อความจาก Line Notify</a>';
     }
-    
+
 
     /**
-    *@noAuth
-    *@url GET /callback/
-    */
+     *@noAuth
+     *@url GET /callback/
+     */
     public function callback()
     {
         if ($this->input->gets->error) {
-             dump($this->input->gets->error);
+            dump($this->input->gets->error);
         } else {
             $code = $this->input->gets->code;
             $state = $this->input->gets->state;
-            $data = 'grant_type=authorization_code&code='.$code.
-            '&redirect_uri='.env('LINESERVICE_REDIRECTURL').
-            '&client_id='.env('LINESERVICE_ID').
-            '&client_secret='.env('LINESERVICE_SECRET');
+            $data = 'grant_type=authorization_code&code=' . $code .
+                '&redirect_uri=' . env('LINESERVICE_REDIRECTURL') .
+                '&client_id=' . env('LINESERVICE_ID') .
+                '&client_secret=' . env('LINESERVICE_SECRET');
             $headers = array('content-type: application/x-www-form-urlencoded');
             $chOne = curl_init();
             curl_setopt($chOne, CURLOPT_URL, env('LINESERVICE_AUTHTOKEN'));
@@ -77,14 +77,14 @@ class LineServiceController extends BaseController
             curl_setopt($chOne, CURLOPT_RETURNTRANSFER, 1);
             $this->result = json_decode(curl_exec($chOne), false);
             if (curl_error($chOne)) {
-                $this->error =  curl_error($chOne);
+                $this->error = curl_error($chOne);
             }
             curl_close($chOne);
             dump($this->result);
             $this->sendmsg('hello', $this->result->access_token);
         }
     }
-    
+
 
 
 

@@ -26,8 +26,6 @@ define('REFTOKEN', $_ENV['REFTOKEN']);  // reference for  GET POST AJAX token fi
 define('AUTHTYPE', $_ENV['AUTHTYPE']);  // session // jwt default jwt
 define('PERPAGE', $_ENV['PERPAGE']);  // display number rows perpage
 
-
-require_once  __DIR__.'/../vendor/autoload.php';
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Database\Eloquent\Model as Model;
 use Carbon\Carbon;

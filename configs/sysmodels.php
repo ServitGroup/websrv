@@ -3,15 +3,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Servit\Restsrv\Model\BaseModel;
 
-class Book extends BaseModel
-{
-
-    // use SoftDeletes;
-    // protected $dates = ['deleted_at'];
-    protected $table='books';
-    protected $primaryKey='id';
-}
-
 class Package extends BaseModel
 {
 
@@ -174,4 +165,40 @@ class Dbcolinfo extends BaseModel
     // protected $dates = ['deleted_at'];
     protected $table='dbcolumninfos';
     protected $primaryKey='id';
+}
+
+class Menu extends BaseModel
+{
+    protected $table = 'menus';
+    protected $primaryKey = 'id';
+    public $timestamps = true;
+
+    public function parent()
+    {
+        return $this->hasOne('Menu', 'id', 'parent_id');
+    }
+
+    public function menuitems()
+    {
+        return $this->hasMany('Menu', 'parent_id');
+    }
+
+    public function tree()
+    {
+        return static::with(implode('.', array_fill(0, 10, 'menuitems')))->where('parent_id', '=', '0')->get();
+    }
+}
+
+class Column extends BaseModel
+{
+    protected $table = 'columns';
+    protected $primaryKey = 'id';
+    public $timestamps = false;
+}
+
+class Dbinfo extends BaseModel
+{
+    protected $table = 'dbinfos';
+    protected $primaryKey = 'id';
+    public $timestamps = false;
 }

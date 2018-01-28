@@ -9,6 +9,21 @@ use Servit\Restsrv\Libs\Linenotify;
 
 class TestController extends BaseController
 {
+    
+    /**
+    *@noAuth
+    *@url GET /abc/
+    */
+    public function abc(){
+        $b = new Book();
+        echo session_id(),"<br/>";
+        echo $b->get();
+
+        // $arrr = get_declared_classes();
+        // dump($arrr);
+    }
+    
+    
     /**
      * @noAuth
      * @url GET  /test
