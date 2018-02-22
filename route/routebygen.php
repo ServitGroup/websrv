@@ -1,7 +1,5 @@
 <?php
- $server->addClass('BookController', '/api/books'); 
- $server->addClass('Columns_copy2Controller', '/api/columns_copy2'); 
- $server->addClass('InvoiceController', '/api/invoices'); 
- $server->addClass('PaymentlogController', '/api/paymentlogs'); 
- $server->addClass('PositionController', '/api/positions'); 
- $server->addClass('StmaController', '/api/stmas'); 
+ $server->addClass('BookController','/api/v1/books'); 
+ $server->addClass('ColumnController','/api/v1/columns'); 
+ $server->addClass('DbinfoController','/api/v1/dbinfos'); 
+ $server->addClass('MenuController','/api/v1/menus'); 
