@@ -193,7 +193,7 @@ class GentableController extends BaseController
                 $menu->save();
                 $sort++;
 
-            $modelfile = __DIR__ . '/../models/' . $model->model . '.php';
+            $modelfile = __DIR__ . '/../../models/' . $model->model . '.php';
             if (!class_exists($model->model) && !file_exists($modelfile)) {
                 echo 'create ' . $modelfile . "'\n<br/>";
                 $handle = fopen($modelfile, "w");
@@ -203,7 +203,7 @@ class GentableController extends BaseController
                 echo $modelfile . " class or file exist\n<br/>";
             }
             
-            $servfile = __DIR__.'/../services/'.$model->model.'Service.php';
+            $servfile = __DIR__.'/../../services/'.$model->model.'Service.php';
             if (!class_exists($model->model) && !file_exists($servfile)) {
                 echo 'create ' . $servfile . "'\n<br/>";
                 $handle = fopen($servfile, "w");
@@ -213,10 +213,11 @@ class GentableController extends BaseController
                 echo $servfile . " class or file exist\n<br/>";
             }
 
-            $controllerfile = __DIR__ . "/../controllers/" . $model->model . "Controller.php";
+            $controllerfile = __DIR__ . "/../../controllers/" . $model->model . "Controller.php";
             if (!file_exists($controllerfile)) {
                 echo $model->model . "Controller\n<br/>";
                 echo '<textarea>', $model->controller, '</textarea><br/>';
+                dump($controllerfile);
                 $handle = fopen($controllerfile, 'w') or die('Cannot open file:  ' . $controllerfile);
                 fwrite($handle, $model->controller);
                 fclose($handle);
@@ -229,7 +230,7 @@ class GentableController extends BaseController
         echo '<br/>gen Routers<br/>';
         echo '<hr/>';
         $routedata = "<?php\n";
-        $routefile = __DIR__ . "/../route/routebygen.php";
+        $routefile = __DIR__ . "/../../route/routebygen.php";
         $handle = fopen($routefile, "w");
         echo '<br/><hr/>';
         foreach ($models as $model) {
