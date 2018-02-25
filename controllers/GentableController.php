@@ -512,8 +512,8 @@ return $controller;
         `parent_id` int(10) UNSIGNED NULL DEFAULT 0,
         `description` text CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL,
         `sort` int(10) UNSIGNED NULL DEFAULT 0 COMMENT 'การเลียง',
-        `created_at` timestamp(0) NULL DEFAULT NULL,
-        `updated_at` timestamp(0) NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(0),
+        `created_at` timestamp NULL DEFAULT NULL,
+        `updated_at` timestamp NULL DEFAULT NULL,
         `crated_by` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL,
         `updated_by` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL,
         PRIMARY KEY (`id`) USING BTREE
