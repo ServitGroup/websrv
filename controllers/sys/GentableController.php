@@ -436,7 +436,7 @@ public function all(\$page = 1, \$perpage = 10, \$kw = '', \$ajax = 0){
 
         \$total = \$qry->count();
         \$skip = 0;
-        if (\$total >= 500 || \$ajax) {
+        if (\$total >= \$_ENV['MAXROWAJAX'] || \$ajax) {
             if (\$ajax == 0) {
                 \$ajax = 1;
             }
