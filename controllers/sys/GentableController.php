@@ -6,10 +6,8 @@ use \Servit\Restsrv\RestServer\RestController as BaseController;
 class GentableController extends BaseController
 {
     public function __construct(){
-        $this->createcolumns();
-        $this->createddbinfos();
-        $this->createmenus();
-}
+        
+    }
 
 /**
  *@noAuth
@@ -18,8 +16,54 @@ class GentableController extends BaseController
     public function index()
     {
         echo "Code gen system for Service Restful Api";
-        echo "<a href='http://127.0.0.1:8080/routes/tlen/GentableController'>this</a>";
     }
+
+
+
+
+/**
+*@noAuth
+*@url GET /migrate/
+*/
+public function migrate(){
+    $this->up();
+    echo 'Magration Successed!';
+}
+
+
+
+/**
+*@noAuth
+*@url GET /migrate/clean/
+*/
+public function migrateclean(){
+    $this->down();
+    echo 'Successed! clean all database system';
+}
+
+
+
+/**
+*@noAuth
+*@url GET /migatere/fresh/
+*/
+public function migaterefresh(){
+    $this->down();
+    $this->up();
+    echo 'Successed! You Dbs Now Fresh';
+}
+
+
+
+/**
+*@noAuth
+*@url GET /migate/seeds/
+*/
+public function migateseed(){
+    $this->seed();
+    echo 'Data Seeds Successed!';
+}
+
 
 /**
  *@noAuth
@@ -319,7 +363,8 @@ return $servicedata;
 
 }
 
-private function makecontroller($model){
+private function makecontroller($model)
+{
 
 $controller = "<?php
 use \Servit\Restsrv\RestServer\RestException;
@@ -376,14 +421,14 @@ public function all(\$page = 1, \$perpage = 10, \$kw = '', \$ajax = 0){
                     if (\$k && \$v) {
                         \$qry->Where(\$k, 'like', '%' . \$vv . '%');
                     } else {
-                        \$qry->Where('domain', 'like', '%' . \$vv . '%');
+                        // \$qry->Where('domain', 'like', '%' . \$vv . '%');
                     }
                     \$i = 0;
                 } else {
                     if (\$k && \$v) {
                         \$qry->orWhere(\$k, 'like', '%' . \$vv . '%');
                     } else {
-                        \$qry->orWhere('domain', 'like', '%' . \$vv . '%');
+                        // \$qry->orWhere('domain', 'like', '%' . \$vv . '%');
                     }
                 }
             }
@@ -536,73 +581,348 @@ return $controller;
         return $t;
     }
 
-    private function createcolumns(){
-        $sql = "CREATE TABLE IF NOT EXISTS `columns`  (
-              `id` int(11) NOT NULL AUTO_INCREMENT,
-                `table_id` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT 'ชื่อtable',
-                `key` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL,
-                `key_view` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT 'table ref',
-                `key_id` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT 'table id',
-                `key_ref` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT 'fieldto ref',
-                `label` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL,
-                `inputtype` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL,
-                `datatype` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL,
-                `required` varchar(10) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL,
-                `datalenth` int(10) NULL DEFAULT 0,
-                `numscale` int(10) NULL DEFAULT 0,
-                `unsigned` int(1) NULL DEFAULT 0,
-                `visible` int(1) UNSIGNED NULL DEFAULT 1,
-                `export` int(1) NULL DEFAULT 1,
-                `gridview` int(1) NULL DEFAULT 1,
-                `frmview` int(1) NULL DEFAULT 1,
-                `classname` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL,
-                `width` int(11) NULL DEFAULT NULL,
-                `height` int(11) NULL DEFAULT NULL,
-                `searchable` int(1) NULL DEFAULT NULL,
-                `orderable` int(1) NULL DEFAULT NULL,
-                `search` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT '{\"search\":\"\", \"regex\":\"\" }',
-                `sort` int(3) NULL DEFAULT NULL,
-                `json` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL,
-                `datadic` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL,
-                `description` text CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL,
-                PRIMARY KEY (`id`) USING BTREE
-                ) ENGINE = InnoDB AUTO_INCREMENT = 49 CHARACTER SET = utf8 COLLATE = utf8_bin ROW_FORMAT = Dynamic;
-          ";
-        return Capsule::statement($sql);
+    private function up() {
+        Capsule::schema()->disableForeignKeyConstraints();
+        if (!Capsule::schema()->hasTable('users')) {
+            Capsule::schema()->create(
+                'users',
+                function ($table) {
+                    $table->increments('id');
+                    $table->string('email');
+                    $table->integer('level')->unsigned()->default(10);
+
+                    $table->timestamps();
+                }
+            );
+        }
+
+        if (!Capsule::schema()->hasTable('password_resets')) {
+            Capsule::schema()->create(
+                'password_resets',
+                function ($table) {
+                    $table->string('email');
+                    $table->string('token');
+                    $table->timestamps();
+                }
+            );
+        }
+
+        if (!Capsule::schema()->hasTable('dbinfos')) {
+            Capsule::schema()->create(
+                'dbinfos',
+                function ($table) {
+                    $table->increments('id');
+                    $table->string('table_name');
+                    $table->string('title');
+                    $table->string('sub_title');
+                    $table->string('status');
+                    $table->boolean('v_insert')->default(1);
+                    $table->boolean('v_update')->default(1);
+                    $table->boolean('v_delete')->default(1);
+                    $table->boolean('v_export')->default(1);
+                    $table->boolean('v_print')->default(1);
+                    $table->boolean('v_import')->default(1);
+                    $table->boolean('v_view')->default(1);
+                    $table->string('level')->default(10);
+                    $table->timestamps();
+                }
+            );
+        }
+
+        if (!Capsule::schema()->hasTable('columns')) {
+            Capsule::schema()->create ('columns', function($table)
+            {
+                $table->increments('id');
+                $table->string('table_id');
+                $table->string('key');
+                $table->string('key_view')->nullable();
+                $table->string('key_id')->nullable();
+                $table->string('key_ref')->nullable();
+                $table->string('label');
+                $table->string('inputtype');
+                $table->string('datatype');
+                $table->string('required')->nullable();
+                $table->integer('datalenth')->default(0);
+                $table->integer('numscale')->default(0);
+                $table->integer('unsigned')->default(0);
+                $table->boolean('visible')->default(true);
+                $table->boolean('export')->default(true);
+                $table->boolean('gridview')->default(true);
+                $table->boolean('frmview')->default(true);
+                $table->boolean('searchable')->default(true);
+                $table->boolean('orderable')->default(true);
+                $table->string('classname')->nullable();
+                $table->string('width')->nullable();
+                $table->string('height')->nullable();
+                $table->json('search')->default('{"search":"", "regex":"" }');
+                $table->string('sort')->default(0);
+                $table->json('json')->nullable();
+                $table->string('datadic')->nullable();
+                $table->text('description')->nullable();
+                $table->integer('level')->unsigned()->default(10);
+                $table->string('created_by')->default('system');
+                $table->string('update_by')->default('system');
+                $table->timestamps();
+            });
+        }
+
+        if (!Capsule::schema()->hasTable('menus')) {
+            Capsule::schema()->create(
+                'menus',
+                function ($table) {
+                    $table->increments('id');
+                    $table->string('menu_position')->nullable();
+                    $table->tinyInteger('group')->nullable();
+                    $table->string('table_name')->nullable();
+                    $table->string('label')->nullable();
+                    $table->string('permalink')->nullable();
+                    $table->string('component')->nullable();
+                    $table->string('icon_class')->nullable();
+                    $table->string('classname')->nullable();
+                    $table->boolean('status')->default(1);
+                    $table->unsignedInteger('parent_id');
+                    $table->string('description')->nullable();
+                    $table->unsignedInteger('sort')->default(0);
+                    $table->string('crated_by')->default('system');
+                    $table->string('updated_by')->default('system');
+                    $table->tinyInteger('level')->default(10);
+                    $table->timestamps();
+                }
+            );
+        }
+
+        if (!Capsule::schema()->hasTable('permissions')) {
+            Capsule::schema()->create('permissions', function ($table) {
+                $table->increments('id');
+                $table->string('name');
+                $table->string('guard_name');
+                $table->string('description');
+                $table->integer('level')->unsigned()->default(10);                
+                $table->timestamps();
+            });
+        }
+
+        if (!Capsule::schema()->hasTable('roles')) {
+            Capsule::schema()->create('roles', function ($table) {
+                $table->increments('id');
+                $table->string('name');
+                $table->string('guard_name');
+                $table->integer('level')->unsigned()->default(10);                
+                $table->timestamps();
+            });
+        }
+
+        if (!Capsule::schema()->hasTable('model_has_permissions')) {
+            Capsule::schema()->create('model_has_permissions', function ($table) {
+                $table->integer('permission_id')->unsigned();
+                $table->morphs('model');
+
+                $table->foreign('permission_id')
+                    ->references('id')
+                    ->on('permissions')
+                    ->onDelete('cascade');
+
+                $table->primary(['permission_id', 'model_id', 'model_type']);
+            });
+        }
+        
+        if (!Capsule::schema()->hasTable('model_has_roles')) {
+            Capsule::schema()->create('model_has_roles', function ($table) {
+                $table->integer('role_id')->unsigned();
+                $table->morphs('model');
+
+                $table->foreign('role_id')
+                    ->references('id')
+                    ->on('roles')
+                    ->onDelete('cascade');
+
+                $table->primary(['role_id', 'model_id', 'model_type']);
+            });
+        }
+        
+        if (!Capsule::schema()->hasTable('role_has_permissions')) {
+            Capsule::schema()->create('role_has_permissions', function ($table)  {
+                $table->integer('permission_id')->unsigned();
+                $table->integer('role_id')->unsigned();
+
+                $table->foreign('permission_id')
+                    ->references('id')
+                    ->on('permissions')
+                    ->onDelete('cascade');
+
+                $table->foreign('role_id')
+                    ->references('id')
+                    ->on('roles')
+                    ->onDelete('cascade');
+
+                $table->primary(['permission_id', 'role_id']);
+            });
+        }
+
+        if (!Capsule::schema()->hasTable('packages')) {
+            Capsule::schema()->create(
+                'packages',
+                function ($table) {
+                    $table->increments('id');
+                    $table->string('name');
+                    $table->string('desc');
+                    $table->string('uuid');
+                    $table->string('comp_db');
+                    $table->integer('account')->default(1);
+                    $table->string('modules');
+                    $table->integer('tb_limit')->default(0);
+                    $table->string('remark');
+                    $table->json('json_data');
+                    $table->string('promotionid');
+                    $table->string('showpublic');
+                    $table->timestamp('deleted_at')->nullable();
+                    $table->boolean('status')->default(1);
+                    $table->integer('level')->unsigned()->default(10);                    
+                    $table->string('created_by')->default('system');
+                    $table->string('updated_by')->default('system');                                        
+                    $table->timestamps();
+                }
+            );
+        }
+        
+        if (!Capsule::schema()->hasTable('companies')) {
+            Capsule::schema()->create(
+                'companies',
+                function ($table) {
+                    $table->increments('id');
+                    $table->string('companyname');
+                    $table->string('comp_uuid');
+                    $table->string('comp_code');
+                    $table->string('path')->nullable();
+                    $table->boolean('status')->default(1);
+                    $table->integer('sort');
+                    $table->timestamp('deleted_at');
+                    $table->integer('level')->unsigned()->default(10);                    
+                    $table->string('created_by')->default('system');
+                    $table->string('updated_by')->default('system');                                        
+                    $table->timestamps();
+                }
+            );
+        }
+
+        if (!Capsule::schema()->hasTable('profiles')) {
+            Capsule::schema()->create(
+                'profiles',
+                function ($table) {
+                    $table->increments('id');
+                    $table->string('comp_code')->nullable();
+                    $table->string('user_id')->nullable();
+                    $table->string('fname')->nullable();
+                    $table->string('lname')->nullable();
+                    $table->string('email')->nullable();
+                    $table->string('address1')->nullable();
+                    $table->string('address2')->nullable();
+                    $table->string('district',100)->nullable();
+                    $table->string('provice',100)->nullable();
+                    $table->string('country',100)->nullable();
+                    $table->string('zipcode',20)->nullable();
+                    $table->string('tel',50)->nullable();
+                    $table->timestamp('deleted_at')->nullable();
+                    $table->string('created_by')->default('system');
+                    $table->string('updated_by')->default('system');
+                    $table->integer('level')->unsigned()->default(10);                    
+                    $table->timestamps();
+                }
+            );
+        }
+
+        if (!Capsule::schema()->hasTable('modules')) {
+            Capsule::schema()->create(
+                'modules',
+                function ($table) {
+                    $table->increments('id');
+                    $table->string('name');
+                    $table->string('description')->nullable();
+                    $table->string('route')->nullable();
+                    $table->string('doctype')->nullable();
+                    $table->boolean('status')->default(1);
+                    $table->integer('level')->default(10);
+                    $table->string('created_by')->default('system');
+                    $table->string('updated_by')->default('system');                    
+                    $table->timestamps();
+                }
+            );
+        }
+        
+        if (!Capsule::schema()->hasTable('syspackages')) {
+            Capsule::schema()->create(
+                'syspackages',
+                function ($table) {
+                    $table->increments('id');
+                    $table->integer('level')->unsigned()->default(10);                    
+                    $table->string('name');
+                    $table->string('desc')->nullable();
+                    $table->string('comp_db')->nullable();
+                    $table->string('account')->nullable();
+                    $table->string('modules')->nullable();
+                    $table->string('tb_limit')->nullable();
+                    $table->text('remark')->nullable();
+                    $table->boolean('status')->default(1);
+                    $table->json('json_data')->nullable();
+                    $table->string('promotionid')->nullable();
+                    $table->string('showpublic')->nullable();
+                    $table->string('created_by')->default('system');
+                    $table->string('updated_by')->default('system');                    
+                    $table->timestamps();
+                }
+            );
+        }
+        
+        if (!Capsule::schema()->hasTable('apps')) {
+            Capsule::schema()->create(
+                'apps',
+                function ($table) {
+                    $table->increments('id');
+                    $table->string('popkey')->unique();
+                    $table->string('pop_value');
+                    $table->string('v1')->nullable();
+                    $table->string('v2')->nullable();
+                    $table->decimal('v3', 10, 2)->default(0);
+                    $table->decimal('v4', 10, 2)->default(0);
+                    $table->text('v5')->nullable();
+                    $table->text('v6')->nullable();
+                    $table->boolean('status')->default(1);
+                    $table->string('created_by')->default('system');
+                    $table->string('updated_by')->default('system');                    
+                    $table->timestamps();
+                }
+            );
+        }
+        Capsule::schema()->enableForeignKeyConstraints();
     }
-    private function createddbinfos(){
-        $sql= "
-        CREATE TABLE IF NOT EXISTS `dbinfos`  (
-        `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-        `table_name` varchar(100) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL,
-        `title` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL,
-        `sub_title` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL,
-        PRIMARY KEY (`id`) USING BTREE
-        ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_bin ROW_FORMAT = Dynamic;
-        ";
-        return Capsule::statement($sql);
+
+    private function down() {
+        Capsule::schema()->disableForeignKeyConstraints();
+        Capsule::schema()->dropIfExists('users');
+        Capsule::schema()->dropIfExists('password_resets');
+        
+        Capsule::schema()->dropIfExists('dbinfos');
+        Capsule::schema()->dropIfExists('columns');
+        Capsule::schema()->dropIfExists('menus');
+        
+        Capsule::schema()->dropIfExists('permissions');
+        Capsule::schema()->dropIfExists('roles');
+        Capsule::schema()->dropIfExists('model_has_permissions');
+        Capsule::schema()->dropIfExists('model_has_roles');
+        Capsule::schema()->dropIfExists('role_has_permissions');
+        
+        Capsule::schema()->dropIfExists('packages');
+        Capsule::schema()->dropIfExists('companies');
+        Capsule::schema()->dropIfExists('profiles');
+        Capsule::schema()->dropIfExists('modules');
+        Capsule::schema()->dropIfExists('syspackages');
+        Capsule::schema()->dropIfExists('apps');
+        Capsule::schema()->enableForeignKeyConstraints();
     }
-    private function createmenus(){
-        $sql= "CREATE TABLE IF NOT EXISTS `menus`  (
-        `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-        `menu_position` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT 'TOP  LEFT RIGHT BOTTOM',
-        `group` tinyint(4) NULL DEFAULT NULL COMMENT 'group of เมนู',
-        `table_name` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT 'เมนูที่มี tables',
-        `label` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT 'ซื้อ Menu',
-        `permalink` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT 'permalink',
-        `component` varchar(50) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL,
-        `icon_class` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL COMMENT 'icon class',
-        `classname` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL,
-        `status` tinyint(1) NULL DEFAULT 1 COMMENT 'status 1 0 ',
-        `parent_id` int(10) UNSIGNED NULL DEFAULT 0,
-        `description` text CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL,
-        `sort` int(10) UNSIGNED NULL DEFAULT 0 COMMENT 'การเลียง',
-        `created_at` timestamp NULL DEFAULT NULL,
-        `updated_at` timestamp NULL DEFAULT NULL,
-        `crated_by` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL,
-        `updated_by` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NULL DEFAULT NULL,
-        PRIMARY KEY (`id`) USING BTREE
-        ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_bin ROW_FORMAT = Dynamic;";
-    return Capsule::statement($sql);
+    
+    private function seeds() {
+        
     }
+
+
 }
