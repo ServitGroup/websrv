@@ -2,6 +2,8 @@
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Servit\Restsrv\Model\BaseModel;
+use Servit\Restsrv\Traits\HasPermissions;
+
 
 class Package extends BaseModel
 {
@@ -14,7 +16,7 @@ class Package extends BaseModel
 
 class User extends BaseModel
 {
-
+    use HasRoles;
     // use SoftDeletes;
     // use LoadTrait;
     // protected $dates = ['deleted_at'];
@@ -31,10 +33,6 @@ class User extends BaseModel
         parent::__construct($attributes);
     }
 
-    public function role()
-    {
-        return $this->belongsTo('Role', 'role_id', 'id');
-    }
 
 
     public function company()
@@ -49,11 +47,6 @@ class User extends BaseModel
     public function companies()
     {
         return $this->hasMany('Company', 'comp_code', 'uuid')->where('status', 1)->whereNull('deleted_at')->orderBy('sort', 'asc');
-    }
-
-    public function roles()
-    {
-        return $this->hasMany('Role', 'comp_code', 'uuid')->orWhere('comp_code', '*********');
     }
 
     public function compmodules()
@@ -88,48 +81,12 @@ class User extends BaseModel
     }
 }
 
-class Role extends BaseModel
-{
-    // use SoftDeletes;
-    // protected $dates = ['deleted_at'];
-    protected $table='roles';
-    protected $primaryKey='id';
-
-    public function parent()
-    {
-        return $this->hasOne('Role', 'id', 'parent_id');
-    }
-
-    public function children()
-    {
-        return $this->hasMany('Role', 'parent_id', 'id');
-    }
-
-    public function permission()
-    {
-        return $this->hasMany('Permission');
-    }
-}
-
-class permission_role extends BaseModel
-{
-    protected $table = 'permission_role';
-}
 
 class Syspackage extends BaseModel
 {
     protected $table = 'sys_packages';
 }
 
-class Permission extends BaseModel
-{
-    protected $table='permissions';
-    protected $primaryKey='id';
-    public function module()
-    {
-        return $this->belongsTo('Module');
-    }
-}
 
 class Module extends BaseModel
 {
@@ -159,14 +116,6 @@ class Company extends BaseModel
     protected $primaryKey='id';
 }
    
-class Dbcolinfo extends BaseModel
-{
-    // use SoftDeletes;
-    // protected $dates = ['deleted_at'];
-    protected $table='dbcolumninfos';
-    protected $primaryKey='id';
-}
-
 class Menu extends BaseModel
 {
     protected $table = 'menus';
@@ -201,4 +150,29 @@ class Dbinfo extends BaseModel
     protected $table = 'dbinfos';
     protected $primaryKey = 'id';
     public $timestamps = false;
+}
+
+class Role extends BaseModel
+{
+
+    use HasPermissions;
+    protected $table = 'roles';
+    protected $primaryKey = 'id';
+    public $timestamps = true;
+
+    public function permissions()
+    {
+        return $this->belongsToMany('Permission', 'role_has_permissions');
+    }
+
+}
+
+class Permission extends BaseModel
+{
+
+    use HasRoles;
+    protected $table = 'permissions';
+    protected $primaryKey = 'id';
+    public $timestamps = true;
+
 }
