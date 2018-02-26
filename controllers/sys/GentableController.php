@@ -57,7 +57,7 @@ class GentableController extends BaseController
             $modelname = ucfirst($this->depluralize($table));
             $model->table = $table;
             $model->model = $modelname;
-            $my_file = __DIR__ . '/../controllers/' . $modelname . 'Controller.php';
+            $my_file = __DIR__ . '/../../controllers/' . $modelname . 'Controller.php';
             dump($my_file);
             if (!file_exists($my_file)) {
                 $controller = $this->makecontroller($model);
@@ -340,13 +340,97 @@ public function authorize(){
 /**
 *@noAuth
 *@url GET /all/
+*@url GET /all/\$page
+*@url GET /all/\$page/\$perpage
+*@url GET /all/\$page/\$perpage/\$ajax
+*@url GET /all/\$page/\$perpage/\$ajax/\$kw
 */
-public function all(){
-    \$datas = $model->model::get();
-    \$info = Dbinfo::where('table_name','$model->table')->first();
+public function all(\$page = 1, \$perpage = 10, \$kw = '', \$ajax = 0){
+        //Capsule::enableQuerylog();
+        \$kws = [];
+        if (\$kw) {
+            \$kws = explode(',', \$kw);
+        }
+        \$qry = $model->model::query();
+        \$vkw = '';
+        // dump(\$kws);
+        if (\$kws) {
+            \$i = 1;
+            foreach (\$kws as \$value) {
+                // dump(\$value);
+                \$vv = '';
+                @list(\$k, \$v) = explode('=', \$value);
+                // dump(\$k,\$v);
+                if (\$v) {
+                    \$v1 = str_replace('#', '/', \$v);
+                    if (\$v1) {
+                        \$v2 = str_replace('@', '.', \$v1);
+                        \$vkw .= \$v2 . ',';
+                        \$vv = \$v2;
+                    }
+                } else {
+                    \$vv = \$k;
+                }
+                // dump(['vv'=>\$vv]);
+                if (\$i) {
+                    if (\$k && \$v) {
+                        \$qry->Where(\$k, 'like', '%' . \$vv . '%');
+                    } else {
+                        \$qry->Where('domain', 'like', '%' . \$vv . '%');
+                    }
+                    \$i = 0;
+                } else {
+                    if (\$k && \$v) {
+                        \$qry->orWhere(\$k, 'like', '%' . \$vv . '%');
+                    } else {
+                        \$qry->orWhere('domain', 'like', '%' . \$vv . '%');
+                    }
+                }
+            }
+        }
 
-    \$columns = Column::where('table_id','$model->table')->get();
-    return ['datas'=>\$datas,'columns'=>\$columns,'info'=>\$info,'status'=>'1'];
+        \$total = \$qry->count();
+        \$skip = 0;
+        if (\$total >= 500 || \$ajax) {
+            if (\$ajax == 0) {
+                \$ajax = 1;
+            }
+
+            \$take = \$perpage;
+            \$skip = (((\$page - 1) < 0) ? 0 : \$page - 1) * \$perpage;
+            if (\$total < \$skip) {
+                \$skip = 0;
+            }
+            \$datas = \$qry->skip(\$skip)->take(\$perpage)->get();
+        } else {
+            \$datas = \$qry->get();
+        }
+
+        \$info = Dbinfo::where('table_name', '$model->table')->first();
+        \$columns = Column::where('table_id', '$model->table')->orderBy('sort', 'asc')->get();
+        //---addition----
+        \$method = [];
+        \$domains = [];
+
+        \$data = [
+            'ajax' => \$ajax,
+            'status' => '1',
+            'page' => \$page,
+            'perpage' => \$perpage,
+            'skip' => \$skip,
+            'total' => \$total,
+            'datacount' => count(\$datas),
+            'datas' => \$datas,
+            'columns' => \$columns,
+            'info' => \$info,
+            'infos' => \$info,
+            'domains' => \$domains,
+            'method' => \$method,
+            //'sql' => Capsule::getQueryLog(),
+        ];
+        // dump(\$data);
+        return \$data;
+
 }
 
 protected function model(){
