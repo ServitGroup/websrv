@@ -3,6 +3,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Servit\Restsrv\Model\BaseModel;
 use Servit\Restsrv\Traits\HasPermissions;
+use Servit\Restsrv\Traits\HasRoles;
 
 
 class Package extends BaseModel
