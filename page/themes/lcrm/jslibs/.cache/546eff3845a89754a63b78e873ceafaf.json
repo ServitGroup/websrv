@@ -1,0 +1,1 @@
+{"dependencies":[],"generated":{"js":"\"use strict\";module.exports=function(t){return Array.isArray(this.items)?this.items.splice(t,1):delete this.items[t],this};"},"hash":"eca652ee291b06d20ac0a98e860d2109"}

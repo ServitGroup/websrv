@@ -45,7 +45,7 @@ public function migrateclean(){
 
 /**
 *@noAuth
-*@url GET /migatere/fresh/
+*@url GET /migrate/fresh/
 */
 public function migaterefresh(){
     $this->down();
@@ -206,6 +206,79 @@ public function migateseed(){
             }
         echo '<hr/>';
         $sort = 10;
+        $menu = new Menu();
+            $menu->menu_position = 'LEFTSIDEBAR';
+            $menu->group = '1';
+            $menu->table_name = 'Dashboard';
+            $menu->label = 'Dashboard';
+            $menu->permalink = 'dashboard';
+            $menu->component = 'Template';
+            $menu->icon_class = 'dashboard';
+            $menu->classname = 'material-icons text-primary';
+            $menu->status = '1';
+            $menu->parent_id = '0';
+            $menu->description = '';
+            $menu->sort = '0';
+            $menu->crated_by = 'system';
+            $menu->updated_by = 'system';
+        $menu->save();
+
+        $menu = new Menu();
+            $menu->menu_position = 'LEFTSIDEBAR';
+            $menu->group = '2';
+            $menu->table_name = 'System Setting';
+            $menu->label = 'System';
+            $menu->permalink = 'systemsetting';
+            $menu->component = 'Template';
+            $menu->icon_class = 'settings_brightness';
+            $menu->classname = 'material-icons text-default';
+            $menu->status = '1';
+            $menu->parent_id = '0';
+            $menu->description = '';
+            $menu->sort = '98';
+            $menu->crated_by = 'system';
+            $menu->updated_by = 'system';
+        $menu->save();
+        $sysgroup = $menu->id;   
+        
+        $menu = new Menu();
+            $menu->menu_position = 'LEFTSIDEBAR';
+            $menu->group = '2';
+            $menu->table_name = 'Admin Setting';
+            $menu->label = 'Admin';
+            $menu->permalink = 'adminsetting';
+            $menu->component = 'Template';
+            $menu->icon_class = 'settings_brightness';
+            $menu->classname = 'material-icons text-default';
+            $menu->status = '1';
+            $menu->parent_id = '0';
+            $menu->description = '';
+            $menu->sort = '99';
+            $menu->crated_by = 'system';
+            $menu->updated_by = 'system';
+        $menu->save();
+        $admingroup = $menu->id;
+        $systemtables = [
+        'columns',
+        'menus',
+        'dbinfos',];
+
+        $admintables = [
+        'apps',
+        'users',
+        'password_resets',
+        'profiles',
+        'companies',
+        'roles',
+        'permissions',
+        'model_has_permissions',
+        'model_has_roles',
+        'role_has_permissions',
+        'modules',
+        'packages',
+        'syspackages',
+        ];
+
         foreach ($models as $model) {
             // dump($model);
             $dbinfo = Dbinfo::where('table_name',$model->table)->first();
@@ -217,19 +290,32 @@ public function migateseed(){
                 $dbinf->save();
             }
 
+
+
+            
             $menu = Menu::where('table_name',$model->table)->first();
             // dump($menu);
+            
             if(!$menu){  $menu = new Menu(); }
                 $menu->menu_position = 'LEFTSIDEBAR';
-                $menu->group = '1';
                 $menu->table_name = $model->table;
                 $menu->label = $model->model;
                 $menu->permalink = $model->table;
-                $menu->component = 'Template';
+                $menu->component = 'Crudtemplate';
                 $menu->icon_class = 'dashboard';
                 $menu->classname = 'material-icons text-default';
                 $menu->status = '1';
-                $menu->parent_id = '0';
+                if(in_array($model->table, $admintables)){
+                    $menu->group = '2';
+                    $menu->parent_id = $admingroup;
+                } elseif(in_array($model->table,$systemtables)){
+                    $menu->group = '2';
+                    $menu->parent_id = $sysgroup;
+                } else {
+                    $menu->group = '1';
+                    $menu->parent_id =0;
+                }
+                
                 $menu->description = '';
                 $menu->sort = $sort;
                 $menu->crated_by = 'system';
@@ -648,9 +734,9 @@ return $controller;
                 $table->string('classname')->nullable();
                 $table->string('width')->nullable();
                 $table->string('height')->nullable();
-                $table->json('search')->default('{"search":"", "regex":"" }');
+                $table->string('search')->default('{"search":"", "regex":"" }');
                 $table->string('sort')->default(0);
-                $table->json('json')->nullable();
+                $table->text('json')->nullable();
                 $table->string('datadic')->nullable();
                 $table->text('description')->nullable();
                 $table->integer('level')->unsigned()->default(10);
@@ -766,7 +852,7 @@ return $controller;
                     $table->string('modules');
                     $table->integer('tb_limit')->default(0);
                     $table->string('remark');
-                    $table->json('json_data');
+                    $table->text('json_data');
                     $table->string('promotionid');
                     $table->string('showpublic');
                     $table->timestamp('deleted_at')->nullable();
@@ -857,7 +943,7 @@ return $controller;
                     $table->string('tb_limit')->nullable();
                     $table->text('remark')->nullable();
                     $table->boolean('status')->default(1);
-                    $table->json('json_data')->nullable();
+                    $table->text('json_data')->nullable();
                     $table->string('promotionid')->nullable();
                     $table->string('showpublic')->nullable();
                     $table->string('created_by')->default('system');

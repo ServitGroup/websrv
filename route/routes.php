@@ -20,7 +20,8 @@ $server->addClass('TlenController', '/tlen', 'sys'); // fortest
 $server->addClass('AdminlteController', '/admin', 'sys'); // fortest
 $server->addClass('JwtController', '', 'sys'); // fortest
 $server->addThemeClass('RootThemeController', 'sys');
-$server->addClass('RootController', '', 'sys'); // fortest
+// $server->addClass('RootController', '', 'sys'); // fortest
+$server->addClass('LcrmController', '', 'sys'); // fortest
 if (file_exists(__DIR__ . '/routebygen.php')) {
     require_once __DIR__ . '/routebygen.php';
 }

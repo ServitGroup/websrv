@@ -1,2 +1,18 @@
 <?php
+ $server->addClass('AppController','/api/v1/apps'); 
  $server->addClass('BookController','/api/v1/books'); 
+ $server->addClass('ColumnController','/api/v1/columns'); 
+ $server->addClass('CompanyController','/api/v1/companies'); 
+ $server->addClass('DbinfoController','/api/v1/dbinfos'); 
+ $server->addClass('MenuController','/api/v1/menus'); 
+ $server->addClass('Model_has_permissionController','/api/v1/model_has_permissions'); 
+ $server->addClass('Model_has_roleController','/api/v1/model_has_roles'); 
+ $server->addClass('ModuleController','/api/v1/modules'); 
+ $server->addClass('PackageController','/api/v1/packages'); 
+ $server->addClass('Password_resetController','/api/v1/password_resets'); 
+ $server->addClass('PermissionController','/api/v1/permissions'); 
+ $server->addClass('ProfileController','/api/v1/profiles'); 
+ $server->addClass('Role_has_permissionController','/api/v1/role_has_permissions'); 
+ $server->addClass('RoleController','/api/v1/roles'); 
+ $server->addClass('SyspackageController','/api/v1/syspackages'); 
+ $server->addClass('UserController','/api/v1/users'); 
