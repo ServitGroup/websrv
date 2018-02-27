@@ -383,29 +383,27 @@ public function authorize(){
 }
 
 /**
-*@noAuth
-*@url GET /all/
-*@url GET /all/\$page
-*@url GET /all/\$page/\$perpage
-*@url GET /all/\$page/\$perpage/\$ajax
-*@url GET /all/\$page/\$perpage/\$ajax/\$kw
-*/
+ *@noAuth
+ *@url GET /all/
+ *@url GET /all/\$page
+ *@url GET /all/\$page/\$perpage
+ *@url GET /all/\$page/\$perpage/\$ajax
+ *@url GET /all/\$page/\$perpage/\$ajax/\$kw
+ */
 public function all(\$page = 1, \$perpage = 10, \$kw = '', \$ajax = 0){
         //Capsule::enableQuerylog();
+        \$columns = Column::where('table_id', '$model->table')->orderBy('sort', 'asc')->get();
         \$kws = [];
         if (\$kw) {
             \$kws = explode(',', \$kw);
         }
         \$qry = $model->model::query();
+        \$qry->whereRaw('1 = 1');
         \$vkw = '';
-        // dump(\$kws);
         if (\$kws) {
-            \$i = 1;
             foreach (\$kws as \$value) {
-                // dump(\$value);
                 \$vv = '';
                 @list(\$k, \$v) = explode('=', \$value);
-                // dump(\$k,\$v);
                 if (\$v) {
                     \$v1 = str_replace('#', '/', \$v);
                     if (\$v1) {
@@ -416,20 +414,17 @@ public function all(\$page = 1, \$perpage = 10, \$kw = '', \$ajax = 0){
                 } else {
                     \$vv = \$k;
                 }
-                // dump(['vv'=>\$vv]);
-                if (\$i) {
-                    if (\$k && \$v) {
-                        \$qry->Where(\$k, 'like', '%' . \$vv . '%');
-                    } else {
-                        // \$qry->Where('domain', 'like', '%' . \$vv . '%');
-                    }
-                    \$i = 0;
+
+                if (\$k && \$v) {
+                    \$qry->Where(\$k, 'like', '%' . \$vv . '%');
                 } else {
-                    if (\$k && \$v) {
-                        \$qry->orWhere(\$k, 'like', '%' . \$vv . '%');
-                    } else {
-                        // \$qry->orWhere('domain', 'like', '%' . \$vv . '%');
-                    }
+                    \$qry->where(function(\$query) use(\$columns,\$vv){
+                        foreach (\$columns as \$column) {
+                            if(\$column->searchable){
+                                \$query->orWhere(\$column->key, 'like', '%' . \$vv . '%');
+                            }
+                        }
+                    });
                 }
             }
         }
@@ -452,7 +447,6 @@ public function all(\$page = 1, \$perpage = 10, \$kw = '', \$ajax = 0){
         }
 
         \$info = Dbinfo::where('table_name', '$model->table')->first();
-        \$columns = Column::where('table_id', '$model->table')->orderBy('sort', 'asc')->get();
         //---addition----
         \$method = [];
         \$domains = [];
