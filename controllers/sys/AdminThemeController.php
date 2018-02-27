@@ -10,30 +10,30 @@ class AdminThemeController extends ThemeController
 
     public function __construct()
     {
-        $this->themepath = __DIR__;
+        $this->themepath = __DIR__.'/..';
         parent::__construct();
     }
 
     public function handle404()
     {
-        // $this->get_header();
-        $path404 = $this->themepath.'/../page/themes/'.$this->theme.'/errors/404.php';
+        $this->get_header();
+        $path404 = $this->themepath.'/../../page/themes/'.$this->theme.'/errors/404.php';
         if (file_exists($path404)) {
             require_once $path404;
         } else {
-            echo '<h2><b>Error:</b>404</h2>';
+            echo '<h2><b>admin Error:</b>404</h2>';
         }
-        // $this->get_footer();
+        $this->get_footer();
     }
     
     public function handle401()
     {
         $this->get_header();
-        $path401 = $this->themepath.'/../page/themes/'.$this->theme.'/errors/401.php';
+        $path401 = $this->themepath.'/../../page/themes/'.$this->theme.'/errors/401.php';
         if (file_exists($path401)) {
             require_once $path401;
         } else {
-            echo '<h2><b>Error:</b>401</h2>';
+            echo '<h2><b>admin Error:</b>401</h2>';
         }
         $this->get_footer();
     }

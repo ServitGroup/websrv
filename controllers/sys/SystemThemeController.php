@@ -8,9 +8,14 @@ class SystemThemeController extends ThemeController
 
     protected $theme = 'system';
 
+
+    public function gettheme(){
+        return $this->theme;
+    }
+
     public function __construct()
     {
-        $this->themepath = __DIR__;
+        $this->themepath = __DIR__.'/..';
         parent::__construct();
     }
 
@@ -21,7 +26,7 @@ class SystemThemeController extends ThemeController
         if (file_exists($path404)) {
             require_once $path404;
         } else {
-            echo '<h2><b>Error:</b>404</h2>';
+            echo '<h2><b>system Error:</b>404</h2>';
         }
         // $this->get_footer();
     }
@@ -33,7 +38,7 @@ class SystemThemeController extends ThemeController
         if (file_exists($path401)) {
             require_once $path401;
         } else {
-            echo '<h2><b>Error:</b>401</h2>';
+            echo '<h2><b>system Error:</b>401</h2>';
         }
         $this->get_footer();
     }

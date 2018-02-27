@@ -1,1 +1,1 @@
-<h2>Error 404.php</h2>
+<h2>System Error 404.php</h2>
