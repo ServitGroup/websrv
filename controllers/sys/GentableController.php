@@ -228,7 +228,7 @@ public function migateseed(){
             $menu = new Menu();
             $menu->menu_position = 'LEFTSIDEBAR';
             $menu->group = '1';
-            $menu->table_name = 'Dashboard';
+            $menu->table_name = '';
             $menu->label = 'Dashboard';
             $menu->permalink = 'dashboard';
             $menu->component = 'Template';
@@ -248,9 +248,9 @@ public function migateseed(){
             $menu = new Menu();
             $menu->menu_position = 'LEFTSIDEBAR';
             $menu->group = '2';
-            $menu->table_name = 'System Setting';
+            $menu->table_name = '';
             $menu->label = 'System';
-            $menu->permalink = 'systemsetting';
+            $menu->permalink = '';
             $menu->component = 'Template';
             $menu->icon_class = 'settings_brightness';
             $menu->classname = 'material-icons text-default';
@@ -269,9 +269,9 @@ public function migateseed(){
             $menu = new Menu();
             $menu->menu_position = 'LEFTSIDEBAR';
             $menu->group = '2';
-            $menu->table_name = 'Admin Setting';
+            $menu->table_name = '';
             $menu->label = 'Admin';
-            $menu->permalink = 'adminsetting';
+            $menu->permalink = '';
             $menu->component = 'Template';
             $menu->icon_class = 'settings_brightness';
             $menu->classname = 'material-icons text-default';
