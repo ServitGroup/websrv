@@ -74,7 +74,7 @@ public function migaterefresh(){
 *@url GET /migate/seeds/
 */
 public function migateseed(){
-    $this->seed();
+    $this->seeds();
     echo 'Data Seeds Successed!';
     echo '<br/><a href="/system/generator/index">Back</a>';
 }
@@ -697,8 +697,11 @@ return $controller;
                 function ($table) {
                     $table->increments('id');
                     $table->string('email');
+                    $table->string('password');
+                    $table->string('ref_token')->nullable();
+                    $table->unsignedInteger('profile_id');
                     $table->integer('level')->unsigned()->default(10);
-
+                    $table->boolean('status')->default(1);
                     $table->timestamps();
                 }
             );
@@ -723,7 +726,7 @@ return $controller;
                     $table->string('table_name');
                     $table->string('title');
                     $table->string('sub_title');
-                    $table->string('status');
+                    $table->boolean('status')->default(1);
                     $table->boolean('v_insert')->default(1);
                     $table->boolean('v_update')->default(1);
                     $table->boolean('v_delete')->default(1);
@@ -804,8 +807,8 @@ return $controller;
             Capsule::schema()->create('permissions', function ($table) {
                 $table->increments('id');
                 $table->string('name');
-                $table->string('guard_name');
-                $table->string('description');
+                $table->string('guard_name')->defaule('web');
+                $table->string('description')->nullable();
                 $table->integer('level')->unsigned()->default(10);                
                 $table->timestamps();
             });
@@ -815,7 +818,7 @@ return $controller;
             Capsule::schema()->create('roles', function ($table) {
                 $table->increments('id');
                 $table->string('name');
-                $table->string('guard_name');
+                $table->string('guard_name')->default('web');
                 $table->integer('level')->unsigned()->default(10);                
                 $table->timestamps();
             });
@@ -1030,6 +1033,97 @@ return $controller;
     }
     
     private function seeds() {
+        echo '<b>Start ----Seeding Data----</b>';
+        //----------------apps--------------------
+        echo '<hr/>Apps---Data<br/>';
+        $app = App::where('popkey','APP_NAME')->first();
+        if($app){}else{
+            $app = new App();
+        }
+        $app->popkey = 'APP_NAME';
+        $app->pop_value = 'MONGKOL';
+        $app->save();
+
+
+        echo '<hr/>Add User Admin@admin.com/password---Data<br/>';
+        $admin = new User();
+        $admin->email = 'admin@admin.com';
+        $admin->password =  'password';
+        $admin->level = 99;
+        $admin->save();
+        //----------------permission--------------------
+        echo '<hr/>Permissions---Data<br/>';
+        $permission_created = new Permission();
+        $permission_created->name = 'created articles';
+        $permission_created->guard_name = 'web';
+        $permission_created->save();
+        $permission_edit    = new Permission();
+        $permission_edit->name = 'edit articles';
+        $permission_edit->guard_name = 'web';
+        $permission_edit->save();
+        $permission_delete  = new Permission();
+        $permission_delete->name = 'delete articles';
+        $permission_delete->guard_name = 'web';
+        $permission_delete->save();
+        $permission_read    = new Permission();
+        $permission_read->name = 'read articles';
+        $permission_read->guard_name = 'web';
+        $permission_read->save();
+        $permission_export  = new Permission();
+        $permission_export->name = 'export articles';
+        $permission_export->guard_name = 'web';
+        $permission_export->save();
+        $permission_print   = new Permission();
+        $permission_print->name = 'print articles';
+        $permission_print->guard_name = 'web';
+        $permission_print->save();
+        $permission_auth    = new Permission();
+        $permission_auth->name = 'auth articles';
+        $permission_auth->guard_name = 'web';
+        $permission_auth->save();
+        //----------------roles--------------------
+        echo '<hr/>Role---Data<br/>';
+        echo 'add employee role<br/>';
+        $role_emp    = new Role();
+        $role_emp->name ='employee';
+        $role_emp->save();
+        
+        echo 'add leeder role<br/>';
+        $role_leeder = new Role();
+        $role_leeder->name ='leeder';
+        $role_leeder->save();
+        
+        echo 'add owner role<br/>';
+        $role_owner  = new Role();
+        $role_owner->name ='owner';
+        $role_owner->save();
+        
+        echo 'add admin role<br/>';
+        $role_admin  = new Role();
+        $role_admin->name ='admin';
+        $role_admin->save();
+        $permissions = Permission::get();
+
+        $role_owner->syncPermissions($permissions);//----------------User--------------------
+        $role_admin->syncPermissions($permissions);//----------------User--------------------
+        $role_emp->givePermissionTo($permission_read);
+        $role_leeder->givePermissionTo($permission_read);
+        
+        $role_emp->givePermissionTo($permission_created);
+        $role_leeder->givePermissionTo($permission_created);
+
+        $role_emp->givePermissionTo($permission_edit);
+        $role_leeder->givePermissionTo($permission_edit);
+        $role_emp->givePermissionTo($permission_print);
+        $role_leeder->givePermissionTo($permission_print);
+        
+        $role_leeder->givePermissionTo($permission_export);
+        $role_leeder->givePermissionTo($permission_auth);
+
+
+        echo '<hr/>User---Data<br/>';
+        $admin->assignRole('admin');
+        echo '<hr/>';
         
     }
 

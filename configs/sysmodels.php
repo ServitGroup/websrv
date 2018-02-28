@@ -18,6 +18,7 @@ class Package extends BaseModel
 class User extends BaseModel
 {
     use HasRoles;
+    public $grard_name = "web";
     // use SoftDeletes;
     // use LoadTrait;
     // protected $dates = ['deleted_at'];
@@ -153,6 +154,14 @@ class Dbinfo extends BaseModel
     public $timestamps = false;
 }
 
+class Permission extends BaseModel
+{
+    use HasRoles;
+    protected $table = 'permissions';
+    protected $primaryKey = 'id';
+    public $timestamps = true;
+}
+
 class Role extends BaseModel
 {
 
@@ -168,12 +177,11 @@ class Role extends BaseModel
 
 }
 
-class Permission extends BaseModel
+class App extends BaseModel
 {
-
-    use HasRoles;
-    protected $table = 'permissions';
+    protected $table = 'apps';
     protected $primaryKey = 'id';
     public $timestamps = true;
-
 }
+
+
