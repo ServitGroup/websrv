@@ -15,7 +15,18 @@ class GentableController extends BaseController
  */
     public function index()
     {
-        echo "Code gen system for Service Restful Api";
+        echo '<center>';
+        echo "Code gen system for Service Restful Api<br/>";
+        echo "<b>Database: </b><h2 style='display:inline'>".$this->server->config->dbconfig['database']."</h2><br/>";
+        echo '<hr/>';
+        echo '<a href="/system/generator/migrate">Migrate</a><br/>';
+        echo '<a href="/system/generator/migrate/clean">Migrate:clien</a><br/>';
+        echo '<a href="/system/generator/migrate/fresh">Migrate:fresh</a><br/>';
+        echo '<a href="/system/generator/migate/seeds">Seed Data</a><br/>';
+        echo '<a href="/system/generator/genall/v3/1">Gen All V3 Overwrite</a><br/>';
+        echo '<a href="/">Home</a>';
+        echo '</center>';
+
     }
 
 
@@ -28,6 +39,7 @@ class GentableController extends BaseController
 public function migrate(){
     $this->up();
     echo 'Magration Successed!';
+    echo '<br/><a href="/system/generator/index">Back</a>';
 }
 
 
@@ -39,6 +51,7 @@ public function migrate(){
 public function migrateclean(){
     $this->down();
     echo 'Successed! clean all database system';
+    echo '<br/><a href="/system/generator/index">Back</a>';
 }
 
 
@@ -51,6 +64,7 @@ public function migaterefresh(){
     $this->down();
     $this->up();
     echo 'Successed! You Dbs Now Fresh';
+        echo '<br/><a href="/system/generator/index">Back</a>';
 }
 
 
@@ -62,6 +76,7 @@ public function migaterefresh(){
 public function migateseed(){
     $this->seed();
     echo 'Data Seeds Successed!';
+    echo '<br/><a href="/system/generator/index">Back</a>';
 }
 
 
@@ -178,6 +193,7 @@ public function migateseed(){
         }
         if($ovr=='$orv') $ovr=0;
         // dump($basepath,$ovr);
+        echo '<br/><a href="/system/generator/index">Back</a>';
         echo '<br/>Gen Collumns<hr/>';
         if($ovr){
             Capsule::select('truncate columns;');
@@ -206,7 +222,10 @@ public function migateseed(){
             }
         echo '<hr/>';
         $sort = 10;
-        $menu = new Menu();
+
+        $menu = Menu::where('label','Dashboard')->first();
+        if($menu){  } else {
+            $menu = new Menu();
             $menu->menu_position = 'LEFTSIDEBAR';
             $menu->group = '1';
             $menu->table_name = 'Dashboard';
@@ -221,9 +240,12 @@ public function migateseed(){
             $menu->sort = '0';
             $menu->crated_by = 'system';
             $menu->updated_by = 'system';
-        $menu->save();
+            $menu->save();
+        }
 
-        $menu = new Menu();
+        $menu = Menu::where('label', 'System')->first();
+        if($menu){} else {
+            $menu = new Menu();
             $menu->menu_position = 'LEFTSIDEBAR';
             $menu->group = '2';
             $menu->table_name = 'System Setting';
@@ -238,10 +260,13 @@ public function migateseed(){
             $menu->sort = '98';
             $menu->crated_by = 'system';
             $menu->updated_by = 'system';
-        $menu->save();
-        $sysgroup = $menu->id;   
+            $menu->save();
+        }
+           $sysgroup = $menu->id;   
         
-        $menu = new Menu();
+        $menu = Menu::where('label','Admin')->first();
+        if($menu){} else {
+            $menu = new Menu();
             $menu->menu_position = 'LEFTSIDEBAR';
             $menu->group = '2';
             $menu->table_name = 'Admin Setting';
@@ -256,27 +281,30 @@ public function migateseed(){
             $menu->sort = '99';
             $menu->crated_by = 'system';
             $menu->updated_by = 'system';
-        $menu->save();
+            $menu->save();
+        }
         $admingroup = $menu->id;
+
         $systemtables = [
-        'columns',
-        'menus',
-        'dbinfos',];
+            'columns',
+            'menus',
+            'dbinfos',
+        ];
 
         $admintables = [
-        'apps',
-        'users',
-        'password_resets',
-        'profiles',
-        'companies',
-        'roles',
-        'permissions',
-        'model_has_permissions',
-        'model_has_roles',
-        'role_has_permissions',
-        'modules',
-        'packages',
-        'syspackages',
+            'apps',
+            'users',
+            'password_resets',
+            'profiles',
+            'companies',
+            'roles',
+            'permissions',
+            'model_has_permissions',
+            'model_has_roles',
+            'role_has_permissions',
+            'modules',
+            'packages',
+            'syspackages',
         ];
 
         foreach ($models as $model) {
@@ -334,7 +362,7 @@ public function migateseed(){
             }
             
             $servfile = __DIR__.'/../../services/'.$model->model.'Service.php';
-            if (!class_exists($model->model) && !file_exists($servfile)) {
+            if (!class_exists($model->model.'Service') && !file_exists($servfile)) {
                 echo 'create ' . $servfile . "'\n<br/>";
                 $handle = fopen($servfile, "w");
                 fwrite($handle, $model->service);
@@ -344,7 +372,7 @@ public function migateseed(){
             }
 
             $controllerfile = __DIR__ . "/../../controllers/" . $model->model . "Controller.php";
-            if (!file_exists($controllerfile)) {
+            if (!class_exists($model->model.'Controller') &&!file_exists($controllerfile)) {
                 echo $model->model . "Controller\n<br/>";
                 echo '<textarea>', $model->controller, '</textarea><br/>';
                 dump($controllerfile);
@@ -726,6 +754,7 @@ return $controller;
                 $table->integer('numscale')->default(0);
                 $table->integer('unsigned')->default(0);
                 $table->boolean('visible')->default(true);
+                $table->boolean('readonly')->default(false);
                 $table->boolean('export')->default(true);
                 $table->boolean('gridview')->default(true);
                 $table->boolean('frmview')->default(true);
