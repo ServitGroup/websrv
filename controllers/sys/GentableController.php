@@ -39,7 +39,7 @@ class GentableController extends BaseController
 public function migrate(){
     $this->up();
     echo 'Magration Successed!';
-    echo '<br/><a href="/system/generator/index">Back</a>';
+    $this->index();
 }
 
 
@@ -51,7 +51,7 @@ public function migrate(){
 public function migrateclean(){
     $this->down();
     echo 'Successed! clean all database system';
-    echo '<br/><a href="/system/generator/index">Back</a>';
+    $this->index();
 }
 
 
@@ -64,7 +64,8 @@ public function migaterefresh(){
     $this->down();
     $this->up();
     echo 'Successed! You Dbs Now Fresh';
-        echo '<br/><a href="/system/generator/index">Back</a>';
+    $this->index();
+
 }
 
 
@@ -76,7 +77,7 @@ public function migaterefresh(){
 public function migateseed(){
     $this->seeds();
     echo 'Data Seeds Successed!';
-    echo '<br/><a href="/system/generator/index">Back</a>';
+    $this->index();
 }
 
 
@@ -193,7 +194,8 @@ public function migateseed(){
         }
         if($ovr=='$orv') $ovr=0;
         // dump($basepath,$ovr);
-        echo '<br/><a href="/system/generator/index">Back</a>';
+        $this->index();
+
         echo '<br/>Gen Collumns<hr/>';
         if($ovr){
             Capsule::select('truncate columns;');
@@ -636,9 +638,13 @@ return $controller;
                     $c->inputtype = 'datetime-local';
                 } else if (in_array($col->DATA_TYPE, ['tinyint', 'boolean', 'smallint', 'mediumint', 'int', 'integer', 'bigint', 'decimal', 'dec', 'numeric', 'fixed', 'float', 'double', 'bit'])) {
                         // + "COLUMN_KEY"  : "int(10) unsigned"
-                    $c->inputtype = 'number';
-                    $c->datalenth = $col->NUMERIC_PRECISION;
+                    if($col->DATA_TYPE == 'tinyint' && $col->NUMERIC_PRECISION <=3 ) {
+                        $c->inputtype = 'checkbox';
+                    } else {
+                        $c->inputtype = 'number';
+                    }
                     $c->numscale = $col->NUMERIC_SCALE;
+                    $c->datalenth = $col->NUMERIC_PRECISION;
                         // $c->unsigned = 0;
                 } elseif (in_array($col->DATA_TYPE, ['blob', 'mediumblob', 'longblob', 'tinytext', 'text', 'mediumtext', 'longtext', 'enum', 'set'])) {
                     $c->inputtype = 'textarea';
@@ -723,9 +729,7 @@ return $controller;
                 'dbinfos',
                 function ($table) {
                     $table->increments('id');
-                    $table->string('table_name');
                     $table->string('title');
-                    $table->string('sub_title');
                     $table->boolean('status')->default(1);
                     $table->boolean('v_insert')->default(1);
                     $table->boolean('v_update')->default(1);
@@ -735,6 +739,8 @@ return $controller;
                     $table->boolean('v_import')->default(1);
                     $table->boolean('v_view')->default(1);
                     $table->string('level')->default(10);
+                    $table->string('table_name');
+                    $table->string('sub_title');
                     $table->timestamps();
                 }
             );
@@ -752,10 +758,7 @@ return $controller;
                 $table->string('label');
                 $table->string('inputtype');
                 $table->string('datatype');
-                $table->string('required')->nullable();
-                $table->integer('datalenth')->default(0);
-                $table->integer('numscale')->default(0);
-                $table->integer('unsigned')->default(0);
+                $table->integer('level')->unsigned()->default(10);
                 $table->boolean('visible')->default(true);
                 $table->boolean('readonly')->default(false);
                 $table->boolean('export')->default(true);
@@ -763,17 +766,21 @@ return $controller;
                 $table->boolean('frmview')->default(true);
                 $table->boolean('searchable')->default(true);
                 $table->boolean('orderable')->default(true);
+                $table->boolean('status')->unsigned()->default(1);
+                $table->string('required')->nullable();
+                $table->string('sort')->default(0);
+                $table->integer('datalenth')->default(0);
+                $table->integer('numscale')->default(0);
+                $table->integer('unsigned')->default(0);
                 $table->string('classname')->nullable();
                 $table->string('width')->nullable();
                 $table->string('height')->nullable();
-                $table->string('search')->default('{"search":"", "regex":"" }');
-                $table->string('sort')->default(0);
-                $table->text('json')->nullable();
                 $table->string('datadic')->nullable();
                 $table->text('description')->nullable();
-                $table->integer('level')->unsigned()->default(10);
                 $table->string('created_by')->default('system');
                 $table->string('update_by')->default('system');
+                $table->string('search')->default('{"search":"", "regex":"" }');
+                $table->text('json')->nullable();
                 $table->timestamps();
             });
         }
