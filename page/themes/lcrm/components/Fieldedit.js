@@ -58,7 +58,7 @@ export default {
                     </div>
 
                     <div  v-else-if="col.inputtype=='checkbox'">
-                        <input type="checkbox" :name='col.key'
+                        <input class="btn-success" type="checkbox" :name='col.key'
                             v-model='item[col.key]' >
                                 {{item[col.key]}}
                         </input>
@@ -129,3 +129,4 @@ export default {
         console.log("fieldedit------------------->", item, col);
     }
 };
+("");

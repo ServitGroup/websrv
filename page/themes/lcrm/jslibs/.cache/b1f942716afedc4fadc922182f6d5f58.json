@@ -1,1 +1,0 @@
-{"dependencies":[],"generated":{"js":"\"use strict\";module.exports=function(t){for(var s=Math.round(this.items.length/t),r=JSON.parse(JSON.stringify(this.items)),e=[],i=0;i<t;i+=1)e.push(new this.constructor(r.splice(0,s)));return new this.constructor(e)};"},"hash":"89a17b731cc1c88feca026df951775c9"}

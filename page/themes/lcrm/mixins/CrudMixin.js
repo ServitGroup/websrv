@@ -390,7 +390,7 @@ export default {
     created() {
         console.log("mixins created");
         window.vc = this;
-        console.log = () => {};
+        // console.log = () => {};
     },
     data() {
         return {

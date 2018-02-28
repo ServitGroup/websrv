@@ -1,1 +1,0 @@
-{"dependencies":[],"generated":{"js":"\"use strict\";function r(r){if(Array.isArray(r)){for(var t=0,a=Array(r.length);t<r.length;t++)a[t]=r[t];return a}return Array.from(r)}module.exports=function(t){return void 0!==t?Math.min.apply(Math,r(this.pluck(t).all())):Math.min.apply(Math,r(this.items))};"},"hash":"3d537dc7c116f17a846f112cca011faf"}

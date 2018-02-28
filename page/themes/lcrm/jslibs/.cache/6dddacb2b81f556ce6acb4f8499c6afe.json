@@ -1,1 +1,0 @@
-{"dependencies":[{"name":"../helpers/variadic","loc":{"line":3,"column":23}}],"generated":{"js":"\"use strict\";var r=require(\"../helpers/variadic\");module.exports=function(){for(var e=this,t=arguments.length,i=Array(t),n=0;n<t;n++)i[n]=arguments[n];var u=r(i);return u.filter(function(r){return e.items[r]}).length===u.length};"},"hash":"9bc8014035d3a612d2f568b0b85120dd"}

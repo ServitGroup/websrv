@@ -24,7 +24,22 @@ const Login = () =>
     import ("../pages/Login.js");
 const Columnpage = () =>
     import ("../pages/Columns.js");
-
+const Zortq = () =>
+    import ("../pages/Zortq.js");
+const Dbinfos = () =>
+    import ("../pages/Dbinfos.js");
+const Apikeys = () =>
+    import ("../pages/Apikeys.js");
+const Smscredittr = () =>
+    import ("../pages/Smscredittr.js");
+const Logcomship = () =>
+    import ("../pages/Logcomship.js");
+const Creditshipcom = () =>
+    import ("../pages/Creditshipcom.js");
+const Smslog = () =>
+    import ("../pages/Smslog.js");
+const Curdtable = () =>
+    import ("../pages/Crudtable.js");
 const User = {
     props: ["id"],
     template: "<div>User {{ id }}</div>"

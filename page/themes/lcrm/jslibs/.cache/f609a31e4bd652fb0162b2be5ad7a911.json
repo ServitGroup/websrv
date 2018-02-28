@@ -1,1 +1,0 @@
-{"dependencies":[{"name":"../helpers/values","loc":{"line":3,"column":21}}],"generated":{"js":"\"use strict\";var e=require(\"../helpers/values\");module.exports=function(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:1,r=e(this.items),s=new this.constructor(r).shuffle();return 1===t?s.first():s.take(t)};"},"hash":"bd5060b99d9dd0c62921c9cca302f798"}

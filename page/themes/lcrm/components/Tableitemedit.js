@@ -5,10 +5,10 @@ export default {
         <span  :style="{background: item[col.key] }" style="padding: 7px;  text-align: center; display: inline-block;"></span>
         <span>{{item[col.key]}}</span>
     </div>
-    <span v-else-if="col.inputtype=='checkbox' && (col.key).toLowerCase() == 'status'">{{fcstatus(item[col.key])}}</span>
-    <span v-else-if="col.inputtype=='checkbox' && (col.key).toLowerCase() == 'visible'">{{fcvisible(item[col.key])}}</span>
-    <div v-else-if="col.inputtype=='checkbox'" ><input type="checkbox"  v-model="item[col.key]" disabled />{{fctf(item[col.key])}}</div>
-    <span v-else >{{item[col.key]}}</span>
+    <div v-else-if="col.inputtype=='checkbox' && (col.key).toLowerCase() == 'status'" ><input type="checkbox"  v-model="item[col.key]"  />{{fctf(item[col.key])}}</div>
+    <div v-else-if="col.inputtype=='checkbox' && (col.key).toLowerCase() == 'visible'"><input type="checkbox"  v-model="item[col.key]"  />{{fctf(item[col.key])}}</div>
+    <div v-else-if="col.inputtype=='checkbox'" ><input type="checkbox"  v-model="item[col.key]"  />{{fctf(item[col.key])}}</div>
+    <div v-else >{{item[col.key]}}</div>
 </div>
 `,
     props: {
@@ -37,7 +37,7 @@ export default {
             }
         },
         fctf(tf) {
-            if(tf){
+            if (tf) {
                 return true;
             } else {
                 return false;

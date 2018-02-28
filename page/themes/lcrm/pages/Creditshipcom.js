@@ -7,16 +7,16 @@ import Printa4table from "../components/Printa4table.js";
 export default {
     template: `
 <div>
-    <h1>
+    <h1  >
         {{title}}
     </h1>
-    <div v-show="viewstate.v_lists" ref="v_lists">
+    <div v-show="viewstate.v_lists" ref="v_lists" >
         <div class="page-header clearfix">
             <div class="pull-right">
-                <button v-if="infos.v_insert" v-show="!viewstate.v_insert" @click="insert" class="btn btn-primary"><i class="fa fa-plus-circle"></i> Insert</button>
-                <button v-if="infos.v_import" class="btn btn-primary" @click="changeview('v_import')"><i class="fa fa-download"></i> Import</button>
-                <button v-if="infos.v_export" class="btn btn-primary" @click="changeview('v_export')"><i class="fa fa-upload"></i> Export</button>
-                <button v-if="infos.v_print" class="btn btn-primary" @click="printv"><i class="fa fa-print"></i> Print</button>
+                <button v-show="!viewstate.v_insert" @click="insert" class="btn btn-primary"><i class="fa fa-plus-circle"></i> Insert</button>
+                <button class="btn btn-primary" @click="changeview('v_import')"><i class="fa fa-download"></i> Import</button>
+                <button class="btn btn-primary" @click="changeview('v_export')"><i class="fa fa-upload"></i> Export</button>
+                <button class="btn btn-primary" @click="printv"><i class="fa fa-print"></i> Print</button>
             </div>
         </div>
         <div class="panel panel-default">
@@ -37,11 +37,12 @@ export default {
                     <div class="row">
                         <div class="col-sm-12">
                             <div id="data_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
-                                <div class="row flex-container" >
+                                <div class="row">
                                     <div class="col-sm-12">
                                         <div id="data_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
-                                            <div class="row" style="display:flex">
-                                                    <div class="dataTables_length" id="data_length" style="display:inline-flex">
+                                            <div class="row">
+                                                <div class="col-sm-3">
+                                                    <div class="dataTables_length" id="data_length">
                                                         <label>
                                                                 Show
                                                                 <select v-model="perpage" @change="changeperpage" name="data_length" aria-controls="data" class="form-control input-sm">
@@ -51,34 +52,28 @@ export default {
                                                                     <option value="100">100</option>
                                                                 </select>
                                                                 entries
-                                                        </label>
+                                                            </label>
                                                     </div>
-                                                    <select v-model="selectdomain" class="form-control" style="width:200px" >
-                                                        <option value="-1">All</option>
-                                                        <option v-for="(domain,idx) in domains" :key="idx" :value="domain.domain">{{domain.domain}}</option>
-                                                    </select>
-                                                    <div>
-                                                        <span>&nbsp;&nbsp;Method:</span>
-                                                        <select v-model="selectmethod" class="form-control" style="width:200px" >
-                                                            <option value="-1">All</option>
-                                                            <option v-for="(mthod,idx) in method" :key="idx" :value="mthod.method">{{mthod.method}}</option>
-                                                        </select>
+                                                </div>
+
+                                                <div class="col-sm-3">
+                                                                <select v-model="selectdomain"  class="form-control input-sm">
+                                                                    <option value="-1">All</option>
+                                                                    <option v-for="domain in domains" :value="domain.id">{{domain.name}}</option>
+                                                                </select>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div id="data_filter" class="dataTables_filter">
+                                                        <label>
+                                                                Search:
+                                                                <div class="input-group">
+                                                                    <input v-model="filtertxt" type="search" class="form-control"/>
+                                                                    <span v-show="ajax" class="input-group-addon" style="cursor:pointer" @click="search">
+                                                                        <i class="fa fa-search"></i>
+                                                                    </span>
+                                                                </div>
+                                                            </label>
                                                     </div>
-                                                    <div>
-                                                        <span style="white-space: nowrap;" >&nbsp;&nbsp;export All:</span>
-                                                        <input type="checkbox" name="exportall" v-model="exportall" >
-                                                        <span style="padding-top: 5px;" >{{exportall}}</span>
-                                                    </div>
-                                                <div id="data_filter" class="dataTables_filter">
-                                                    <label>
-                                                            Search:
-                                                            <div class="input-group">
-                                                                <input v-model="filtertxt" type="search" class="form-control"/>
-                                                                <span v-show="ajax" class="input-group-addon" style="cursor:pointer" @click="search">
-                                                                    <i class="fa fa-search"></i>
-                                                                </span>
-                                                            </div>
-                                                        </label>
                                                 </div>
                                             </div>
                                             <div class="row">
@@ -88,7 +83,7 @@ export default {
                                                             <tr role="row">
                                                                 <th width="60px;">
                                                                     <input type="checkbox" v-model="checked_all" @click="checkeall"> &nbsp;# </th>
-                                                                <th v-for="(col,idx) in columns" v-show="col.visible" :tabindex="idx" :key="idx" :class="{ active: sortKey == col.key }" :style="{ cursor: col.orderable ? 'pointer' : '' }" @click="sortBy(col)">
+                                                                <th v-for="(col,idx) in columns" v-show="col.visible" :tabindex="idx" :key="idx" :class="{ active: sortKey == col.key }" :style="{ cursor: col.orderable ? 'pointer' : '' }" @click="sortBy(col)" >
                                                                     <div style="display:inline-flex;align-items:center;flex-wrap: nowrap;">
                                                                         <span style="white-space: nowrap;">{{col.label}}</span>
                                                                         <i v-show="col.orderable && sortKey != col.key " class="fa fa-sort pull-right" style="color: #ddd;" aria-hidden="true"></i>
@@ -101,16 +96,16 @@ export default {
                                                         </thead>
                                                         <tbody>
                                                             <tr v-for="(row,index) in lists" role="row" class="">
-                                                                <td style="display:flex"><input type="checkbox" v-model="row.checked">&nbsp; {{index+1}}</td>
+                                                                <td style="display:flex" ><input type="checkbox" v-model="row.checked">&nbsp; {{index+1}}</td>
                                                                 <td v-for="(col,idx) in columns" :key="idx" v-if="col.visible">
-                                                                    <tableitem :col="col" :item="row" />
+                                                                    <tableitem  :col="col" :item="row" />
                                                                 </td>
                                                                 <td style="cursor: pointer;display:inline-flex;align-items:center;flex-wrap: nowrap;">
                                                                     <i @click="view(row)" class="fa fa-fw fa-eye text-primary"></i>
-                                                                    <i v-if="infos.v_update" @click="edit(row)" alt="edit" aria-hidden="true" class="fa fa-pencil"></i>
+                                                                    <i @click="edit(row)" alt="edit" aria-hidden="true" class="fa fa-pencil"></i>
                                                                     <!-- <i @click="changeview('v_import')" alt="reset password" aria-hidden="true" class="fa fa-key"></i>  -->
                                                                     <!-- <i @click="changeview('v_export')" alt="reset password" aria-hidden="true" class="fa fa-key"></i>  -->
-                                                                    <i v-if="infos.v_delete" @click="deleterow(row)" alt="delete" aria-hidden="true" class="fa fa-times-circle " style="color: red;"></i>
+                                                                    <i @click="deleterow(row)" alt="delete" aria-hidden="true" class="fa fa-times-circle " style="color: red;"></i>
                                                                     <!-- <i @click="printv(row)" alt="print" aria-hidden="true" class="fa fa-print"></i> -->
                                                                 </td>
                                                             </tr>
@@ -119,7 +114,7 @@ export default {
                                                             <tr role="row">
                                                                 <th width="60px;">
                                                                     <input type="checkbox" v-model="checked_all" @click="checkeall"> &nbsp;# </th>
-                                                                <th v-for="(col,idx) in columns" v-show="col.visible" :tabindex="idx" :key="idx" :class="{ active: sortKey == col.key }" :style="{ cursor: col.orderable ? 'pointer' : '' }" @click="sortBy(col)">
+                                                                <th v-for="(col,idx) in columns" v-show="col.visible" :tabindex="idx" :key="idx" :class="{ active: sortKey == col.key }" :style="{ cursor: col.orderable ? 'pointer' : '' }" @click="sortBy(col)" >
                                                                     <div style="display:inline-flex;align-items:center;flex-wrap: nowrap;">
                                                                         <span style="white-space: nowrap;">{{col.label}}</span>
                                                                         <i v-show="col.orderable && sortKey != col.key " class="fa fa-sort pull-right" style="color: #ddd;" aria-hidden="true"></i>
@@ -169,12 +164,7 @@ export default {
                             </div>
                         </div>
                         <div class="col-sm-7">
-                            <paginate ref="paginate" 
-                                    :page-count="totalpage" 
-                                    :prev-text="'Prev'" 
-                                    :next-text="'Next'" 
-                                    :click-handler="changepage" 
-                                    :container-class="'pagination'">
+                            <paginate ref="paginate" :page-count="totalpage" :prev-text="'Prev'" :next-text="'Next'" :click-handler="changepage" :container-class="'pagination'">
                             </paginate>
                         </div>
                     </div>
@@ -182,7 +172,7 @@ export default {
             </div>
         </div>
     </div>
-    <div class="vprint" v-show="viewstate.v_print" ref="v_print">
+    <div class="vprint" v-show="viewstate.v_print" ref="v_print" >
         <div class="page-header clearfix">
             <div class="pull-right">
                 <button @click="changeview('v_lists')" class="btn btn-primary">
@@ -190,7 +180,7 @@ export default {
                     </button>
             </div>
         </div>
-        <div class="panel panel-default" style="position: relative;">
+        <div class="panel panel-default" style="position: relative;" >
             <div class="panel-heading">
                 <h4 class="panel-title">
                     <i class="material-icons">archive</i> {{title}} Print
@@ -209,12 +199,12 @@ export default {
                 </div>
             </div>
         </div>
-        <div id="preview">
-            <printa4table :items="exportdatas()"  :cols="columns"/>
+        <div id="preview" >
+            <printa4table />
         </div>
     </div>
-
-    <div v-show="viewstate.v_update" ref="v_update">
+    
+    <div v-show="viewstate.v_update" ref="v_update"  >
         <div class="page-header clearfix">
             <div class="pull-right">p
                 <button @click="updatecancel" class="btn btn-primary">
@@ -247,7 +237,7 @@ export default {
             </div>
         </div>
     </div>
-    <div v-show="viewstate.v_insert" ref="v_insert">
+    <div v-show="viewstate.v_insert" ref="v_insert"  >
         <div class="page-header clearfix">
             <div class="pull-right">
                 <button @click="insertcancel" class="btn btn-primary"><i class="fa fa-arrow-left"></i> Back</button>
@@ -281,7 +271,7 @@ export default {
         </div>
     </div>
 
-    <div v-show="viewstate.v_delete" ref="v_delete">
+    <div v-show="viewstate.v_delete" ref="v_delete"  >
         <div class="page-header clearfix">
             <div class="pull-right">
                 <button @click="changeview('v_lists')" class="btn btn-primary"><i class="fa fa-arrow-left"></i> Back</button>
@@ -300,7 +290,7 @@ export default {
             <div class="panel-body" style="display: block;">
                 <div v-for="(item,idx) in viewobj" :key="idx" class="form-group">
                     <label for="title" class="control-label">{{item.label}}</label>
-                    <viewitem :item="item" />
+                    <viewitem :item="item"  />
                 </div>
                 <div class="form-group">
                     <div class="controls">
@@ -312,7 +302,7 @@ export default {
         </div>
     </div>
 
-    <div v-show="viewstate.v_import" ref="import">
+    <div v-show="viewstate.v_import" ref="import"  >
         <div class="page-header clearfix">
             <div class="pull-right">
                 <button @click="changeview('v_lists')" class="btn btn-primary"><i class="fa fa-arrow-left"></i> Back</button>
@@ -352,7 +342,7 @@ export default {
         </div>
     </div>
 
-    <div v-show="viewstate.v_export" ref="export">
+    <div v-show="viewstate.v_export" ref="export"  >
         <div class="page-header clearfix">
             <div class="pull-right">
                 <button @click="changeview('v_lists')" class="btn btn-primary"><i class="fa fa-arrow-left"></i> Back</button>
@@ -384,7 +374,7 @@ export default {
         </div>
     </div>
 
-    <div v-show="viewstate.v_view" ref="view">
+    <div v-show="viewstate.v_view" ref="view"  >
         <div class="page-header clearfix">
             <div class="pull-right">
                 <button @click="changeview('v_lists')" class="btn btn-primary"><i class="fa fa-arrow-left"></i> Back</button>
@@ -433,17 +423,10 @@ export default {
 `,
     mixins: [crudmix],
     data() {
-        return {
-            domains: [],
-            selectdomain: -1,
-            selectmethod: -1,
-            exportall: false,
-            infos: {}
-        };
+        return { selectdomain: -1 };
     },
     created() {
         console.log("crud template created");
-        window.vc = this;
     },
     components: {
         tableitem: Tableitem,
@@ -452,55 +435,16 @@ export default {
         viewitem: Viewitem,
         printa4table: Printa4table
     },
-    methods: {
-        getkw() {
-            if (this.selectdomain != -1 && this.selectdomain) {
-                let kw = this.filtertxt + ",domain=" + this.selectdomain;
-                return btoa(kw);
-            } else {
-                return "";
-            }
-        },
-        exportdatas() {
-            let datas = this.filteredData;
-            if (!this.exportall) {
-                datas = datas.filter(i => i.checked);
-            }
-            console.log("datalength=", datas.length);
-            return datas;
-        },
-        search() {
-            console.log("search");
-            if ((this.filtertxt || this.selectdomain != -1) && this.ajax) {
-                this.getdatas();
-            }
-        }
-    },
     computed: {
-        filterDomain() {
-            let self = this;
-            let selectdomain = this.selectdomain;
-            let selectmethod = this.selectmethod;
-            let data = Object.assign([], self.datas);
-            if (selectdomain != -1) {
-                data = data.filter(row => row.domain == selectdomain);
-            }
-            if (selectmethod != -1) {
-                data = data.filter(row => row.method == selectmethod);
-            }
-
-            if (typeof data == "undefined") {
-                return [];
-            } else {
-                return data;
-            }
-        },
         filteredData() {
             let self = this;
+            let data = self.datas;
             let sortKey = self.sortKey;
             let filtertxt = self.filtertxt && self.filtertxt.toLowerCase();
             let order = self.sortOrders[sortKey] || 1;
-            let data = self.filterDomain;
+            if (this.selectdomain != -1) {
+                data = data.filter(r => r.domain_id == this.selectdomain);
+            }
             if (filtertxt) {
                 data = data.filter(row => {
                     return this.columns.some(c => {

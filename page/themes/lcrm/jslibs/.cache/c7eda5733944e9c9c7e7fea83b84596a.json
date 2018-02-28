@@ -1,1 +1,0 @@
-{"dependencies":[],"generated":{"js":"\"use strict\";module.exports=function(t){var c=[];return this.items.forEach(function(n,r){var s=Object.keys(n),o=[];s.forEach(function(t){o.push(n[t])});var e=t(o,r),u={};s.forEach(function(t,c){u[t]=e[c]}),c.push(u)}),new this.constructor(Object.assign.apply(Object,c))};"},"hash":"c77409d23029b901cbd9850bbc4999af"}

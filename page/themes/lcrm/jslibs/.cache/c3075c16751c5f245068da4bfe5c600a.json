@@ -1,1 +1,0 @@
-{"dependencies":[{"name":"process"}],"generated":{"js":"var process = require(\"process\");\nvar e=require(\"process\");module.exports=function(){void 0!==e&&e.exit(1)};"},"hash":"100376e7725835c6bfee88a7b81c02e8"}

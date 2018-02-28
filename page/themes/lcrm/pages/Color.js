@@ -1,9 +1,4 @@
 import crudmix from "../mixins/CrudMixin.js";
-import Tableitem from "../components/Tableitem.js";
-import Fieldinsert from "../components/FieldInsert.js";
-import Fieldedit from "../components/Fieldedit.js";
-import Viewitem from "../components/ViewItem.js";
-import Printa4table from "../components/Printa4table.js";
 export default {
     template: `
 <div>
@@ -13,10 +8,10 @@ export default {
     <div v-show="viewstate.v_lists" ref="v_lists">
         <div class="page-header clearfix">
             <div class="pull-right">
-                <button v-if="infos.v_insert" v-show="!viewstate.v_insert" @click="insert" class="btn btn-primary"><i class="fa fa-plus-circle"></i> Insert</button>
-                <button v-if="infos.v_import" class="btn btn-primary" @click="changeview('v_import')"><i class="fa fa-download"></i> Import</button>
-                <button v-if="infos.v_export" class="btn btn-primary" @click="changeview('v_export')"><i class="fa fa-upload"></i> Export</button>
-                <button v-if="infos.v_print" class="btn btn-primary" @click="printv"><i class="fa fa-print"></i> Print</button>
+                <button v-show="!viewstate.v_insert" @click="insert" class="btn btn-primary"><i class="fa fa-plus-circle"></i> Insert</button>
+                <button class="btn btn-primary" @click="changeview('v_import')"><i class="fa fa-download"></i> Import</button>
+                <button class="btn btn-primary" @click="changeview('v_export')"><i class="fa fa-upload"></i> Export</button>
+                <button class="btn btn-primary" @click="printv"><i class="fa fa-print"></i> Print</button>
             </div>
         </div>
         <div class="panel panel-default">
@@ -37,99 +32,74 @@ export default {
                     <div class="row">
                         <div class="col-sm-12">
                             <div id="data_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
-                                <div class="row flex-container" >
+                                <div class="row">
                                     <div class="col-sm-12">
                                         <div id="data_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
-                                            <div class="row" style="display:flex">
-                                                    <div class="dataTables_length" id="data_length" style="display:inline-flex">
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <div class="dataTables_length" id="data_length">
                                                         <label>
                                                                 Show
-                                                                <select v-model="perpage" @change="changeperpage" name="data_length" aria-controls="data" class="form-control input-sm">
+                                                                <select v-model="perpage" name="data_length" aria-controls="data" class="form-control input-sm">
                                                                     <option value="10">10</option>
                                                                     <option value="25">25</option>
                                                                     <option value="50">50</option>
                                                                     <option value="100">100</option>
                                                                 </select>
                                                                 entries
-                                                        </label>
+                                                            </label>
                                                     </div>
-                                                    <select v-model="selectdomain" class="form-control" style="width:200px" >
-                                                        <option value="-1">All</option>
-                                                        <option v-for="(domain,idx) in domains" :key="idx" :value="domain.domain">{{domain.domain}}</option>
-                                                    </select>
-                                                    <div>
-                                                        <span>&nbsp;&nbsp;Method:</span>
-                                                        <select v-model="selectmethod" class="form-control" style="width:200px" >
-                                                            <option value="-1">All</option>
-                                                            <option v-for="(mthod,idx) in method" :key="idx" :value="mthod.method">{{mthod.method}}</option>
-                                                        </select>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div id="data_filter" class="dataTables_filter">
+                                                        <label>
+                                                                Search:
+                                                                <input v-model="filtertxt" type="search" class="form-control input-sm" placeholder="" aria-controls="data">
+                                                            </label>
                                                     </div>
-                                                    <div>
-                                                        <span style="white-space: nowrap;" >&nbsp;&nbsp;export All:</span>
-                                                        <input type="checkbox" name="exportall" v-model="exportall" >
-                                                        <span style="padding-top: 5px;" >{{exportall}}</span>
-                                                    </div>
-                                                <div id="data_filter" class="dataTables_filter">
-                                                    <label>
-                                                            Search:
-                                                            <div class="input-group">
-                                                                <input v-model="filtertxt" type="search" class="form-control"/>
-                                                                <span v-show="ajax" class="input-group-addon" style="cursor:pointer" @click="search">
-                                                                    <i class="fa fa-search"></i>
-                                                                </span>
-                                                            </div>
-                                                        </label>
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <div class="col-sm-12" style="overflow-x:auto;">
+                                                <div class="col-sm-12" style="flow-x:auto;">
                                                     <table id="data" class="table table-striped table-bordered dataTable no-footer" role="grid" aria-describedby="data_info" style="width: 737px;">
                                                         <thead>
                                                             <tr role="row">
-                                                                <th width="60px;">
+                                                                <th width="80px;">
                                                                     <input type="checkbox" v-model="checked_all" @click="checkeall"> &nbsp;# </th>
                                                                 <th v-for="(col,idx) in columns" v-show="col.visible" :tabindex="idx" :key="idx" :class="{ active: sortKey == col.key }" :style="{ cursor: col.orderable ? 'pointer' : '' }" @click="sortBy(col)">
-                                                                    <div style="display:inline-flex;align-items:center;flex-wrap: nowrap;">
-                                                                        <span style="white-space: nowrap;">{{col.label}}</span>
+                                                                    <div style="display:inline-flex;align-items:center">
+                                                                        {{col.label}}
                                                                         <i v-show="col.orderable && sortKey != col.key " class="fa fa-sort pull-right" style="color: #ddd;" aria-hidden="true"></i>
                                                                         <i v-show="col.orderable && sortKey==col.key && sortOrders[col.key]==1" style="display:none" class="fa fa-sort-asc pull-right" aria-hidden="true"></i>
                                                                         <i v-show="col.orderable && sortKey==col.key && sortOrders[col.key]==-1" style="display:none" class="fa fa-sort-desc pull-right" aria-hidden="true"></i>
                                                                     </div>
                                                                 </th>
-                                                                <th>Option</th>
+                                                                <th>
+                                                                    Option
+                                                                </th>
+
                                                             </tr>
                                                         </thead>
                                                         <tbody>
                                                             <tr v-for="(row,index) in lists" role="row" class="">
-                                                                <td style="display:flex"><input type="checkbox" v-model="row.checked">&nbsp; {{index+1}}</td>
+                                                                <td>
+                                                                    <input type="checkbox" v-model="row.checked">&nbsp; {{index+1}}</td>
                                                                 <td v-for="(col,idx) in columns" :key="idx" v-if="col.visible">
-                                                                    <tableitem :col="col" :item="row" />
+                                                                    <div stype="display:inline;">
+                                                                            <span v-if="col.inputtype=='color'" :style="{background: row[col.key] }" style="padding: 7px;  text-align: center; display: inline-block;"></span>
+                                                                            <span >{{row[col.key]}}</span>
+                                                                    </div>
                                                                 </td>
-                                                                <td style="cursor: pointer;display:inline-flex;align-items:center;flex-wrap: nowrap;">
+                                                                <td style="cursor: pointer;">
                                                                     <i @click="view(row)" class="fa fa-fw fa-eye text-primary"></i>
-                                                                    <i v-if="infos.v_update" @click="edit(row)" alt="edit" aria-hidden="true" class="fa fa-pencil"></i>
+                                                                    <i @click="edit(row)" alt="edit" aria-hidden="true" class="fa fa-pencil"></i>
                                                                     <!-- <i @click="changeview('v_import')" alt="reset password" aria-hidden="true" class="fa fa-key"></i>  -->
                                                                     <!-- <i @click="changeview('v_export')" alt="reset password" aria-hidden="true" class="fa fa-key"></i>  -->
-                                                                    <i v-if="infos.v_delete" @click="deleterow(row)" alt="delete" aria-hidden="true" class="fa fa-times-circle " style="color: red;"></i>
+                                                                    <i @click="deleterow(row)" alt="delete" aria-hidden="true" class="fa fa-times-circle " style="color: red;"></i>
                                                                     <!-- <i @click="printv(row)" alt="print" aria-hidden="true" class="fa fa-print"></i> -->
                                                                 </td>
                                                             </tr>
                                                         </tbody>
-                                                        <thead>
-                                                            <tr role="row">
-                                                                <th width="60px;">
-                                                                    <input type="checkbox" v-model="checked_all" @click="checkeall"> &nbsp;# </th>
-                                                                <th v-for="(col,idx) in columns" v-show="col.visible" :tabindex="idx" :key="idx" :class="{ active: sortKey == col.key }" :style="{ cursor: col.orderable ? 'pointer' : '' }" @click="sortBy(col)">
-                                                                    <div style="display:inline-flex;align-items:center;flex-wrap: nowrap;">
-                                                                        <span style="white-space: nowrap;">{{col.label}}</span>
-                                                                        <i v-show="col.orderable && sortKey != col.key " class="fa fa-sort pull-right" style="color: #ddd;" aria-hidden="true"></i>
-                                                                        <i v-show="col.orderable && sortKey==col.key && sortOrders[col.key]==1" style="display:none" class="fa fa-sort-asc pull-right" aria-hidden="true"></i>
-                                                                        <i v-show="col.orderable && sortKey==col.key && sortOrders[col.key]==-1" style="display:none" class="fa fa-sort-desc pull-right" aria-hidden="true"></i>
-                                                                    </div>
-                                                                </th>
-                                                                <th>Option</th>
-                                                            </tr>
-                                                        </thead>
                                                     </table>
                                                     <div id="data_processing" class="dataTables_processing panel panel-default" style="display: none;">
                                                         Processing...
@@ -169,12 +139,7 @@ export default {
                             </div>
                         </div>
                         <div class="col-sm-7">
-                            <paginate ref="paginate" 
-                                    :page-count="totalpage" 
-                                    :prev-text="'Prev'" 
-                                    :next-text="'Next'" 
-                                    :click-handler="changepage" 
-                                    :container-class="'pagination'">
+                            <paginate ref="paginate" :page-count="totalpage" :prev-text="'Prev'" :next-text="'Next'" :click-handler="changepage" :container-class="'pagination'">
                             </paginate>
                         </div>
                     </div>
@@ -182,7 +147,7 @@ export default {
             </div>
         </div>
     </div>
-    <div class="vprint" v-show="viewstate.v_print" ref="v_print">
+    <div v-show="viewstate.v_print" ref="v_print">
         <div class="page-header clearfix">
             <div class="pull-right">
                 <button @click="changeview('v_lists')" class="btn btn-primary">
@@ -190,7 +155,7 @@ export default {
                     </button>
             </div>
         </div>
-        <div class="panel panel-default" style="position: relative;">
+        <div class="panel panel-default">
             <div class="panel-heading">
                 <h4 class="panel-title">
                     <i class="material-icons">archive</i> {{title}} Print
@@ -209,14 +174,10 @@ export default {
                 </div>
             </div>
         </div>
-        <div id="preview">
-            <printa4table :items="exportdatas()"  :cols="columns"/>
-        </div>
     </div>
-
     <div v-show="viewstate.v_update" ref="v_update">
         <div class="page-header clearfix">
-            <div class="pull-right">p
+            <div class="pull-right">
                 <button @click="updatecancel" class="btn btn-primary">
                         <i class="fa fa-arrow-left"></i> Back
                     </button>
@@ -235,7 +196,43 @@ export default {
             <div class="panel-body" style="display: block;">
                 <form method="POST" action="#" accept-charset="UTF-8" id="company" enctype="multipart/form-data" novalidate="novalidate" class="bv-form">
                     <div v-for="(item,idx) in updateobj()" :key="idx" class="row">
-                        <fieldedit :col="item" :item="row_update" />
+                        <div class="col-md-12">
+                            <div class="form-group ">
+                                <label v-bind:class="item.required" class="control-label" >{{item.label}}</label>
+                                <div class="controls">
+                                    <input v-if="item.inputtype=='textinput'" 
+                                    v-validate="validateupdate(item)" 
+                                    :class="{'input': true, 'is-danger': errors.has(item.key) }" 
+                                    :placeholder="item.label" :name="item.key" type="text" v-model="row_update[item.key]" class="form-control"> <span class="help-block"></span>
+                                    
+                                    <input v-if="item.inputtype=='number'" 
+                                    v-validate="validateupdate(item)" 
+                                    :class="{'input': true, 'is-danger': errors.has(item.key) }" 
+                                    :name="item.key" type="number" v-model="row_update[item.key]" class="form-control"> <span class="help-block"></span>
+                                    
+                                    <el-date-picker v-if="item.inputtype=='datetime-local'" 
+                                    v-validate="validateupdate(item)" 
+                                    :class="{'input': true, 'is-danger': errors.has(item.key) }"                                     
+                                    format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss"
+                                    v-model="row_update[item.key]"  type="datetime" placeholder="Select date and time" />
+                                    
+                                    <div v-if="item.inputtype=='color'" style="display: inline-flex; align-items: center;">
+                                    <el-color-picker v-model="row_update[item.key]"></el-color-picker>
+                                    <span>{{row_update[item.key]}}</span>
+                                    </div>
+                                    
+                                    <textarea v-if="item.inputtype=='textarea'" 
+                                    v-validate="validateupdate(item)" 
+                                    :class="{'input': true, 'is-danger': errors.has(item.key) }"                                     
+                                    :name="item.key" v-model="row_update[item.key]" rows="8" style="width:90%;"></textarea><span class="help-block"></span>
+                                
+                                </div>
+                                <small class="help-block" data-bv-validator="notEmpty" data-bv-for="address" data-bv-result="NOT_VALIDATED" style="display: none;">The address field is required.</small>
+                            </div>
+                        </div>
+                        <!--              <div class="col-md-6">
+                              <pre>{{item}}</pre>
+                           </div> -->
                     </div>
                     <div class="form-group">
                         <div class="controls">
@@ -266,7 +263,48 @@ export default {
             <div class="panel-body" style="display: block;">
                 <form method="POST" action="#" accept-charset="UTF-8" id="company" enctype="multipart/form-data" novalidate="novalidate" class="bv-form">
                     <div v-for="(item,idx) in insertobj()" :key="idx" class="row">
-                        <fieldinsert :col="item" :item="row_insert" />
+                        <div class="col-md-12">
+                            <div class="form-group required ">
+                                <label class="control-label" v-bind:class="item.required">{{item.label}}</label>
+                                <div class="controls">
+                                    <input v-if="item.inputtype=='textinput'" :placeholder="item.label"
+                                      v-validate="validateinsert(item)"
+                                      :class="{'input': true, 'is-danger': errors.has(item.key) }" 
+                                      :name="item.key" type="text" v-model="row_insert[item.key]" 
+                                      class="form-control"> <span class="help-block"></span>
+                                      
+                                      <input v-if="item.inputtype=='number' && item.key != 'id'" 
+                                      v-validate="validateinsert(item)"
+                                      :class="{'input': true, 'is-danger': errors.has(item.key) }" 
+                                      :name="item.key" type="number" 
+                                      v-model="row_insert[item.key]" class="form-control"> <span class="help-block"></span>
+                                      
+                                      <el-date-picker v-if="item.inputtype=='datetime-local'" 
+                                      v-validate="validateinsert(item)"
+                                      :class="{'input': true, 'is-danger': errors.has(item.key) }" 
+                                      v-model="row_insert[item.key]"  
+                                      format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss"
+                                      type="datetime" placeholder="Select date and time" />
+
+                                    <div v-if="item.inputtype=='color'" style="display: inline-flex; align-items: center;">
+                                    <el-color-picker v-model="row_insert[item.key]"></el-color-picker>
+                                    <span>{{row_insert[item.key]}}</span>
+                                    </div>                                      
+
+                                    <textarea v-if="item.inputtype=='textarea'" 
+                                      v-validate="validateinsert(item)"
+                                     :class="{'input': true, 'is-danger': errors.has(item.key) }" 
+                                    :name="item.key" v-model="row_insert[item.key]" rows="8" style="width:90%;"></textarea><span class="help-block"></span>
+                                    
+                                    <span v-if="item.inputtype=='number' && item.key == 'id'">{{item.key}}</span>
+
+                                </div>
+                                <small class="help-block" data-bv-validator="notEmpty" data-bv-for="address" data-bv-result="NOT_VALIDATED" style="display: none;">The address field is required.</small>
+                            </div>
+                        </div>
+                        <!--              <div class="col-md-6">
+                              <pre>{{item}}</pre>
+                           </div> -->
                     </div>
                     <div class="form-group">
                         <div class="controls">
@@ -300,7 +338,9 @@ export default {
             <div class="panel-body" style="display: block;">
                 <div v-for="(item,idx) in viewobj" :key="idx" class="form-group">
                     <label for="title" class="control-label">{{item.label}}</label>
-                    <viewitem :item="item" />
+                    <div class="controls">
+                        {{item.value}}
+                    </div>
                 </div>
                 <div class="form-group">
                     <div class="controls">
@@ -321,7 +361,7 @@ export default {
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h4 class="panel-title">
-                    <i class="material-icons">archive</i> Import {{title}}
+                    <i class="material-icons">archive</i> Import {{title}} 
                 </h4>
                 <span class="pull-right">
                      <i class="fa fa-fw fa-chevron-up clickable">
@@ -331,23 +371,14 @@ export default {
             <div class="panel-body" style="display: block;">
                 <div class="right_cont">
                     <div>
-                        <form class="form-horizontal">
-                            <div data-provides="fileinput" class="fileinput fileinput-new">
-                                <span class="btn btn-default btn-file">
+                    <form class="form-horizontal">
+                    <div data-provides="fileinput" class="fileinput fileinput-new">
+                    <span class="btn btn-default btn-file">
                     <span class="fileinput-new">Select file</span>
-                                <span class="fileinput-exists">Change</span>
-                                <input type="file" name="..."></span> <span class="fileinput-filename"></span>
-                                <a href="#" data-dismiss="fileinput" class="close fileinput-exists import-cat">×</a></div> <br>
-                            <button class="btn btn-primary">Upload and Review</button> <a href="#" class="btn btn-primary">Download Template</a></form>
-                        <!---->
-                        <div class="table-responsive">
-                            <!---->
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12"><a href="" class="btn btn-primary pull-right disabled" style="display: none;">Create Selected</a></div>
-                        </div>
-                    </div>
-                </div>
+                    <span class="fileinput-exists">Change</span> 
+                    <input type="file" name="..."></span> <span class="fileinput-filename"></span> 
+                    <a href="#" data-dismiss="fileinput" class="close fileinput-exists import-cat">×</a></div> <br> 
+                    <button class="btn btn-primary">Upload and Review</button> <a href="#" class="btn btn-primary">Download Template</a></form> <!----> <div class="table-responsive"><!----></div> <div class="row"><div class="col-md-12"><a href="" class="btn btn-primary pull-right disabled" style="display: none;">Create Selected</a></div></div></div></div>
             </div>
         </div>
     </div>
@@ -371,13 +402,27 @@ export default {
             <div class="panel-body" style="display: block;">
                 <div class="form-group">
                     <div class="controls">
-                        <a @click="changeview('v_lists')" href="#" class="btn btn-primary"><i class="fa fa-arrow-left"></i> Back</a>
-                        <download-excel class="btn btn-default" type="slx" :data="exportdatas()" :name="exportxlsx()" v-bind:fields="json_fields()">
-                            Download Excel
-                        </download-excel>
-                        <download-excel type="csv" class="btn btn-default" :data="exportdatas()" v-bind:name="exportcsv()" v-bind:fields="json_fields()">
-                            Download CSV
-                        </download-excel>
+                    <a @click="changeview('v_lists')" href="#" class="btn btn-primary"><i class="fa fa-arrow-left"></i> Back</a>
+                    <download-excel
+                        key="slx"
+                        class= "btn btn-default"
+                        type="slx"
+                        :data= "exportdatas()"
+                        :name="exportxlsx()"
+                        :fields = "json_fields()"
+                        >
+                        Download Excel
+                    </download-excel>
+                    <download-excel
+                        key="csv"
+                        type ="csv"
+                        class= "btn btn-default"
+                        :data= "exportdatas()"
+                        v-bind:name="exportcsv()"
+                        :fields = "json_fields()"
+                        >
+                        Download CSV
+                    </download-excel>
                     </div>
                 </div>
             </div>
@@ -411,8 +456,10 @@ export default {
                                         <div v-for="(item,idx) in viewobj" :key="idx" class="form-group">
                                             <label for="title" class="control-label">{{item.label}}</label>
                                             <div class="controls">
-                                                <span v-if="(item.label).toLowerCase() == 'status'">{{fcstatus(item.value)}}</span>
-                                                <span v-else>{{item.value}}</span>
+                                                <div v-if="item.label=='RGB'" style="display:inline;">
+                                                    <span :style="{background: item.value }" style="padding: 7px;  text-align: center; display: inline-block;"></span>
+                                                </div>
+                                                {{item.value}}
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -432,98 +479,7 @@ export default {
 </div>
 `,
     mixins: [crudmix],
-    data() {
-        return {
-            domains: [],
-            selectdomain: -1,
-            selectmethod: -1,
-            exportall: false,
-            infos: {}
-        };
-    },
     created() {
         console.log("crud template created");
-        window.vc = this;
-    },
-    components: {
-        tableitem: Tableitem,
-        fieldinsert: Fieldinsert,
-        fieldedit: Fieldedit,
-        viewitem: Viewitem,
-        printa4table: Printa4table
-    },
-    methods: {
-        getkw() {
-            if (this.selectdomain != -1 && this.selectdomain) {
-                let kw = this.filtertxt + ",domain=" + this.selectdomain;
-                return btoa(kw);
-            } else {
-                return "";
-            }
-        },
-        exportdatas() {
-            let datas = this.filteredData;
-            if (!this.exportall) {
-                datas = datas.filter(i => i.checked);
-            }
-            console.log("datalength=", datas.length);
-            return datas;
-        },
-        search() {
-            console.log("search");
-            if ((this.filtertxt || this.selectdomain != -1) && this.ajax) {
-                this.getdatas();
-            }
-        }
-    },
-    computed: {
-        filterDomain() {
-            let self = this;
-            let selectdomain = this.selectdomain;
-            let selectmethod = this.selectmethod;
-            let data = Object.assign([], self.datas);
-            if (selectdomain != -1) {
-                data = data.filter(row => row.domain == selectdomain);
-            }
-            if (selectmethod != -1) {
-                data = data.filter(row => row.method == selectmethod);
-            }
-
-            if (typeof data == "undefined") {
-                return [];
-            } else {
-                return data;
-            }
-        },
-        filteredData() {
-            let self = this;
-            let sortKey = self.sortKey;
-            let filtertxt = self.filtertxt && self.filtertxt.toLowerCase();
-            let order = self.sortOrders[sortKey] || 1;
-            let data = self.filterDomain;
-            if (filtertxt) {
-                data = data.filter(row => {
-                    return this.columns.some(c => {
-                        return (
-                            String(row[c.key])
-                            .toLowerCase()
-                            .indexOf(filtertxt) > -1
-                        );
-                    });
-                });
-            }
-            if (sortKey) {
-                data = data.slice().sort(function(a, b) {
-                    a = a[sortKey];
-                    b = b[sortKey];
-                    return (a === b ? 0 : +a > +b ? 1 : -1) * order;
-                });
-            }
-            if (typeof data == "undefined") {
-                return [];
-            } else {
-                return data;
-            }
-        }
     }
 };
