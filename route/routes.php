@@ -25,6 +25,26 @@ $server->addClass('TController', '/t', 'sys'); // fortest
 $server->addClass('AppController', '/api/v1', 'sys'); // fortest
 $server->addClass('TlenController', '/tlen', 'sys'); // fortest
 $server->addClass('JwtController', '', 'sys'); // fortest
+$server->addClass('ColumnController','/api/v3/columns','sys'); 
+$server->addClass('DbinfoController','/api/v3/dbinfos','sys'); 
+$server->addClass('MenuController','/api/v3/menus','sys'); 
+$server->addClass('AppController', '/api/v3/apps', 'sys');
+$server->addClass('ColumnController', '/api/v3/columns', 'sys');
+$server->addClass('CompanyController', '/api/v3/companies', 'sys');
+$server->addClass('DbinfoController', '/api/v3/dbinfos', 'sys');
+$server->addClass('MenuController', '/api/v3/menus', 'sys');
+$server->addClass('Model_has_permissionController', '/api/v3/model_has_permissions', 'sys');
+$server->addClass('Model_has_roleController', '/api/v3/model_has_roles', 'sys');
+$server->addClass('ModuleController', '/api/v3/modules', 'sys');
+$server->addClass('PackageController', '/api/v3/packages', 'sys');
+$server->addClass('Password_resetController', '/api/v3/password_resets', 'sys');
+$server->addClass('PermissionController', '/api/v3/permissions', 'sys');
+$server->addClass('ProfileController', '/api/v3/profiles', 'sys');
+$server->addClass('Role_has_permissionController', '/api/v3/role_has_permissions', 'sys');
+$server->addClass('RoleController', '/api/v3/roles', 'sys');
+$server->addClass('SyspackageController', '/api/v3/syspackages', 'sys');
+$server->addClass('UserController', '/api/v3/users', 'sys');
+
 // $server->addClass('RootController', '', 'sys'); // roottheme rootfile
 $server->addThemeClass('RootThemeController', 'sys'); 
 $server->addClass('LcrmController', '', 'sys'); // roottheme rootfile
