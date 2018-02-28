@@ -13,10 +13,10 @@ export default {
     <div v-show="viewstate.v_lists" ref="v_lists" >
         <div class="page-header clearfix">
             <div class="pull-right">
-                <button v-show="!viewstate.v_insert" @click="insert" class="btn btn-primary"><i class="fa fa-plus-circle"></i> Insert</button>
-                <button class="btn btn-primary" @click="changeview('v_import')"><i class="fa fa-download"></i> Import</button>
-                <button class="btn btn-primary" @click="changeview('v_export')"><i class="fa fa-upload"></i> Export</button>
-                <button class="btn btn-primary" @click="printv"><i class="fa fa-print"></i> Print</button>
+                <button v-if="info.v_insert"  v-show="!viewstate.v_insert" @click="insert" class="btn btn-primary"><i class="fa fa-plus-circle"></i> Insert</button>
+                <button v-if="info.v_import"  class="btn btn-primary" @click="changeview('v_import')"><i class="fa fa-download"></i> Import</button>
+                <button v-if="info.v_export"  class="btn btn-primary" @click="changeview('v_export')"><i class="fa fa-upload"></i> Export</button>
+                <button v-if="info.v_print"  class="btn btn-primary" @click="printv"><i class="fa fa-print"></i> Print</button>
             </div>
         </div>
         <div class="panel panel-default">
@@ -106,14 +106,13 @@ export default {
                                                                     <tableitemedit :select="{inputtype:inputtypes}"  :col="col" :item="row" />
                                                                 </td>
                                                                 <td style="cursor: pointer;display:inline-flex;align-items:center;flex-wrap: nowrap;">
-                                                                    <!-- <i @click="view(row)" class="fa fa-fw fa-eye text-primary"></i> -->
-                                                                    <i @click="edit(row)" alt="edit" aria-hidden="true" class="fa fa-pencil"></i>
-                                                                    <i @click="updatedtablerow(row)" alt="save" aria-hidden="true" class="fa fa-save"></i>
-                                                                    <span>&nbsp;&nbsp;</span>
-                                                                    <!-- <i @click="changeview('v_import')" alt="reset password" aria-hidden="true" class="fa fa-key"></i>  -->
-                                                                    <!-- <i @click="changeview('v_export')" alt="reset password" aria-hidden="true" class="fa fa-key"></i>  -->
-                                                                    <i @click="deleterow(row)" alt="delete" aria-hidden="true" class="fa fa-times-circle " style="color: red;"></i>
-                                                                    <!-- <i @click="printv(row)" alt="print" aria-hidden="true" class="fa fa-print"></i> -->
+                                                                    <i v-if="info.v_view" @click="view(row)" class="fa fa-fw fa-eye text-primary"></i> 
+                                                                    <i v-if="info.v_update" @click="edit(row)" alt="edit" aria-hidden="true" class="fa fa-pencil"></i>
+                                                                    <i v-if="info.v_update" @click="updatedtablerow(row)" alt="save" aria-hidden="true" class="fa fa-save"></i>
+                                                                    <i v-if="info.v_import" @click="changeview('v_import')" alt="reset password" aria-hidden="true" class="fa fa-key"></i>  
+                                                                    <i v-if="info.v_export" @click="changeview('v_export')" alt="reset password" aria-hidden="true" class="fa fa-key"></i>  
+                                                                    <i v-if="info.v_delete" @click="deleterow(row)" alt="delete" aria-hidden="true" class="fa fa-times-circle " style="color: red;"></i>
+                                                                    <i v-if="info.v_print" @click="printv(row)" alt="print" aria-hidden="true" class="fa fa-print"></i> 
                                                                 </td>
                                                             </tr>
                                                         </tbody>
