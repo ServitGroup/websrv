@@ -1044,6 +1044,14 @@ return $controller;
         $app->pop_value = 'MONGKOL';
         $app->save();
 
+        $app = App::where('popkey', 'Company')->first();
+        if($app){}else{
+            $app = new App();
+        }
+        $app->popkey = 'Company';
+        $app->pop_value = 'MONGKOL';
+        $app->save();
+
 
         echo '<hr/>Add User Admin@admin.com/password---Data<br/>';
         $admin = new User();
