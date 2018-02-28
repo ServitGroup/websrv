@@ -6,7 +6,7 @@ use Servit\Restsrv\Libs\Request;
 use Carbon\Carbon;
 use \Servit\Restsrv\Traits\DbTrait;
 
-class ColumnController extends BaseController {
+class Model_has_roleController extends BaseController {
 
 use DbTrait;
 
@@ -24,12 +24,12 @@ public function authorize(){
  */
 public function all($page = 1, $perpage = 10, $kw = '', $ajax = 0){
         //Capsule::enableQuerylog();
-        $columns = Column::where('table_id', 'columns')->orderBy('sort', 'asc')->get();
+        $columns = Column::where('table_id', 'model_has_roles')->orderBy('sort', 'asc')->get();
         $kws = [];
         if ($kw) {
             $kws = explode(',', $kw);
         }
-        $qry = Column::query();
+        $qry = Model_has_role::query();
         $qry->whereRaw('1 = 1');
         $vkw = '';
         if ($kws) {
@@ -78,17 +78,10 @@ public function all($page = 1, $perpage = 10, $kw = '', $ajax = 0){
             $datas = $qry->get();
         }
 
-        $info = Dbinfo::where('table_name', 'columns')->first();
+        $info = Dbinfo::where('table_name', 'model_has_roles')->first();
         //---addition----
-        $tables = Column::select('table_id')->groupBy('table_id')->get();
-        $inputtypes = [
-            ['inputtype'=>'checkbox'],
-            ['inputtype'=>'datetime-local'],
-            ['inputtype'=>'number'],
-            ['inputtype'=>'select'],
-            ['inputtype'=>'textarea'],
-            ['inputtype'=>'textinput'],
-        ];
+        $method = [];
+        $domains = [];
 
         $data = [
             'ajax' => $ajax,
@@ -101,10 +94,9 @@ public function all($page = 1, $perpage = 10, $kw = '', $ajax = 0){
             'datas' => $datas,
             'columns' => $columns,
             'info' => $info,
-            'tables' => $tables,
-            "inputtypes" => $inputtypes,
-
-
+            'infos' => $info,
+            'domains' => $domains,
+            'method' => $method,
             //'sql' => Capsule::getQueryLog(),
         ];
         // dump($data);
@@ -112,45 +104,8 @@ public function all($page = 1, $perpage = 10, $kw = '', $ajax = 0){
 
 }
 
-
-
-/**
-*@noAuth
-*@url POST /updates/
-*/
-public function updates(){
-    try {
-        $data = isset($this->input) ? $this->input->input->toArray() : [] ;
-        $change = [];
-        foreach ($data as $row) {
-            $col = Column::find($row['id']);
-            $chk = 0;
-            if($col){
-                foreach ($col->toArray() as $key => $value) {
-                    if($value != $row[$key]) {
-                        $chk = 1;
-                        $col->{$key} = $row[$key];
-                    }   
-                }  
-              if($chk){
-                  $col->save();
-                  $change[] = $col;
-              } 
-            }
-        }
-        return [
-            'status'=> 1,
-            'change'=> $change
-        ];
-    } catch (Exception $e) {
-       return ['status' => 0,'msg'=>$e->getMessage()];
-    }
-}
-
-
-
 protected function model(){
-    return new Column();
+    return new Model_has_role();
 }
 
 }
