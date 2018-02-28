@@ -54,6 +54,6 @@ export default {
         }
     },
     created() {
-        console.log("attrs", this.$attrs);
+        // console.log("attrs", this.$attrs);
     }
 };
