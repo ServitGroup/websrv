@@ -41,7 +41,7 @@ export default {
                                     <div class="col-sm-12">
                                         <div id="data_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
                                             <div class="row">
-                                                <div class="col-sm-9">
+                                                <div class="col-sm-7">
                                                     <div class="dataTables_length" id="data_length">
                                                         <label>
                                                                 Show
@@ -58,7 +58,7 @@ export default {
                                                 <div class="col-sm-1">
                                                     <button @click="updatedtablerows" class="btn btn-primary"><i class="fa fa-save"></i> Save Page</button>
                                                 </div>
-                                                <div class="col-sm-2">
+                                                <div class="col-sm-4">
                                                     <div id="data_filter" class="dataTables_filter">
                                                         <label>
                                                                 Search:
