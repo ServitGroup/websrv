@@ -1,8 +1,11 @@
+<?php 
+  $app = App::where('popkey', 'APP_NAME')->first();
+?>
 <html style="min-height: 1110px;">
 <head>
     <meta charset="UTF-8">
     <title>
-        Payments Log | dsla
+        <?=$app->pop_value?> | <?=$this->server->url?:'Home'?>
     </title>
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <meta id="token" name="token" value="<?=session_id()?>">
