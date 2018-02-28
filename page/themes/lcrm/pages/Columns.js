@@ -103,7 +103,7 @@ export default {
                                                             <tr v-for="(row,index) in lists" role="row" class="">
                                                                 <td style="display:flex" ><input type="checkbox" v-model="row.checked">&nbsp; {{index+1}}</td>
                                                                 <td v-for="(col,idx) in columns" :key="idx" v-if="col.visible">
-                                                                    <tableitemedit  :col="col" :item="row" />
+                                                                    <tableitemedit :select="{inputtype:inputtypes}"  :col="col" :item="row" />
                                                                 </td>
                                                                 <td style="cursor: pointer;display:inline-flex;align-items:center;flex-wrap: nowrap;">
                                                                     <!-- <i @click="view(row)" class="fa fa-fw fa-eye text-primary"></i> -->

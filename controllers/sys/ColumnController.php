@@ -81,7 +81,14 @@ public function all($page = 1, $perpage = 10, $kw = '', $ajax = 0){
         $info = Dbinfo::where('table_name', 'columns')->first();
         //---addition----
         $tables = Column::select('table_id')->groupBy('table_id')->get();
-        $inputtypes = Column::select('inputtype')->groupBy('inputtype')->get();
+        $inputtypes = [
+            ['inputtype'=>'checkbox'],
+            ['inputtype'=>'datetime-local'],
+            ['inputtype'=>'number'],
+            ['inputtype'=>'select'],
+            ['inputtype'=>'textarea'],
+            ['inputtype'=>'textinput'],
+        ];
 
         $data = [
             'ajax' => $ajax,
@@ -95,7 +102,7 @@ public function all($page = 1, $perpage = 10, $kw = '', $ajax = 0){
             'columns' => $columns,
             'info' => $info,
             'tables' => $tables,
-            "inuttypes" => $inputtypes,
+            "inputtypes" => $inputtypes,
 
 
             //'sql' => Capsule::getQueryLog(),
