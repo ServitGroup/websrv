@@ -119,7 +119,7 @@ public function migateseed(){
             $model->model = $modelname;
             $my_file = __DIR__ . '/../../controllers/' . $modelname . 'Controller.php';
             dump($my_file);
-            if (!file_exists($my_file)) {
+            if (!class_exists($modelname.'Controller') || !file_exists($my_file)) {
                 $controller = $this->makecontroller($model);
                 $handle = fopen($my_file, 'w') or die('Cannot open file:  ' . $my_file);
                 fwrite($handle, $controller);
@@ -331,7 +331,11 @@ public function migateseed(){
                 $menu->table_name = $model->table;
                 $menu->label = $model->model;
                 $menu->permalink = $model->table;
-                $menu->component = 'Crudtemplate';
+                if(in_array($model->table,$systemtables)){
+                    $menu->component =  ucfirst($model->table);
+                }else{
+                    $menu->component = 'Crudtemplate';
+                }
                 $menu->icon_class = 'dashboard';
                 $menu->classname = 'material-icons text-default';
                 $menu->status = '1';
@@ -603,6 +607,9 @@ return $controller;
 
     private function makecols($table,$ovr) 
     {
+
+        $coldisable = ['id','created_at','updated_at','created_by','updated_by'];
+
         $t = new \stdClass();
         $pk = '';
         $timestamps = 0;
@@ -661,7 +668,11 @@ return $controller;
                     $c->datalenth = $col->CHARACTER_MAXIMUM_LENGTH;
                 }
                 $c->datatype = $col->DATA_TYPE;
-                $c->visible = 1;
+                if(in_array($col->COLUMN_NAME,$coldisable)){
+                    $c->visible = 0;
+                } else {
+                    $c->visible = 1;
+                }
                     // $c->classname = '';
                     // $c->width = '';
                     // $c->height = '';
@@ -778,7 +789,7 @@ return $controller;
                 $table->string('datadic')->nullable();
                 $table->text('description')->nullable();
                 $table->string('created_by')->default('system');
-                $table->string('update_by')->default('system');
+                $table->string('updated_by')->default('system');
                 $table->string('search')->default('{"search":"", "regex":"" }');
                 $table->text('json')->nullable();
                 $table->timestamps();
