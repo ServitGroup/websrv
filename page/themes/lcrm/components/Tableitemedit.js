@@ -8,7 +8,11 @@ export default {
     <div v-else-if="col.inputtype=='checkbox' && (col.key).toLowerCase() == 'status'" ><input type="checkbox"  v-model="item[col.key]"  />{{fctf(item[col.key])}}</div>
     <div v-else-if="col.inputtype=='checkbox' && (col.key).toLowerCase() == 'visible'"><input type="checkbox"  v-model="item[col.key]"  />{{fctf(item[col.key])}}</div>
     <div v-else-if="col.inputtype=='checkbox'" ><input type="checkbox"  v-model="item[col.key]"  />{{fctf(item[col.key])}}</div>
-    <div v-else >{{item[col.key]}}</div>
+    <div v-else >
+        <span  v-if="col.readonly"> {{item[col.key]}} </span>
+        <input v-else v-model="item[col.key]" type="text" />
+        
+    </div>
 </div>
 `,
     props: {

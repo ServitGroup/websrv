@@ -1,15 +1,16 @@
 import crudmix from "../mixins/CrudMixin.js";
-import Tableitem from "../components/Tableitem.js";
+import Tableitemedit from "../components/Tableitemedit.js";
 import Fieldinsert from "../components/FieldInsert.js";
 import Fieldedit from "../components/Fieldedit.js";
 import Viewitem from "../components/ViewItem.js";
+import Printa4table from "../components/Printa4table.js";
 export default {
     template: `
 <div>
-    <h1>
-        Management {{title}}
+    <h1  >
+        {{title}}
     </h1>
-    <div v-show="viewstate.v_lists" ref="v_lists">
+    <div v-show="viewstate.v_lists" ref="v_lists" >
         <div class="page-header clearfix">
             <div class="pull-right">
                 <button v-show="!viewstate.v_insert" @click="insert" class="btn btn-primary"><i class="fa fa-plus-circle"></i> Insert</button>
@@ -40,36 +41,42 @@ export default {
                                     <div class="col-sm-12">
                                         <div id="data_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
                                             <div class="row">
-                                                <div class="col-sm-6">
-                                                    <div style="display:flex;align-items:center">
-                                                        <div class="dataTables_length" id="data_length">
-                                                            <label>
-                                                                    Show
-                                                                    <select v-model="perpage" name="data_length" aria-controls="data" class="form-control input-sm">
-                                                                        <option value="10">10</option>
-                                                                        <option value="25">25</option>
-                                                                        <option value="50">50</option>
-                                                                        <option value="100">100</option>
-                                                                    </select>
-                                                                    entries
-                                                                </label>
-                                                        </div>
-
-                                                        <label>&nbsp;&nbsp;เลือกตาราง:</label>
-                                                        <select name="selecttable"  
-                                                            @change="selecttablechange"
-                                                            ref="selecttable" 
-                                                            v-model="selecttable"
-                                                            id="selecttable" class="form-control input-sm">
-                                                            <option v-for="(table,idx) in tables"  :value="table.table_name">{{table.title}}</option>
+                                                <div class="col-sm-3">
+                                                    <div class="dataTables_length" id="data_length">
+                                                        <label>
+                                                                Show
+                                                                <select v-model="perpage" @change="changeperpage" name="data_length" aria-controls="data" class="form-control input-sm">
+                                                                    <option value="10">10</option>
+                                                                    <option value="25">25</option>
+                                                                    <option value="50">50</option>
+                                                                    <option value="100">100</option>
+                                                                </select>
+                                                                entries
+                                                            </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4">                                                    
+                                                    <div>
+                                                        Table:
+                                                        <select v-model="filtertable" class="form-control input-sm">
+                                                            <option value="-1">All</option>
+                                                            <option v-for="table in tables" :value="table.table_id">{{table.table_id}}</option>
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div class="col-sm-6">
+                                                <div class="col-sm-1">
+                                                    <button @click="updatedtablerows" class="btn btn-primary"><i class="fa fa-save"></i> Save Page</button>
+                                                </div>
+                                                <div class="col-sm-4">
                                                     <div id="data_filter" class="dataTables_filter">
                                                         <label>
                                                                 Search:
-                                                                <input v-model="filtertxt" type="search" class="form-control input-sm" placeholder="" aria-controls="data">
+                                                                <div class="input-group">
+                                                                    <input v-model="filtertxt" type="search" class="form-control"/>
+                                                                    <span v-show="ajax" class="input-group-addon" style="cursor:pointer" @click="search">
+                                                                        <i class="fa fa-search"></i>
+                                                                    </span>
+                                                                </div>
                                                             </label>
                                                     </div>
                                                 </div>
@@ -94,16 +101,15 @@ export default {
                                                         </thead>
                                                         <tbody>
                                                             <tr v-for="(row,index) in lists" role="row" class="">
-                                                                <td style="display:flex;align-items:center">
-                                                                    <input type="checkbox" v-model="row.checked">
-                                                                    <span>&nbsp;{{index+1}}</span>
-                                                                </td>
+                                                                <td style="display:flex" ><input type="checkbox" v-model="row.checked">&nbsp; {{index+1}}</td>
                                                                 <td v-for="(col,idx) in columns" :key="idx" v-if="col.visible">
-                                                                    <tableitem :col="col" :item="row" />
+                                                                    <tableitemedit  :col="col" :item="row" />
                                                                 </td>
                                                                 <td style="cursor: pointer;display:inline-flex;align-items:center;flex-wrap: nowrap;">
-                                                                    <i @click="view(row)" class="fa fa-fw fa-eye text-primary"></i>
+                                                                    <!-- <i @click="view(row)" class="fa fa-fw fa-eye text-primary"></i> -->
                                                                     <i @click="edit(row)" alt="edit" aria-hidden="true" class="fa fa-pencil"></i>
+                                                                    <i @click="updatedtablerow(row)" alt="save" aria-hidden="true" class="fa fa-save"></i>
+                                                                    <span>&nbsp;&nbsp;</span>
                                                                     <!-- <i @click="changeview('v_import')" alt="reset password" aria-hidden="true" class="fa fa-key"></i>  -->
                                                                     <!-- <i @click="changeview('v_export')" alt="reset password" aria-hidden="true" class="fa fa-key"></i>  -->
                                                                     <i @click="deleterow(row)" alt="delete" aria-hidden="true" class="fa fa-times-circle " style="color: red;"></i>
@@ -173,7 +179,7 @@ export default {
             </div>
         </div>
     </div>
-    <div v-show="viewstate.v_print" ref="v_print">
+    <div class="vprint" v-show="viewstate.v_print" ref="v_print" >
         <div class="page-header clearfix">
             <div class="pull-right">
                 <button @click="changeview('v_lists')" class="btn btn-primary">
@@ -181,7 +187,7 @@ export default {
                     </button>
             </div>
         </div>
-        <div class="panel panel-default">
+        <div class="panel panel-default" style="position: relative;" >
             <div class="panel-heading">
                 <h4 class="panel-title">
                     <i class="material-icons">archive</i> {{title}} Print
@@ -200,10 +206,14 @@ export default {
                 </div>
             </div>
         </div>
+        <div id="preview" >
+            <printa4table />
+        </div>
     </div>
-    <div v-show="viewstate.v_update" ref="v_update">
+    
+    <div v-show="viewstate.v_update" ref="v_update"  >
         <div class="page-header clearfix">
-            <div class="pull-right">
+            <div class="pull-right">p
                 <button @click="updatecancel" class="btn btn-primary">
                         <i class="fa fa-arrow-left"></i> Back
                     </button>
@@ -223,35 +233,6 @@ export default {
                 <form method="POST" action="#" accept-charset="UTF-8" id="company" enctype="multipart/form-data" novalidate="novalidate" class="bv-form">
                     <div v-for="(item,idx) in updateobj()" :key="idx" class="row">
                         <fieldedit :col="item" :item="row_update" />
-                        <!-- <div class="col-md-12">
-                            <div class="form-group ">
-                                <label v-bind:class="item.required" class="control-label">{{item.label}}</label>
-                                <div class="controls">
-                                    <input v-if="item.inputtype=='textinput'" v-validate="validateupdate(item)" :class="{'input': true, 'is-danger': errors.has(item.key) }" :placeholder="item.label" :name="item.key" type="text" v-model="row_update[item.key]" class="form-control">                                    <span class="help-block"></span>
-
-                                    <input v-else-if="item.inputtype=='number'" v-validate="validateupdate(item)" :class="{'input': true, 'is-danger': errors.has(item.key) }" :name="item.key" type="number" v-model="row_update[item.key]" class="form-control">                                    <span class="help-block"></span>
-
-                                    <el-date-picker v-else-if="item.inputtype=='datetime-local'" v-validate="validateupdate(item)" :class="{'input': true, 'is-danger': errors.has(item.key) }" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss" v-model="row_update[item.key]" type="datetime"
-                                        placeholder="Select date and time" />
-
-                                    <textarea v-else-if="item.inputtype=='textarea'" v-validate="validateupdate(item)" :class="{'input': true, 'is-danger': errors.has(item.key) }" :name="item.key" v-model="row_update[item.key]" rows="8" style="width:90%;"></textarea>
-                                    <span class="help-block"></span>
-
-                                    <div v-else-if="(item.key).toLowerCase()=='status'" style="display:inline">
-                                        <input type="checkbox" :name="item.key" v-model="row_update[item.key]" /> {{fcstatus(row_update[item.key])}}
-                                    </div>
-                                    <div v-else-if="(item.key).toLowerCase()=='visible'" style="display:inline">
-                                        <input type="checkbox" :name="item.key" v-model="row_update[item.key]" /> {{fcvisible(row_update[item.key])}}
-                                    </div>
-
-                                    <span v-else >{{row_update[item.key]}}</span>
-                                </div>
-                                <small class="help-block" data-bv-validator="notEmpty" data-bv-for="address" data-bv-result="NOT_VALIDATED" style="display: none;">The address field is required.</small>
-                            </div>
-                        </div> -->
-                        <!--              <div class="col-md-6">
-                              <pre>{{item}}</pre>
-                           </div> -->
                     </div>
                     <div class="form-group">
                         <div class="controls">
@@ -263,7 +244,7 @@ export default {
             </div>
         </div>
     </div>
-    <div v-show="viewstate.v_insert" ref="v_insert">
+    <div v-show="viewstate.v_insert" ref="v_insert"  >
         <div class="page-header clearfix">
             <div class="pull-right">
                 <button @click="insertcancel" class="btn btn-primary"><i class="fa fa-arrow-left"></i> Back</button>
@@ -297,7 +278,7 @@ export default {
         </div>
     </div>
 
-    <div v-show="viewstate.v_delete" ref="v_delete">
+    <div v-show="viewstate.v_delete" ref="v_delete"  >
         <div class="page-header clearfix">
             <div class="pull-right">
                 <button @click="changeview('v_lists')" class="btn btn-primary"><i class="fa fa-arrow-left"></i> Back</button>
@@ -316,9 +297,7 @@ export default {
             <div class="panel-body" style="display: block;">
                 <div v-for="(item,idx) in viewobj" :key="idx" class="form-group">
                     <label for="title" class="control-label">{{item.label}}</label>
-                    <div class="controls">
-                        {{item.value}}
-                    </div>
+                    <viewitem :item="item"  />
                 </div>
                 <div class="form-group">
                     <div class="controls">
@@ -330,7 +309,7 @@ export default {
         </div>
     </div>
 
-    <div v-show="viewstate.v_import" ref="import">
+    <div v-show="viewstate.v_import" ref="import"  >
         <div class="page-header clearfix">
             <div class="pull-right">
                 <button @click="changeview('v_lists')" class="btn btn-primary"><i class="fa fa-arrow-left"></i> Back</button>
@@ -370,7 +349,7 @@ export default {
         </div>
     </div>
 
-    <div v-show="viewstate.v_export" ref="export">
+    <div v-show="viewstate.v_export" ref="export"  >
         <div class="page-header clearfix">
             <div class="pull-right">
                 <button @click="changeview('v_lists')" class="btn btn-primary"><i class="fa fa-arrow-left"></i> Back</button>
@@ -402,7 +381,7 @@ export default {
         </div>
     </div>
 
-    <div v-show="viewstate.v_view" ref="view">
+    <div v-show="viewstate.v_view" ref="view"  >
         <div class="page-header clearfix">
             <div class="pull-right">
                 <button @click="changeview('v_lists')" class="btn btn-primary"><i class="fa fa-arrow-left"></i> Back</button>
@@ -428,7 +407,10 @@ export default {
                                     <div class="panel-body">
                                         <div v-for="(item,idx) in viewobj" :key="idx" class="form-group">
                                             <label for="title" class="control-label">{{item.label}}</label>
-                                            <viewitem :item="item" />
+                                            <div class="controls">
+                                                <span v-if="(item.label).toLowerCase() == 'status'">{{fcstatus(item.value)}}</span>
+                                                <span v-else>{{item.value}}</span>
+                                            </div>
                                         </div>
                                         <div class="form-group">
                                             <div class="controls">
@@ -445,74 +427,75 @@ export default {
         </div>
     </div>
 </div>
-    `,
+`,
     mixins: [crudmix],
     data() {
         return {
-            tables: [],
-            selecttable: ""
+            filtertable: -1
         };
     },
     created() {
         console.log("crud template created");
     },
     components: {
-        tableitem: Tableitem,
+        tableitemedit: Tableitemedit,
         fieldinsert: Fieldinsert,
         fieldedit: Fieldedit,
-        viewitem: Viewitem
+        viewitem: Viewitem,
+        printa4table: Printa4table
     },
     methods: {
-        selecttablechange() {
-            console.log("selecttablechange", this.selecttable);
-        },
-        getdatas() {
-            this.$store.commit("show");
-            let url = "/api/v3" + this.$route.path + "/all";
-            console.log("route---->url-->", url);
+        updatedtablerow(row) {
+            let data = JSON.stringify(row);
+            let url = "/api/v3" + this.$route.path + "/update/" + row.id;
+            console.log("url==", url, row);
             this.$http
-                .get(url)
-                .then(response => {
-                    console.log("response--->", response);
-                    this.datas = response.data.datas;
-                    this.columns = response.data.columns;
-                    this.tables = response.data.tables;
-                    this.title = response.data.info.title;
-                    let sortOrders = {};
-                    this.columns.map(r => {
-                        sortOrders[r.key] = 1;
-                    });
-                    this.sortOrders = sortOrders;
-                    this.$store.commit("hide");
-                    if (this.tables) {
-                        this.selecttable = this.tables[0].table_name;
+                .put(url, data, {
+                    headers: {
+                        "Content-Type": "application/json"
                     }
+                })
+                .then(rs => {
+                    console.log("result--->", rs);
+                    this.changeview("v_lists");
+                    alert("update successed!");
                 })
                 .catch(err => {
                     console.log(err);
-                    this.$store.commit("hide");
+                    this.changeview("v_lists");
                 });
-            Object.keys(this.viewstate).map(i => {
-                this.viewstate[i] = false;
-            });
-            this.viewstate["v_lists"] = true;
+        },
+        updatedtablerows() {
+            let data = JSON.stringify(this.lists);
+            let url = "/api/v3" + this.$route.path + "/updates/";
+            console.log("url==", url);
+            this.$http
+                .post(url, data, {
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                })
+                .then(rs => {
+                    console.log("result--->", rs);
+                    this.changeview("v_lists");
+                    alert("Update successed!");
+                })
+                .catch(err => {
+                    console.log(err);
+                    this.changeview("v_lists");
+                });
         }
-    },
-    mounted() {
-        console.log("mounted----------->Columns");
     },
     computed: {
         filteredData() {
-            console.log("----------filterdData----computed-----------");
             let self = this;
             let data = self.datas;
             let sortKey = self.sortKey;
-            let filtertable = self.selecttable;
             let filtertxt = self.filtertxt && self.filtertxt.toLowerCase();
+            let filtertable = self.filtertable;
             let order = self.sortOrders[sortKey] || 1;
-
-            if (filtertable) {
-                data = data.filter(row => row.table_id == filtertable);
+            if (filtertable != -1) {
+                data = data.filter(r => r.table_id == filtertable);
             }
             if (filtertxt) {
                 data = data.filter(row => {

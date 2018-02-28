@@ -22,7 +22,7 @@ const Userpage = () =>
     import ("../pages/User.js");
 const Login = () =>
     import ("../pages/Login.js");
-const Columnpage = () =>
+const Columns = () =>
     import ("../pages/Columns.js");
 const Zortq = () =>
     import ("../pages/Zortq.js");
@@ -40,6 +40,9 @@ const Smslog = () =>
     import ("../pages/Smslog.js");
 const Curdtable = () =>
     import ("../pages/Crudtable.js");
+const Menus = () =>
+    import ("../pages/Menus.js");
+
 const User = {
     props: ["id"],
     template: "<div>User {{ id }}</div>"
