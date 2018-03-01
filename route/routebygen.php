@@ -1,6 +1,6 @@
 <?php
  $server->addClass('AppController','/api/v3/apps'); 
- $server->addClass('BookController','/api/v3/books'); 
+ $server->addClass('ClouseController','/api/v3/clouses'); 
  $server->addClass('ColumnController','/api/v3/columns'); 
  $server->addClass('CompanyController','/api/v3/companies'); 
  $server->addClass('DbinfoController','/api/v3/dbinfos'); 
@@ -14,5 +14,9 @@
  $server->addClass('ProfileController','/api/v3/profiles'); 
  $server->addClass('Role_has_permissionController','/api/v3/role_has_permissions'); 
  $server->addClass('RoleController','/api/v3/roles'); 
+ $server->addClass('Student_clouseController','/api/v3/student_clouses'); 
+ $server->addClass('StudentController','/api/v3/students'); 
  $server->addClass('SyspackageController','/api/v3/syspackages'); 
+ $server->addClass('Teacher_clouseController','/api/v3/teacher_clouses'); 
+ $server->addClass('TeacherController','/api/v3/teachers'); 
  $server->addClass('UserController','/api/v3/users'); 
