@@ -15,12 +15,11 @@ class TestController extends BaseController
     *@url GET /abc/
     */
     public function abc(){
-        $b = new Book();
-        echo session_id(),"<br/>";
-        echo $b->get();
-
-        // $arrr = get_declared_classes();
-        // dump($arrr);
+        $leftmenus = Menu::where('status',1)
+         ->where('parent_id',0)
+         ->where('group',2)
+         ->where('menu_position','LEFTSIDEBAR')->orderBy('sort','asc')->get();
+         dump($leftmenus);
     }
     
     

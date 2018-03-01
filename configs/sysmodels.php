@@ -131,7 +131,7 @@ class Menu extends BaseModel
 
     public function menuitems()
     {
-        return $this->hasMany('Menu', 'parent_id');
+        return $this->hasMany('Menu', 'parent_id')->where('status',1)->orderBy('sort','asc');
     }
 
     public function tree()
