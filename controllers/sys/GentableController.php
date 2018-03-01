@@ -31,11 +31,108 @@ class GentableController extends BaseController
 
 
 
+/**
+*@noAuth
+* model service controller columns menu  dbindos
+*@url GET /msccmd/
+*/
+public function msccmd(){
+    
+$html = <<<HTML
+        <form action="/system/generator/mscmd" method="post">
+        
+            tablename:<input type="text" name="tbname"   /><br/>
+            basepath: <input type="text" name="basepath"  /><br/>
+            timestamps: <input type="checkbox" name="timestamps" ><br/>
+            pk: <input type="text" name="pk" value="id" /><br/>
+            <input type="submit" value="Submit">        
+            <input type="reset" value="reset">        
+        </form>
+HTML;
+    echo $html;   
+}
 
 /**
 *@noAuth
-*@url GET /migrate/
+*@url POST /mscmd/
 */
+public function postmscmd(){
+
+try {
+    $model = new stdClass();
+    $tb = $this->server->data->posts->tbname;
+    $basepath = $this->server->data->posts->basepath;
+    $timestamps = $this->server->data->posts->timestamps;
+    $timestamps == 'on' ? $timestamps = true  :  $timestamps = false ;
+    $pk = $this->server->data->posts->pk;
+    
+    $model->table = $tb;
+    $tb = $this->depluralize($tb);
+    $tb = ucfirst($tb);
+    $model->model = $tb;
+    $model->timestamps = $timestamps;
+    $model->pk = $pk;
+    
+    echo 'crete --menucollumn----</br>';
+    $m = $this->columns($model->table,1);
+    dump($m);
+    echo 'crete ---service--</br>';
+    $model->service = $this->makeserviefile($model);
+    $servfile = __DIR__ . '/../../services/' . $model->model . 'Service.php';
+    if (!class_exists($model->model . 'Service') && !file_exists($servfile)) {
+        echo 'create ' . $servfile . "'\n<br/>";
+        $handle = fopen($servfile, "w");
+        fwrite($handle, $model->service);
+        fclose($handle);
+    } else {
+        echo $servfile . " class or file exist\n<br/>";
+    }
+    echo 'crete ---controller----</br>';
+    $this->gencontroller($tb);
+    echo 'crete --dbinfo--------</br>';
+    $dbinf = Dbinfo::where('table_name',$model->table)->first();
+    if($dbinf){}else{ 
+        $dbinf = new Dbinfo();
+    }
+    $dbinf->table_name = $model->table;
+    $dbinf->title = $model->model;
+    $dbinf->sub_title = $model->model;
+    $dbinf->save();
+    
+    echo 'add menu---------<br/>';
+    $menu = Menu::where('table_name',$model->table)->first();
+    if($menu){} {
+        $menu = new Menu();
+    }
+    $menu->menu_position = 'LEFTSIDEBAR';
+    $menu->group = '1';
+    $menu->table_name = $model->table;
+    $menu->label = $model->model;
+    $menu->permalink = $model->table;
+    $menu->component = 'Template';
+    $menu->icon_class = 'settings_brightness';
+    $menu->classname = 'material-icons text-default';
+    $menu->status = '1';
+    $menu->parent_id = '0';
+    $menu->description = '';
+    $menu->sort = '99';
+    $menu->crated_by = 'system';
+    $menu->updated_by = 'system';
+    $menu->save();
+    echo '</br>crete ---model----</br>';
+    $this->genmodel($tb);
+    echo "</br>successed<br/><a href='/system/routes'>Back</a>";
+    
+} catch (Exception $e) {
+    echo $e->getMessage();   
+}
+    
+}
+
+/**
+ *@noAuth
+ *@url GET /migrate/
+ */
 public function migrate(){
     $this->up();
     echo 'Magration Successed!';
@@ -99,7 +196,7 @@ public function migateseed(){
                    throw new Exception('Table Columns is exists', 1);
                 }
             }
-            $this->makecols($table,$ovr);
+          return  $this->makecols($table,$ovr);
         }
 
     }
@@ -137,11 +234,13 @@ public function migateseed(){
  */
     public function genmodel($table = null)
     {
-        if($table=="$table") exit();
+        if($table== '$table' ) {
+            exit();
+        } 
         if ($table) {
             $modelname = ucfirst($this->depluralize($table));
             dump($table, $modelname);
-            $my_file = __DIR__ . '/../models/' . $modelname . '.php';
+            $my_file = __DIR__ . '/../../models/' . $modelname . '.php';
             $class_exists = (!class_exists($modelname));
             if (!file_exists($my_file) && $class_exists) {
                 $cols = Capsule::select("SELECT IS_NULLABLE,COLUMN_DEFAULT,TABLE_NAME,COLUMN_NAME,DATA_TYPE,CHARACTER_MAXIMUM_LENGTH,NUMERIC_PRECISION,NUMERIC_SCALE,COLUMN_TYPE,COLUMN_KEY,COLUMN_COMMENT FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME= ? AND Table_SCHEMA= ? ", [$table, DB_NAME]);
@@ -161,7 +260,12 @@ public function migateseed(){
                 } else {
                     $timestamps = 'false';
                 }
-                $modeldata = $this->makemodlefile($modelname, $table,$pk, $timestamps);
+                $mode = new stdClass();
+                $mode->table = $table;
+                $mode->pk = $pk;
+                $mode->timestamps = $timestamps;
+                $mode->model = $modelname;
+                $modeldata = $this->makemodlefile($mode);
                 echo 'created Model Name: ', $my_file;
                 $handle = fopen($my_file, 'w') or die('Cannot open file:  ' . $my_file);
                 fwrite($handle, $modeldata);
