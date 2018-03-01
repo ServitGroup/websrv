@@ -116,7 +116,7 @@ try {
     $menu->parent_id = '0';
     $menu->description = '';
     $menu->sort = '99';
-    $menu->crated_by = 'system';
+    $menu->created_by = 'system';
     $menu->updated_by = 'system';
     $menu->save();
     echo '</br>crete ---model----</br>';
