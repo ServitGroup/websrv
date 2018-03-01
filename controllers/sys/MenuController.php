@@ -104,6 +104,47 @@ public function all($page = 1, $perpage = 10, $kw = '', $ajax = 0){
 
 }
 
+
+
+/**
+*@noAuth
+*@url POST /updates/
+*/
+public function updates(){
+try {
+    $data = isset($this->input) ? $this->input->input->toArray() : [];
+    $change = [];
+    foreach ($data as $row) {
+        $col = Menu::find($row['id']);
+        $chk = 0;
+        if ($col) {
+            foreach ($col->toArray() as $key => $value) {
+                if ($value != $row[$key]) {
+                    $chk = 1;
+                    $col->{$key} = $row[$key];
+                }
+            }
+            if ($chk) {
+                $col->save();
+                $change[] = $col;
+            }
+        }
+    }
+    return [
+        'status' => 1,
+        'change' => $change,
+    ];
+} catch (Exception $e) {
+    return ['status' => 0, 'msg' => $e->getMessage()];
+}
+    
+
+
+}
+
+
+
+
 protected function model(){
     return new Menu();
 }
