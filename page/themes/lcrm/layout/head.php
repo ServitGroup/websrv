@@ -309,6 +309,7 @@
     <script type="text/javascript" src="https://unpkg.com/element-ui/lib/umd/locale/th.js"></script>
     <script type="text/javascript" src="https://unpkg.com/vue-ls@2.3.3/dist/vue-ls.min.js"></script>
     <script type="text/javascript" src="https://unpkg.com/moment@2.20.1/moment.js"></script>
+    <script type="text/javascript" src="/page/themes/lcrm/js/ga.js"></script>
     
     <!-- <script type="text/javascript" src="https://unpkg.com/vue-i18n@7.3.3/dist/vue-i18n.js"></script> -->
     <!-- <script type="text/javascript" src="https://unpkg.com/vue-resource/dist/vue-resource.min.js"></script> -->
