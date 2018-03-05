@@ -1,7 +1,7 @@
    <header class="noprint header">
       <nav class="navbar navbar-static-top navbar-fixed-top" role="navigation">
          <a href="/" class="logo">
-         <img   src="<?= $this->themeurl ?>/img/mongkollogo.png" alt="dsla" class="img-responsive" style="margin:auto;width:80px;height:50px;background-color:white">
+         <img   src="<?= $this->themeurl ?>/img/mongkollogo.png" alt="dsla" class="img-responsive" style="margin:auto;height:50px;background-color:#313E4B">
          </a>
          <div>
             <a href="#" class="navbar-btn sidebar-toggle" data-toggle="offcanvas" role="button">
