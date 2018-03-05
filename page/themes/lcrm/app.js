@@ -11,8 +11,12 @@ import Printa4table from "./components/Printa4table.js";
 // either be an actual component constructor created via
 // `Vue.extend()`, or just a component options object.
 // We'll talk about nested routes later.
-import { store } from "./store/store.js";
-import { router } from "./route/route.js";
+import {
+    store
+} from "./store/store.js";
+import {
+    router
+} from "./route/route.js";
 import EventBus from "./mixins/eventBus.js";
 const Test = "AAAAA";
 // import collectjs from "./node_modules/collect.js/dist/index.js";
@@ -64,7 +68,9 @@ if (configs.NODE_ENV == "development") {
     var axoisinstance = axios.create({
         baseURL: configs.API,
         timeout: 10 * 60 * 1000,
-        headers: { "X-Custom-Header": "foobar" }
+        headers: {
+            "X-Custom-Header": "foobar"
+        }
     });
 } else {
     console.log("production");
@@ -72,7 +78,9 @@ if (configs.NODE_ENV == "development") {
     var axoisinstance = axios.create({
         baseURL: window.location.protocol + "//" + window.location.host,
         timeout: 1000,
-        headers: { "X-Custom-Header": "foobar" }
+        headers: {
+            "X-Custom-Header": "foobar"
+        }
     });
 }
 Vue.prototype.$http = axoisinstance;
@@ -81,6 +89,8 @@ Vue.prototype.$moment = moment;
 ELEMENT.locale(ELEMENT.lang.th);
 Vue.use(VeeValidate);
 Vue.use(VueLocalStorage);
+vueAnalities(router, 'UA-114317649-1')
+
 Vue.component("paginate", VuejsPaginate);
 Vue.component("downloadExcel", JsonExcel);
 
