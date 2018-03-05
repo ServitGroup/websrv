@@ -31,6 +31,7 @@ class LcrmController extends RootThemeController
      *@url GET /login/
      */
     public function login(){
+$token = session_id();
 $html = <<<HTML
  <div class="container">
         <div class="row">
@@ -52,16 +53,16 @@ $html = <<<HTML
                 <div class="box-color">
                     <h4>Sign in with your Account</h4>
                     <br>
-                    <form method="POST" action="/login" accept-charset="UTF-8" name="form"><input name="_token" type="hidden" value="O3aKTioElVKHMHuZ2b1S68wrQeI7fxiOOK7dCNAa">
+                    <form method="POST" action="/login" accept-charset="UTF-8" name="form"><input name="_token" type="hidden" value="$token">
                     <div class="form-group ">
                         <label for="E-Mail Address">E-Mail Address</label> :
                         <span></span>
-                        <input class="form-control" required="required" placeholder="E-mail" name="email" type="email"  value="admin@crm.com" >
+                        <input class="form-control" required="required" placeholder="E-mail" name="email" type="email"  value="admin@admin.com" >
                     </div>
                     <div class="form-group ">
                         <label for="Password">Password</label> :
                         <span></span>
-                        <input class="form-control" required="required" placeholder="Password" name="password" type="password" value="admin">
+                        <input class="form-control" required="required" placeholder="Password" name="password" type="password" value="password">
                     </div>
                     <div class="form-group">
                         <label>
@@ -97,8 +98,20 @@ HTML;
      *@url POST /login/
      */
     public function logined(){
-        $_SESSION['login'] = 1;
-        Header('Location: /home');
+        // dump($this->input->posts);
+        $email = $this->input->posts->email;
+        $passwd = $this->input->posts->password;
+        $remember = $this->input->posts->remember;
+        $token = $this->input->posts->_token;
+        // dump($email,$passwd,$remember,$token, session_id());
+        $u = User::where('email',$email)->where('password',$passwd)->where('status',1)->first();
+        if($u){
+            $_SESSION['login'] = 1;
+            $_SESSION['user'] = $u;
+            Header('Location: /home');
+        } else {
+            Header('Location: /login');
+        }
     }
     
     /**
@@ -107,6 +120,7 @@ HTML;
      */
     public function logout(){
         $_SESSION['login'] = null;
+        $_SESSION['user'] = null;
         Header('Location: /login');
     }
     
