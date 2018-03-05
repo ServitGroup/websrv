@@ -9,13 +9,13 @@ export default {
     <div v-else-if="col.inputtype=='checkbox' && (col.key).toLowerCase() == 'visible'"><input type="checkbox"  v-model="item[col.key]"  />{{fctf(item[col.key])}}</div>
     <div v-else-if="col.inputtype=='checkbox'" ><input type="checkbox"  v-model="item[col.key]"  />{{fctf(item[col.key])}}</div>
     <div v-else-if="col.inputtype=='select'">
-        <select v-model="item[col.key]" class="">
+        <select v-model="item[col.key]" >
             <option v-for="r in $attrs.select[col.key]" :value="r[col.key]">{{r[col.key]}}</option>
         </select>
     </div>
     <div v-else >
         <span  v-if="col.readonly"> {{item[col.key]}} </span>
-        <input v-else v-model="item[col.key]" type="text" />
+        <input v-else v-model="item[col.key]" type="text" :style="{width:col.width}" />
         
     </div>
 </div>

@@ -18,8 +18,8 @@ const Homepage = () =>
     import ("../pages/Home.js");
 const Dashboard = () =>
     import ("../pages/Daseboard.js");
-const Userpage = () =>
-    import ("../pages/User.js");
+const Users = () =>
+    import ("../pages/Users.js");
 const Login = () =>
     import ("../pages/Login.js");
 const Columns = () =>
@@ -36,12 +36,14 @@ const Logcomship = () =>
     import ("../pages/Logcomship.js");
 const Creditshipcom = () =>
     import ("../pages/Creditshipcom.js");
-const Smslog = () =>
-    import ("../pages/Smslog.js");
 const Curdtable = () =>
     import ("../pages/Crudtable.js");
 const Menus = () =>
     import ("../pages/Menus.js");
+const Apilogs = () =>
+    import ("../pages/Apilogs.js");
+const Smslogs = () =>
+    import ("../pages/Smslogs.js");
 
 const User = {
     props: ["id"],

@@ -100,8 +100,6 @@ export default {
                                                                     <i v-if="info.v_view" @click="view(row)" class="fa fa-fw fa-eye text-primary"></i> 
                                                                     <i v-if="info.v_update" @click="edit(row)" alt="edit" aria-hidden="true" class="fa fa-pencil"></i>
                                                                     <i v-if="info.v_update" @click="updatedtablerow(row)" alt="save" aria-hidden="true" class="fa fa-save"></i>
-                                                                    <i v-if="info.v_import" @click="changeview('v_import')" alt="reset password" aria-hidden="true" class="fa fa-key"></i>  
-                                                                    <i v-if="info.v_export" @click="changeview('v_export')" alt="reset password" aria-hidden="true" class="fa fa-key"></i>  
                                                                     <i v-if="info.v_delete" @click="deleterow(row)" alt="delete" aria-hidden="true" class="fa fa-times-circle " style="color: red;"></i>
                                                                     <i v-if="info.v_print" @click="printv(row)" alt="print" aria-hidden="true" class="fa fa-print"></i> 
                                                                     </td>

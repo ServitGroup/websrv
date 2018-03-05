@@ -80,8 +80,10 @@ public function all($page = 1, $perpage = 10, $kw = '', $ajax = 0){
 
         $info = Dbinfo::where('table_name', 'apilogs')->first();
         //---addition----
-        $method = [];
-        $domains = [];
+        $method = Apilog::select('method')->distinct()->orderBy('method','asc')->get();
+        $domains = Domain::orderBy('name')->get();
+        $services = Apilog::select('service')->distinct()->get();;
+        $customers = [];
 
         $data = [
             'ajax' => $ajax,
@@ -96,7 +98,9 @@ public function all($page = 1, $perpage = 10, $kw = '', $ajax = 0){
             'info' => $info,
             'infos' => $info,
             'domains' => $domains,
-            'method' => $method,
+            'methods' => $method,
+            'services' => $services,
+            'customers'=> $customers,
             //'sql' => Capsule::getQueryLog(),
         ];
         // dump($data);
