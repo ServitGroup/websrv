@@ -13,10 +13,10 @@ export default {
     <div v-show="viewstate.v_lists" ref="v_lists" >
         <div class="page-header clearfix">
             <div class="pull-right">
-                <button v-show="!viewstate.v_insert" @click="insert" class="btn btn-primary"><i class="fa fa-plus-circle"></i> Insert</button>
-                <button class="btn btn-primary" @click="changeview('v_import')"><i class="fa fa-download"></i> Import</button>
-                <button class="btn btn-primary" @click="changeview('v_export')"><i class="fa fa-upload"></i> Export</button>
-                <button class="btn btn-primary" @click="printv"><i class="fa fa-print"></i> Print</button>
+                <button v-if="info.v_insert"  v-show="!viewstate.v_insert" @click="insert" class="btn btn-primary"><i class="fa fa-plus-circle"></i> Insert</button>
+                <button v-if="info.v_import"  class="btn btn-primary" @click="changeview('v_import')"><i class="fa fa-download"></i> Import</button>
+                <button v-if="info.v_export"  class="btn btn-primary" @click="changeview('v_export')"><i class="fa fa-upload"></i> Export</button>
+                <button v-if="info.v_print"  class="btn btn-primary" @click="printv"><i class="fa fa-print"></i> Print</button>
             </div>
         </div>
         <div class="panel panel-default">
@@ -41,7 +41,7 @@ export default {
                                     <div class="col-sm-12">
                                         <div id="data_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
                                             <div class="row">
-                                                <div class="col-sm-6">
+                                                <div class="col-sm-4">
                                                     <div class="dataTables_length" id="data_length">
                                                         <label>
                                                                 Show
@@ -55,7 +55,15 @@ export default {
                                                             </label>
                                                     </div>
                                                 </div>
-                                                <div class="col-sm-6">
+
+                                                <div class="col-sm-4">
+                                                    <span>Domain:</span>
+                                                    <select v-model="filterdomain"  >
+                                                        <option value="-1">All</option>
+                                                        <option v-for="domain in domains" :value="domain.id">{{domain.name}}</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-sm-4">
                                                     <div id="data_filter" class="dataTables_filter">
                                                         <label>
                                                                 Search:
@@ -94,13 +102,13 @@ export default {
                                                                     <tableitem  :col="col" :item="row" />
                                                                 </td>
                                                                 <td style="cursor: pointer;display:inline-flex;align-items:center;flex-wrap: nowrap;">
-                                                                    <i @click="view(row)" class="fa fa-fw fa-eye text-primary"></i>
-                                                                    <i @click="edit(row)" alt="edit" aria-hidden="true" class="fa fa-pencil"></i>
-                                                                    <!-- <i @click="changeview('v_import')" alt="reset password" aria-hidden="true" class="fa fa-key"></i>  -->
-                                                                    <!-- <i @click="changeview('v_export')" alt="reset password" aria-hidden="true" class="fa fa-key"></i>  -->
-                                                                    <i @click="deleterow(row)" alt="delete" aria-hidden="true" class="fa fa-times-circle " style="color: red;"></i>
-                                                                    <!-- <i @click="printv(row)" alt="print" aria-hidden="true" class="fa fa-print"></i> -->
-                                                                </td>
+                                                                    <i v-if="info.v_view" @click="view(row)" class="fa fa-fw fa-eye text-primary"></i> 
+                                                                    <i v-if="info.v_update" @click="edit(row)" alt="edit" aria-hidden="true" class="fa fa-pencil"></i>
+                                                                    <i v-if="info.v_update" @click="updatedtablerow(row)" alt="save" aria-hidden="true" class="fa fa-save"></i>
+                                                                    <i v-if="info.v_import" @click="changeview('v_import')" alt="reset password" aria-hidden="true" class="fa fa-key"></i>  
+                                                                    <i v-if="info.v_export" @click="changeview('v_export')" alt="reset password" aria-hidden="true" class="fa fa-key"></i>  
+                                                                    <i v-if="info.v_delete" @click="deleterow(row)" alt="delete" aria-hidden="true" class="fa fa-times-circle " style="color: red;"></i>
+                                                                    <i v-if="info.v_print" @click="printv(row)" alt="print" aria-hidden="true" class="fa fa-print"></i>                                                                 </td>
                                                             </tr>
                                                         </tbody>
                                                         <thead>
@@ -199,7 +207,7 @@ export default {
     
     <div v-show="viewstate.v_update" ref="v_update"  >
         <div class="page-header clearfix">
-            <div class="pull-right">p
+            <div class="pull-right">
                 <button @click="updatecancel" class="btn btn-primary">
                         <i class="fa fa-arrow-left"></i> Back
                     </button>
@@ -415,6 +423,11 @@ export default {
 </div>
 `,
     mixins: [crudmix],
+    data() {
+        return {
+            filterdomain: -1
+        };
+    },
     created() {
         console.log("crud template created");
     },
@@ -424,5 +437,41 @@ export default {
         fieldedit: Fieldedit,
         viewitem: Viewitem,
         printa4table: Printa4table
+    },
+    computed: {
+        filteredData() {
+            let self = this;
+            let data = self.datas;
+            let sortKey = self.sortKey;
+            let filtertxt = self.filtertxt && self.filtertxt.toLowerCase();
+            let order = self.sortOrders[sortKey] || 1;
+            let filterdomain = self.filterdomain;
+            if (filterdomain != -1) {
+                data = data.filter(r => r.domain_id == filterdomain);
+            }
+            if (filtertxt) {
+                data = data.filter(row => {
+                    return this.columns.some(c => {
+                        return (
+                            String(row[c.key])
+                            .toLowerCase()
+                            .indexOf(filtertxt) > -1
+                        );
+                    });
+                });
+            }
+            if (sortKey) {
+                data = data.slice().sort(function(a, b) {
+                    a = a[sortKey];
+                    b = b[sortKey];
+                    return (a === b ? 0 : +a > +b ? 1 : -1) * order;
+                });
+            }
+            if (typeof data == "undefined") {
+                return [];
+            } else {
+                return data;
+            }
+        }
     }
 };

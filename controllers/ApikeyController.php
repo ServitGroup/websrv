@@ -81,7 +81,7 @@ public function all($page = 1, $perpage = 10, $kw = '', $ajax = 0){
         $info = Dbinfo::where('table_name', 'apikeys')->first();
         //---addition----
         $method = [];
-        $domains = [];
+        $domains = Domain::select('id','cus_id','name')->get();
 
         $data = [
             'ajax' => $ajax,
