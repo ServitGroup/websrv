@@ -199,7 +199,7 @@ export default {
     
     <div v-show="viewstate.v_update" ref="v_update"  >
         <div class="page-header clearfix">
-            <div class="pull-right">p
+            <div class="pull-right">
                 <button @click="updatecancel" class="btn btn-primary">
                         <i class="fa fa-arrow-left"></i> Back
                     </button>
