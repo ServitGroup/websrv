@@ -25,6 +25,7 @@ public function authorize(){
 public function all($page = 1, $perpage = 10, $kw = '', $ajax = 0){
         //Capsule::enableQuerylog();
         $columns = Column::where('table_id', 'zortqs')->orderBy('sort', 'asc')->get();
+        $kw = base64_decode($kw);
         $kws = [];
         if ($kw) {
             $kws = explode(',', $kw);
@@ -80,8 +81,8 @@ public function all($page = 1, $perpage = 10, $kw = '', $ajax = 0){
 
         $info = Dbinfo::where('table_name', 'zortqs')->first();
         //---addition----
-        $method = [];
-        $domains = [];
+        $method =  Zortq::select('method')->distinct()->get();
+        $domains = Zortq::select('domain')->distinct()->orderBy('domain','asc')->get();
 
         $data = [
             'ajax' => $ajax,
@@ -91,13 +92,14 @@ public function all($page = 1, $perpage = 10, $kw = '', $ajax = 0){
             'skip' => $skip,
             'total' => $total,
             'datacount' => count($datas),
-            'datas' => $datas,
-            'columns' => $columns,
+            'kwx' => $kw,
+            //'sql' => Capsule::getQueryLog(),
             'info' => $info,
             'infos' => $info,
+            'columns' => $columns,
             'domains' => $domains,
             'method' => $method,
-            //'sql' => Capsule::getQueryLog(),
+            'datas' => $datas,
         ];
         // dump($data);
         return $data;

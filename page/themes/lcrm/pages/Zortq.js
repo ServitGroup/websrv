@@ -456,7 +456,7 @@ export default {
         getkw() {
             if (this.selectdomain != -1 && this.selectdomain) {
                 let kw = this.filtertxt + ",domain=" + this.selectdomain;
-                return btoa(kw);
+                return btoa(unescape(encodeURIComponent(kw)));
             } else {
                 return "";
             }
@@ -471,7 +471,7 @@ export default {
         },
         search() {
             console.log("search");
-            if ((this.filtertxt || this.selectdomain != -1) && this.ajax) {
+            if (this.ajax) {
                 this.getdatas();
             }
         }
