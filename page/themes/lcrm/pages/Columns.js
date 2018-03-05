@@ -444,6 +444,19 @@ export default {
         printa4table: Printa4table
     },
     methods: {
+        search() {
+            console.log("search");
+            if (this.filtertxt || (this.filtertable && this.ajax)) {
+                this.getdatas();
+            }
+        },
+        getkw() {
+            let kw = "";
+            if (this.filtertable != -1) {
+                kw = "table_id=" + this.filtertable;
+            }
+            return kw + "," + this.filtertxt;
+        },
         updatedtablerow(row) {
             let data = JSON.stringify(row);
             let url = "/api/v3" + this.$route.path + "/update/" + row.id;
