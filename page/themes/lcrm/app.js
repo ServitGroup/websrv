@@ -11,12 +11,8 @@ import Printa4table from "./components/Printa4table.js";
 // either be an actual component constructor created via
 // `Vue.extend()`, or just a component options object.
 // We'll talk about nested routes later.
-import {
-    store
-} from "./store/store.js";
-import {
-    router
-} from "./route/route.js";
+import { store } from "./store/store.js";
+import { router } from "./route/route.js";
 import EventBus from "./mixins/eventBus.js";
 const Test = "AAAAA";
 // import collectjs from "./node_modules/collect.js/dist/index.js";
@@ -83,13 +79,22 @@ if (configs.NODE_ENV == "development") {
         }
     });
 }
+
+Vue.prototype.$observe = function defineReactive(vm, key, val) {
+    if (key in vm) {
+        vm[key] = val;
+    } else {
+        Vue.util.defineReactive(vm, key, val);
+    }
+};
+
 Vue.prototype.$http = axoisinstance;
 Vue.prototype.$download = download;
 Vue.prototype.$moment = moment;
 ELEMENT.locale(ELEMENT.lang.th);
 Vue.use(VeeValidate);
 Vue.use(VueLocalStorage);
-vueAnalities(router, 'UA-114317649-1')
+vueAnalities(router, "UA-114317649-1");
 
 Vue.component("paginate", VuejsPaginate);
 Vue.component("downloadExcel", JsonExcel);
