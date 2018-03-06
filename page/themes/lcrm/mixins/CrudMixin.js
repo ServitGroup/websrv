@@ -95,7 +95,8 @@ export default {
                 .then(response => {
                     console.log("response--->", response);
                     Object.keys(response.data).map(key => {
-                        this[key] = response.data[key];
+                        // this[key] = response.data[key];
+                        console.log("key-->", key);
                         this.$observe(this, key, response.data[key]);
                     });
                     this.title = this.info.title;
