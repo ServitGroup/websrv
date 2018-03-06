@@ -308,7 +308,7 @@ export default {
             let data = [];
             this.columns.map(col => {
                 // console.log(col)
-                if (col.frmview && col.readonly == 0) {
+                if (col.frmview && col.readonly == 0 && col.visible) {
                     col.value = this.row_update[col.key];
                     data.push(col);
                 }
