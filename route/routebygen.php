@@ -33,7 +33,7 @@
  $server->addClass('ProfileController','/api/v3/profiles'); 
  $server->addClass('Role_has_permissionController','/api/v3/role_has_permissions'); 
  $server->addClass('RoleController','/api/v3/roles'); 
- $server->addClass('ServiceController','/api/v3/services'); 
+ $server->addClass('ServiceController','/api/v3/service'); 
  $server->addClass('SmscredittrController','/api/v3/smscredittr'); 
  $server->addClass('SmslogController','/api/v3/smslogs'); 
  $server->addClass('SyspackageController','/api/v3/syspackages'); 
