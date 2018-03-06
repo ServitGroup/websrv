@@ -96,7 +96,7 @@ export default {
                     console.log("response--->", response);
                     Object.keys(response.data).map(key => {
                         this[key] = response.data[key];
-                        this.$observ(this, key, response.data[key]);
+                        this.$observe(this, key, response.data[key]);
                     });
                     this.title = this.info.title;
                     let sortOrders = {};
