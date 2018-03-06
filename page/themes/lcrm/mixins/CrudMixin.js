@@ -305,12 +305,11 @@ export default {
             this.watchupdate();
         },
         updateobj() {
-            let data = [];
-            this.columns.map(col => {
+            let data = this.columns.filter(col => {
                 // console.log(col)
                 if (col.frmview && col.readonly == 0 && col.visible) {
                     col.value = this.row_update[col.key];
-                    data.push(col);
+                    return col;
                 }
             });
             return data;
@@ -489,15 +488,12 @@ export default {
             return this.perpage * this.page;
         },
         viewobj() {
-            let data = [];
-            this.columns.map(col => {
-                // console.log(col)
+            return this.columns.filter(col => {
                 if (col.frmview) {
-                    data.push({ label: col.label, value: this.row_view[col.key] });
+                    col.value = this.row_view[col.key];
+                    return col;
                 }
             });
-            // console.log(data);
-            return data;
         }
     },
     mounted() {
