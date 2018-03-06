@@ -26,10 +26,10 @@ export default {
             type: Array,
             required: true
         },
-        fields: {
-            type: Object,
-            required: true
-        },
+        // fields: {
+        //     type: Object,
+        //     required: true
+        // },
         name: {
             type: String,
             default: "data.xls"
@@ -52,13 +52,13 @@ export default {
                 alert("ไม่มีข้อมูลสำหรับ Export กรุณาเลือก รายการก่อน export");
             } else {
                 if (this.type == "csv") {
-                    return this.exportCSV(this.data, this.name, this.fields);
+                    return this.exportCSV(this.data, this.name, this.$attrs.fields);
                 }
-                return this.exportXLS(this.data, this.name, this.fields);
+                return this.exportXLS(this.data, this.name, this.$attrs.fields);
             }
         },
         generate_excel: function() {
-            this.exportXLS(this.data, this.name, this.fields);
+            this.exportXLS(this.data, this.name, this.$attrs.fields);
         },
         jsonToXLS: function(data, header) {
             var xlsTemp =

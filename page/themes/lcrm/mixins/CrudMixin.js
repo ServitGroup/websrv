@@ -8,8 +8,8 @@ export default {
             vm.$nextTick(() => {
                 console.log("check vm", vm);
                 // vm.$root.$refs.overlay.style.display = "none";
+                vm.getdatas();
             });
-            vm.getdatas();
         });
     },
 

@@ -60,18 +60,18 @@ const routes = [
 ];
 
 phproute.map(i => {
-    console.log(i);
+    // console.log(i);
     routes.push({
         path: "/" + i.permalink,
         name: i.permalink,
         component: eval(i.component)
     });
-    console.log(i.component);
+    // console.log(i.component);
 });
 
 // routes.push({ path: "/*", component: Homepage });
 
-console.log("routes--", routes);
+// console.log("routes--", routes);
 // 3. Create the router instance and pass the `routes` option
 // You can pass in additional options here, but let's
 // keep it simple for now.
