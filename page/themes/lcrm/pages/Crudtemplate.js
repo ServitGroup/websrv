@@ -76,7 +76,7 @@ export default {
                                                             <tr role="row">
                                                                 <th width="60px;">
                                                                     <input type="checkbox" v-model="checked_all" @click="checkeall"> &nbsp;# </th>
-                                                                <th v-for="(col,idx) in columns" v-show="col.visible" :tabindex="idx" :key="idx" :class="{ active: sortKey == col.key }" :style="{ cursor: col.orderable ? 'pointer' : '' }" @click="sortBy(col)" >
+                                                                <th v-for="(col,idx) in columns" v-if="col.gridview" :tabindex="idx" :key="idx" :class="{ active: sortKey == col.key }" :style="{ cursor: col.orderable ? 'pointer' : '' }" @click="sortBy(col)" >
                                                                     <div style="display:inline-flex;align-items:center;flex-wrap: nowrap;">
                                                                         <span style="white-space: nowrap;">{{col.label}}</span>
                                                                         <i v-show="col.orderable && sortKey != col.key " class="fa fa-sort pull-right" style="color: #ddd;" aria-hidden="true"></i>
@@ -108,7 +108,7 @@ export default {
                                                             <tr role="row">
                                                                 <th width="60px;">
                                                                     <input type="checkbox" v-model="checked_all" @click="checkeall"> &nbsp;# </th>
-                                                                <th v-for="(col,idx) in columns" v-show="col.visible" :tabindex="idx" :key="idx" :class="{ active: sortKey == col.key }" :style="{ cursor: col.orderable ? 'pointer' : '' }" @click="sortBy(col)" >
+                                                                <th v-for="(col,idx) in columns" v-if="col.gridview" :tabindex="idx" :key="idx" :class="{ active: sortKey == col.key }" :style="{ cursor: col.orderable ? 'pointer' : '' }" @click="sortBy(col)" >
                                                                     <div style="display:inline-flex;align-items:center;flex-wrap: nowrap;">
                                                                         <span style="white-space: nowrap;">{{col.label}}</span>
                                                                         <i v-show="col.orderable && sortKey != col.key " class="fa fa-sort pull-right" style="color: #ddd;" aria-hidden="true"></i>
