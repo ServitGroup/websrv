@@ -46,6 +46,10 @@ const Smslogs = () =>
     import ("../pages/Smslogs.js");
 const Services = () =>
     import ("../pages/Services.js");
+const Methods = () =>
+    import ("../pages/Methods.js");
+const Methodserv = () =>
+    import ("../pages/Methodserv.js");
 
 const User = {
     props: ["id"],
@@ -73,6 +77,7 @@ phproute.map(i => {
     console.log(i.component);
 });
 
+routes.push({ path: "/methods/serv/:id", component: Methodserv });
 // routes.push({ path: "/*", component: Homepage });
 
 console.log("routes--", routes);

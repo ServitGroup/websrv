@@ -9,5 +9,10 @@ class Service extends BaseModel
 	protected $table = 'services';
 	protected $primaryKey = 'id';
 	public $timestamps = true;
+
+	public function methods(){
+		return $this->hasMany('Method');
+	}
+
 } 
 

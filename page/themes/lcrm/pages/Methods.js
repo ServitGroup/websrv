@@ -10,7 +10,7 @@ export default {
     <h1  >
         {{title}}
     </h1>
-    <div v-if="viewstate.v_lists" ref="v_lists" >
+    <div v-show="viewstate.v_lists" ref="v_lists" >
         <div class="page-header clearfix">
             <div class="pull-right">
                 <button v-if="info.v_insert"  v-show="!viewstate.v_insert" @click="insert" class="btn btn-primary"><i class="fa fa-plus-circle"></i> Insert</button>
@@ -84,7 +84,6 @@ export default {
                                                                         <i v-show="col.orderable && sortKey==col.key && sortOrders[col.key]==-1" style="display:none" class="fa fa-sort-desc pull-right" aria-hidden="true"></i>
                                                                     </div>
                                                                 </th>
-                                                                <th>Methods</th>
                                                                 <th>Option</th>
                                                             </tr>
                                                         </thead>
@@ -93,9 +92,6 @@ export default {
                                                                 <td style="display:flex" ><input type="checkbox" v-model="row.checked">&nbsp; {{index+1}}</td>
                                                                 <td v-for="(col,idx) in columns" :key="idx" v-if="col.gridview">
                                                                     <tableitem  :col="col" :item="row" />
-                                                                </td>
-                                                                <td>
-                                                                    <router-link :to="{ path: '/methods/serv/'+row.id }">Methods</router-link>
                                                                 </td>
                                                                 <td style="cursor: pointer;display:inline-flex;align-items:center;flex-wrap: nowrap;">
                                                                     <i v-if="info.v_view" @click="view(row)" class="fa fa-fw fa-eye text-primary"></i> 
@@ -120,7 +116,6 @@ export default {
                                                                         <i v-show="col.orderable && sortKey==col.key && sortOrders[col.key]==-1" style="display:none" class="fa fa-sort-desc pull-right" aria-hidden="true"></i>
                                                                     </div>
                                                                 </th>
-                                                                <th>Methods</th>
                                                                 <th>Option</th>
                                                             </tr>
                                                         </thead>
@@ -171,7 +166,7 @@ export default {
             </div>
         </div>
     </div>
-    <div class="vprint" v-if="viewstate.v_print" ref="v_print" >
+    <div class="vprint" v-show="viewstate.v_print" ref="v_print" >
         <div class="page-header clearfix">
             <div class="pull-right">
                 <button @click="changeview('v_lists')" class="btn btn-primary">
@@ -203,7 +198,7 @@ export default {
         </div>
     </div>
     
-    <div v-if="viewstate.v_update" ref="v_update"  >
+    <div v-show="viewstate.v_update" ref="v_update"  >
         <div class="page-header clearfix">
             <div class="pull-right">
                 <button @click="updatecancel" class="btn btn-primary">
@@ -236,7 +231,7 @@ export default {
             </div>
         </div>
     </div>
-    <div v-if="viewstate.v_insert" ref="v_insert"  >
+    <div v-show="viewstate.v_insert" ref="v_insert"  >
         <div class="page-header clearfix">
             <div class="pull-right">
                 <button @click="insertcancel" class="btn btn-primary"><i class="fa fa-arrow-left"></i> Back</button>
@@ -270,7 +265,7 @@ export default {
         </div>
     </div>
 
-    <div v-if="viewstate.v_delete" ref="v_delete"  >
+    <div v-show="viewstate.v_delete" ref="v_delete"  >
         <div class="page-header clearfix">
             <div class="pull-right">
                 <button @click="changeview('v_lists')" class="btn btn-primary"><i class="fa fa-arrow-left"></i> Back</button>
@@ -301,7 +296,7 @@ export default {
         </div>
     </div>
 
-    <div v-if="viewstate.v_import" ref="import"  >
+    <div v-show="viewstate.v_import" ref="import"  >
         <div class="page-header clearfix">
             <div class="pull-right">
                 <button @click="changeview('v_lists')" class="btn btn-primary"><i class="fa fa-arrow-left"></i> Back</button>
@@ -341,7 +336,7 @@ export default {
         </div>
     </div>
 
-    <div v-if="viewstate.v_export" ref="export"  >
+    <div v-show="viewstate.v_export" ref="export"  >
         <div class="page-header clearfix">
             <div class="pull-right">
                 <button @click="changeview('v_lists')" class="btn btn-primary"><i class="fa fa-arrow-left"></i> Back</button>
@@ -373,7 +368,7 @@ export default {
         </div>
     </div>
 
-    <div v-if="viewstate.v_view" ref="view"  >
+    <div v-show="viewstate.v_view" ref="view"  >
         <div class="page-header clearfix">
             <div class="pull-right">
                 <button @click="changeview('v_lists')" class="btn btn-primary"><i class="fa fa-arrow-left"></i> Back</button>
@@ -430,5 +425,37 @@ export default {
         fieldedit: Fieldedit,
         viewitem: Viewitem,
         printa4table: Printa4table
+    },
+    computed: {
+        filteredData() {
+            let self = this;
+            let data = self.datas;
+            let sortKey = self.sortKey;
+            let filtertxt = self.filtertxt && self.filtertxt.toLowerCase();
+            let order = self.sortOrders[sortKey] || 1;
+            if (filtertxt) {
+                data = data.filter(row => {
+                    return this.columns.some(c => {
+                        return (
+                            String(row[c.key])
+                            .toLowerCase()
+                            .indexOf(filtertxt) > -1
+                        );
+                    });
+                });
+            }
+            if (sortKey) {
+                data = data.slice().sort(function(a, b) {
+                    a = a[sortKey];
+                    b = b[sortKey];
+                    return (a === b ? 0 : +a > +b ? 1 : -1) * order;
+                });
+            }
+            if (typeof data == "undefined") {
+                return [];
+            } else {
+                return data;
+            }
+        }
     }
 };

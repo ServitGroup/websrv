@@ -108,11 +108,33 @@ public function all($page = 1, $perpage = 10, $kw = '', $ajax = 0){
 
 
 /**
-*@noAuth
-*@url GET /byserviceid/$serviceid
+ *@noAuth
+*@url GET /serv/$serviceid/all
 */
 public function byserviceid($serviceid){
-    echo 'ok', $serviceid;    
+    
+        if($serviceid == '$serviceid') return;
+        $columns = Column::where('table_id', 'methods')->orderBy('sort', 'asc')->get();
+        $columns_master = Column::where('table_id', 'services')->orderBy('sort', 'asc')->get();
+        $srv = Service::find($serviceid);
+        $info = Dbinfo::where('table_name', 'methods')->first();
+        $info_service = Dbinfo::where('table_name', 'service')->first();
+        $srv->methods;
+        $data = [
+            'ajax' => 0,
+            'status' => '1',
+            'master' => $srv,
+            'datas' => $srv->methods,
+            'columns' => $columns,
+            'column_master' => $columns_master,
+            'info' => $info,
+            'info_master' => $info_service,
+        ];
+        return $data;
+
+
+
+
 }
 
 
