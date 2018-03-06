@@ -392,7 +392,7 @@ export default {
                             <div class="details">
                                 <div class="panel panel-primary">
                                     <div class="panel-body">
-                                        <div v-for="(item,idx) in viewobj" :key="idx" class="form-group">
+                                        <div v-for="(item,idx) in viewobj()" :key="idx" class="form-group">
                                             <label for="title" class="control-label">{{item.label}}</label>
                                             <div class="controls">
                                                 <span v-if="(item.label).toLowerCase() == 'status'">{{fcstatus(item.value)}}</span>
