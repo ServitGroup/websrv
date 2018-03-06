@@ -283,14 +283,14 @@ export default {
                      </span>
             </div>
             <div class="panel-body" style="display: block;">
-                <div v-for="(item,idx) in viewobj" :key="idx" class="form-group">
+                <div v-for="(item,idx) in viewobj()" :key="idx" class="form-group">
                     <label for="title" class="control-label">{{item.label}}</label>
                     <viewitem :item="item"  />
                 </div>
                 <div class="form-group">
                     <div class="controls">
                         <a @click="changeview('v_lists')" href="#" class="btn btn-primary"><i class="fa fa-arrow-left"></i> Back</a>
-                        <button @click="deleteyn(viewobj)" type="button" class="btn btn-success"><i class="fa fa-check-square-o"></i> OK</button>
+                        <button @click="deleteyn(viewobj())" type="button" class="btn btn-success"><i class="fa fa-check-square-o"></i> OK</button>
                     </div>
                 </div>
             </div>
@@ -393,7 +393,7 @@ export default {
                             <div class="details">
                                 <div class="panel panel-primary">
                                     <div class="panel-body">
-                                        <div v-for="(item,idx) in viewobj" :key="idx" class="form-group">
+                                        <div v-for="(item,idx) in viewobj()" :key="idx" class="form-group">
                                             <label for="title" class="control-label">{{item.label}}</label>
                                             <div class="controls">
                                                 <span v-if="(item.label).toLowerCase() == 'status'">{{fcstatus(item.value)}}</span>
