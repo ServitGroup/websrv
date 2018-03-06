@@ -304,24 +304,28 @@ export default {
             this.changeview("v_update");
             this.watchupdate();
         },
+        viewobj() {
+            return this.columns.filter(col => {
+                if (col.frmview) {
+                    col.value = this.row_view[col.key];
+                    return col;
+                }
+            });
+        },
         updateobj() {
-            let data = this.columns.filter(col => {
-                // console.log(col)
+            return this.columns.filter(col => {
                 if (col.frmview && col.readonly == 0 && col.visible) {
                     col.value = this.row_update[col.key];
                     return col;
                 }
             });
-            return data;
         },
         insertobj() {
-            let data = [];
-            this.columns.map(col => {
-                if (col.visible) {
-                    data.push(col);
+            return this.columns.filter(col => {
+                if (col.frmview && col.readonly == 0 && col.visible) {
+                    return col;
                 }
             });
-            return data;
         },
         printv(row) {
             this.changeview("v_print");
@@ -486,14 +490,6 @@ export default {
         },
         itempageend() {
             return this.perpage * this.page;
-        },
-        viewobj() {
-            return this.columns.filter(col => {
-                if (col.frmview) {
-                    col.value = this.row_view[col.key];
-                    return col;
-                }
-            });
         }
     },
     mounted() {
