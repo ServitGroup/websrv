@@ -97,10 +97,7 @@ export default {
                     Object.keys(response.data).map(key => {
                         this[key] = response.data[key];
                     });
-                    // this.datas = response.data.datas;
-                    // this.columns = response.data.columns;
-                    // this.infos = response.data.info;
-                    this.title = response.data.info.title;
+                    this.title = this.info.title;
                     let sortOrders = {};
                     this.columns.map(r => {
                         sortOrders[r.key] = 1;
@@ -236,6 +233,7 @@ export default {
             if (this.ajax) {
                 this.getdatas();
             }
+            window.scrollTo(window.scrollX, window.scrollY);
         },
         view(row) {
             console.log("view--->", row);
@@ -431,6 +429,7 @@ export default {
             columns: [],
             domains: [],
             ajax: 0,
+            info: { title: "Title" },
             items: [],
             cols: []
         };
