@@ -492,7 +492,7 @@ export default {
             let data = [];
             this.columns.map(col => {
                 // console.log(col)
-                if (col.visible) {
+                if (col.frmview) {
                     data.push({ label: col.label, value: this.row_view[col.key] });
                 }
             });
