@@ -104,6 +104,18 @@ public function all($page = 1, $perpage = 10, $kw = '', $ajax = 0){
 
 }
 
+
+
+
+/**
+*@noAuth
+*@url GET /byserviceid/$serviceid
+*/
+public function byserviceid($serviceid){
+    echo 'ok', $serviceid;    
+}
+
+
 protected function model(){
     return new Method();
 }

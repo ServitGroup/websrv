@@ -44,6 +44,8 @@ const Apilogs = () =>
     import ("../pages/Apilogs.js");
 const Smslogs = () =>
     import ("../pages/Smslogs.js");
+const Services = () =>
+    import ("../pages/Services.js");
 
 const User = {
     props: ["id"],

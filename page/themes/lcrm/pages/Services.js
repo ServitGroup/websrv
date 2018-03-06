@@ -41,7 +41,7 @@ export default {
                                     <div class="col-sm-12">
                                         <div id="data_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
                                             <div class="row">
-                                                <div class="col-sm-3">
+                                                <div class="col-sm-6">
                                                     <div class="dataTables_length" id="data_length">
                                                         <label>
                                                                 Show
@@ -55,28 +55,7 @@ export default {
                                                             </label>
                                                     </div>
                                                 </div>
-                                                <div class="col-sm-3">
-                                                    <span>Domain:</span>
-                                                    <select v-model="selectdomain">
-                                                        <option value="-1">All</option>
-                                                        <option v-for="domain in domains" :value="domain.id">{{domain.id}}/{{domain.name}}</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-sm-1">
-                                                    <span>Service:</span>
-                                                    <select v-model="selectservice">
-                                                        <option value="-1">All</option>
-                                                        <option v-for="service in services" :value="service.service">{{service.service}}</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-sm-2">
-                                                    <span>Method:</span>
-                                                    <select v-model="selectmethod">
-                                                        <option value="-1">All</option>
-                                                        <option v-for="method in methods" :value="method.method">{{method.method}}</option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-sm-3">
+                                                <div class="col-sm-6">
                                                     <div id="data_filter" class="dataTables_filter">
                                                         <label>
                                                                 Search:
@@ -97,7 +76,7 @@ export default {
                                                             <tr role="row">
                                                                 <th width="60px;">
                                                                     <input type="checkbox" v-model="checked_all" @click="checkeall"> &nbsp;# </th>
-                                                                <th v-for="(col,idx) in columns" v-show="col.visible" :tabindex="idx" :key="idx" :class="{ active: sortKey == col.key }" :style="{ cursor: col.orderable ? 'pointer' : '' }" @click="sortBy(col)" >
+                                                                <th v-for="(col,idx) in columns" v-if="col.gridview" :tabindex="idx" :key="idx" :class="{ active: sortKey == col.key }" :style="{ cursor: col.orderable ? 'pointer' : '' }" @click="sortBy(col)" >
                                                                     <div style="display:inline-flex;align-items:center;flex-wrap: nowrap;">
                                                                         <span style="white-space: nowrap;">{{col.label}}</span>
                                                                         <i v-show="col.orderable && sortKey != col.key " class="fa fa-sort pull-right" style="color: #ddd;" aria-hidden="true"></i>
@@ -105,19 +84,25 @@ export default {
                                                                         <i v-show="col.orderable && sortKey==col.key && sortOrders[col.key]==-1" style="display:none" class="fa fa-sort-desc pull-right" aria-hidden="true"></i>
                                                                     </div>
                                                                 </th>
+                                                                <th>Methods</th>
                                                                 <th>Option</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
                                                             <tr v-for="(row,index) in lists" role="row" class="">
                                                                 <td style="display:flex" ><input type="checkbox" v-model="row.checked">&nbsp; {{index+1}}</td>
-                                                                <td v-for="(col,idx) in columns" :key="idx" v-if="col.visible">
+                                                                <td v-for="(col,idx) in columns" :key="idx" v-if="col.gridview">
                                                                     <tableitem  :col="col" :item="row" />
+                                                                </td>
+                                                                <td>
+                                                                    <router-link to="/api/v3/methods/byserviceid/">Methods</router-link>
                                                                 </td>
                                                                 <td style="cursor: pointer;display:inline-flex;align-items:center;flex-wrap: nowrap;">
                                                                     <i v-if="info.v_view" @click="view(row)" class="fa fa-fw fa-eye text-primary"></i> 
                                                                     <i v-if="info.v_update" @click="edit(row)" alt="edit" aria-hidden="true" class="fa fa-pencil"></i>
-                                                                    <i v-if="info.v_update" @click="updatedtablerow(row)" alt="save" aria-hidden="true" class="fa fa-save"></i>
+                                                                    <!-- <i v-if="info.v_update" @click="updatedtablerow(row)" alt="save" aria-hidden="true" class="fa fa-save"></i> -->
+                                                                    <!-- <i v-if="info.v_import" @click="changeview('v_import')" alt="reset password" aria-hidden="true" class="fa fa-key"></i>   -->
+                                                                    <!-- <i v-if="info.v_export" @click="changeview('v_export')" alt="reset password" aria-hidden="true" class="fa fa-key"></i>   -->
                                                                     <i v-if="info.v_delete" @click="deleterow(row)" alt="delete" aria-hidden="true" class="fa fa-times-circle " style="color: red;"></i>
                                                                     <i v-if="info.v_print" @click="printv(row)" alt="print" aria-hidden="true" class="fa fa-print"></i> 
                                                                 </td>
@@ -127,7 +112,7 @@ export default {
                                                             <tr role="row">
                                                                 <th width="60px;">
                                                                     <input type="checkbox" v-model="checked_all" @click="checkeall"> &nbsp;# </th>
-                                                                <th v-for="(col,idx) in columns" v-show="col.visible" :tabindex="idx" :key="idx" :class="{ active: sortKey == col.key }" :style="{ cursor: col.orderable ? 'pointer' : '' }" @click="sortBy(col)" >
+                                                                <th v-for="(col,idx) in columns" v-if="col.gridview" :tabindex="idx" :key="idx" :class="{ active: sortKey == col.key }" :style="{ cursor: col.orderable ? 'pointer' : '' }" @click="sortBy(col)" >
                                                                     <div style="display:inline-flex;align-items:center;flex-wrap: nowrap;">
                                                                         <span style="white-space: nowrap;">{{col.label}}</span>
                                                                         <i v-show="col.orderable && sortKey != col.key " class="fa fa-sort pull-right" style="color: #ddd;" aria-hidden="true"></i>
@@ -135,6 +120,7 @@ export default {
                                                                         <i v-show="col.orderable && sortKey==col.key && sortOrders[col.key]==-1" style="display:none" class="fa fa-sort-desc pull-right" aria-hidden="true"></i>
                                                                     </div>
                                                                 </th>
+                                                                <th>Methods</th>
                                                                 <th>Option</th>
                                                             </tr>
                                                         </thead>
@@ -444,81 +430,5 @@ export default {
         fieldedit: Fieldedit,
         viewitem: Viewitem,
         printa4table: Printa4table
-    },
-    computed: {
-        filteredData() {
-            let self = this;
-            let data = self.datas;
-            let sortKey = self.sortKey;
-            let filtertxt = self.filtertxt && self.filtertxt.toLowerCase();
-            let order = self.sortOrders[sortKey] || 1;
-            if (this.selectservice != -1) {
-                data = data.filter(r => r.service == this.selectservice);
-            }
-            if (this.selectmethod != -1) {
-                data = data.filter(r => r.method == this.selectmethod);
-            }
-            if (this.selectdomain != -1) {
-                data = data.filter(r => r.domain_id == this.selectdomain);
-            }
-            if (this.selectcustomer != -1) {}
-
-            if (filtertxt) {
-                data = data.filter(row => {
-                    return this.columns.some(c => {
-                        return (
-                            String(row[c.key])
-                            .toLowerCase()
-                            .indexOf(filtertxt) > -1
-                        );
-                    });
-                });
-            }
-            if (sortKey) {
-                data = data.slice().sort(function(a, b) {
-                    a = a[sortKey];
-                    b = b[sortKey];
-                    return (a === b ? 0 : +a > +b ? 1 : -1) * order;
-                });
-            }
-            if (typeof data == "undefined") {
-                return [];
-            } else {
-                return data;
-            }
-        }
-    },
-    methods: {
-        getkw() {
-            let kw = this.filtertxt;
-            if (this.selectservice != -1) {
-                kw += ",service=" + this.selectservice;
-            }
-            if (this.selectmethod != -1) {
-                kw += ",method=" + this.selectmethod;
-            }
-            if (this.selectdomain != -1) {
-                kw += ",domain_id=" + this.selectdomain;
-            }
-            if (this.selectcustomer != -1) {
-                kw += ",cus_id=" + this.selectcustomer;
-            }
-
-            return kw;
-        },
-        search() {
-            console.log("search");
-            if (this.ajax) {
-                this.getdatas();
-            }
-        }
-    },
-    data() {
-        return {
-            selectservice: -1,
-            selectmethod: -1,
-            selectdomain: -1,
-            selectcustomer: -1
-        };
     }
 };
