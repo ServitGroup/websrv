@@ -1,11 +1,7 @@
 export default {
-    template: `  <section class="content-header">
+    template: `<div><section class="content-header">
     <h1>
-      Blank page theme <b>{{theme}}</b>
-      <hr/>
-      <router-link to="/admin/login">Login</router-link>
-      <router-link to="/admin/user">User</router-link>
-      <hr/>
+      Blank page
       <small>it all starts here</small>
     </h1>
     <ol class="breadcrumb">
@@ -27,13 +23,18 @@ export default {
         </div>
       </div>
       <div class="box-body">
-        Start creating your amazing application!
+        theme <b>{{theme}}</b>
+        <hr/>
+          <router-link to="/admin/login">Login</router-link>
+          <router-link to="/admin/user">User</router-link>
+          <router-link to="/admin/profile">Profile</router-link>
+        <hr/>
       </div>
       <div class="box-footer">
         Footer
       </div>
     </div>
-  </section>`,
+  </section></div>`,
     name: "Bank",
     mixins: [],
     data() {

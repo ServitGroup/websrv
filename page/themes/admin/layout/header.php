@@ -13,7 +13,10 @@
     <link rel="stylesheet" href="/page/themes/admin/bower_components/font-awesome/css/font-awesome.min.css">
     <!-- Ionicons -->
     <link rel="stylesheet" href="/page/themes/admin/bower_components/Ionicons/css/ionicons.min.css">
-    <!-- Theme style -->
+    <link rel="stylesheet" href="/page/themes/admin/bower_components/fullcalendar/dist/fullcalendar.min.css">
+    <link rel="stylesheet" href="/page/themes/admin/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
+    <link rel="stylesheet" href="/page/themes/admin/bower_components/fullcalendar/dist/fullcalendar.print.min.css" media="print">
+<!-- Theme style -->
     <link rel="stylesheet" href="/page/themes/admin/dist/css/AdminLTE.min.css">
     <link rel="stylesheet" href="/page/themes/admin/dist/css/skins/_all-skins.min.css">
     <!-- iCheck -->
