@@ -11,6 +11,7 @@ class AdminController extends AdminThemeController
     /**
     *@noAuth
     *@url GET /
+    *@url POST /
     */
     public function admin()
     {
@@ -20,9 +21,13 @@ class AdminController extends AdminThemeController
     }
 
 
+    
+    
+
     /**
     *@noAuth
     *@url GET /login/
+    *@url POST /login/
     */
     public function test()
     {

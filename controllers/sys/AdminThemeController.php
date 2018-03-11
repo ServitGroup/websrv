@@ -16,14 +16,18 @@ class AdminThemeController extends ThemeController
 
     public function handle404()
     {
-        $this->get_header();
-        $path404 = $this->themepath.'/../../page/themes/'.$this->theme.'/errors/404.php';
-        if (file_exists($path404)) {
-            require_once $path404;
-        } else {
-            echo '<h2><b>admin Error:</b>404</h2>';
-        }
-        $this->get_footer();
+
+        require_once __DIR__.'/../../page/themes/admin/layout/header.php';
+        require_once __DIR__.'/../../page/themes/admin/index.php';
+        require_once __DIR__.'/../../page/themes/admin/layout/footer.php';   
+        // $this->get_header();
+        // $path404 = $this->themepath.'/../../page/themes/'.$this->theme.'/errors/404.php';
+        // if (file_exists($path404)) {
+        //     require_once $path404;
+        // } else {
+        //     echo '<h2><b>admin Error:</b>404</h2>';
+        // }
+        // $this->get_footer();
     }
     
     public function handle401()
