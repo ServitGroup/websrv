@@ -42,6 +42,8 @@ const Curdtable = () =>
     import ("../pages/Crudtable.js");
 const Menus = () =>
     import ("../pages/Menus.js");
+const Test = () =>
+    import ("../pages/Test.js");
 
 const User = {
     props: ["id"],
@@ -54,6 +56,7 @@ const routes = [
     // { path: "/setting", component: Setting },
     // { path: "/sales_team", component: Contact },
     // { path: "/user/:id", component: User, props: true },
+    { path: "/test", name: "test", component: Test },
     { path: "/login", name: "login", component: Login },
     { path: "*", name: "*", component: Homepage }
     // { path: "*", component: NotFoundComponent }

@@ -8,6 +8,8 @@ export default {
             <br/>
             <router-link to="/login">Login</router-link>
             <br/>
+            <router-link to="/test">Test</router-link>
+            <br/>
             <router-link to="/homea">Homea</router-link>
             <br/>
             <router-link to="/homeb">Homeb</router-link>
