@@ -30,7 +30,7 @@ class AdminlteController extends ThemeController {
 		'.$breadcrumb.'
 		</section>
 		<section class="content container-fluid">
-		<h1>test</h1>
+		<h1>test ABC</h1>
 		</section>
 		</div>
 		';
