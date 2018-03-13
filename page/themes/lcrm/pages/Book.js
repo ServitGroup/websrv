@@ -2,19 +2,19 @@ import Crudlayout from "../components/crudlayout.js";
 import crudmix from "../mixins/CrudMixin.js";
 
 export default {
-    template: `<Crudlayout v-bind="$data">
-      <h1 slot="vlist">Nolist</h1>
+    template: `<Crudlayout>
+    
     </Crudlayout>`,
-    name: "maintest",
     mixins: [crudmix],
+    name: "Book",
     data() {
         return {
             theme: "AdminLte"
         };
     },
     created() {
-        window.vcm = this;
-        console.log("vc computer is created", vcm);
+        window.vc = this;
+        console.log("vc computer is created");
     },
     mounted() {},
     methods: {},

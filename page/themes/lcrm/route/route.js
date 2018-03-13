@@ -3,6 +3,7 @@
 // import Contact from "../pages/Contact.js";
 // import Invoice from "../pages/Invoices.js";
 // import Template from "../pages/Template.js";
+import Test from "../pages/test.js";
 
 const Invoice = () =>
     import ("../pages/Invoices.js");
@@ -42,8 +43,10 @@ const Curdtable = () =>
     import ("../pages/Crudtable.js");
 const Menus = () =>
     import ("../pages/Menus.js");
-const Test = () =>
-    import ("../pages/Test.js");
+// const Test = () =>
+//     import ("../pages/Test.js");
+const Book = () =>
+    import ("../pages/Book.js");
 
 const User = {
     props: ["id"],
@@ -57,6 +60,7 @@ const routes = [
     // { path: "/sales_team", component: Contact },
     // { path: "/user/:id", component: User, props: true },
     { path: "/test", name: "test", component: Test },
+    // { path: "/book", name: "book", component: Book },
     { path: "/login", name: "login", component: Login },
     { path: "*", name: "*", component: Homepage }
     // { path: "*", component: NotFoundComponent }

@@ -94,17 +94,19 @@ export default {
                 .get(url)
                 .then(response => {
                     console.log("response--->", response);
-                    Object.keys(response.data).map(key => {
-                        // this[key] = response.data[key];
-                        console.log("key-->", key);
-                        this.$observe(this, key, response.data[key]);
-                    });
-                    this.title = this.info.title;
-                    let sortOrders = {};
-                    this.columns.map(r => {
-                        sortOrders[r.key] = 1;
-                    });
-                    this.sortOrders = sortOrders;
+                    if ($resonse.data != undefined) {
+                        Object.keys(response.data).map(key => {
+                            // this[key] = response.data[key];
+                            console.log("key-->", key);
+                            this.$observe(this, key, response.data[key]);
+                        });
+                        this.title = this.info.title;
+                        let sortOrders = {};
+                        this.columns.map(r => {
+                            sortOrders[r.key] = 1;
+                        });
+                        this.sortOrders = sortOrders;
+                    }
                     this.$store.commit("hide");
                 })
                 .catch(err => {
