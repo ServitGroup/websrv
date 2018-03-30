@@ -60,3 +60,5 @@ $capsule->setAsGlobal();
 $capsule->bootEloquent();
 $sysconfig = new Config();
 $sysconfig->dbconfig = $config;
+$sysconfig->capsule = $capsule;
+
