@@ -36,7 +36,12 @@ class GentableController extends BaseController
         echo '<a href="/system/generator/migrate/freshall">Migrate:fresh  All</a><br/>';
         echo '<a href="/system/generator/migrateall">Migrate All</a><br/>';
         echo '<hr/>';
-        echo '<a href="/system/generator/genall/v3/1">Gen All V3 Overwrite</a><br/>';
+        echo '<b>Generate All Api from Databases</b><br/>';
+        echo "<form method='post' action='/system/generator/genapi'>";
+        echo 'basepath: <input type="text" name="basepath" value="/api/$table/v1" placeholder="/api/$table/v1" /> &nbsp; $table in var for replace tablename<br/>
+        overwrite: <input type="checkbox" name="ovr" /> &nbsp; overwrite for Remove all and new generate.<br/>';
+        echo '<input type="submit"  value="Gen All" /><br/></form>';
+        echo '<hr/>';
         echo '<a href="/system/generator/msccmd">Create MSCCMD :Model Service Controller Columns Menu  Dbindos From Table</a><br/>';
         echo '<a href="/">Home</a><br/>';
         echo '</center>';
@@ -54,10 +59,8 @@ class GentableController extends BaseController
         $html = <<<HTML
         <form action="/system/generator/mscmd" method="post">
 
-            tablename:<input type="text" name="tbname"   /><br/>
-            basepath: <input type="text" name="basepath"  /><br/>
-            timestamps: <input type="checkbox" name="timestamps" ><br/>
-            pk: <input type="text" name="pk" value="id" /><br/>
+            tablename:<input type="text" name="tbname"   /> &nbsp;&nbsp;products,orders,users <br/>
+            basepath: <input type="text" name="basepath"  />&nbsp;&nbsp;/aaa/bbb/ccc or /<br/>
             <input type="submit" value="Submit">
             <input type="reset" value="reset">
         </form>
@@ -83,16 +86,18 @@ HTML;
                 $timestamps == 'on' ? $timestamps = true : $timestamps = false;
                 $pk = $this->server->data->posts->pk;
 
+                dump($tb,$basepath,$timestamps,$pk);
+
                 $model->table = $tb;
                 $tb = $this->depluralize($tb);
                 $tb = ucfirst($tb);
                 $model->model = $tb;
                 $model->timestamps = $timestamps;
                 $model->pk = $pk;
-
+                // dump($model);
                 echo 'crete --menucollumn----</b>';
                 $m = $this->columns($model->table, 1);
-                dump($m);
+                // dump($m);
                 echo 'crete ---service--</br>';
                 $model->service = $this->makeserviefile($model);
                 $servfile = __DIR__ . '/../../services/' . $model->model . 'Service.php';
@@ -107,7 +112,9 @@ HTML;
                 echo 'crete ---controller----</br>';
                 $this->gencontroller($tb);
                 echo 'crete --dbinfo--------</br>';
+
                 $dbinf = Dbinfo::where('table_name', $model->table)->first();
+                dump($dbinf);
                 if ($dbinf) {} else {
                     $dbinf = new Dbinfo();
                 }
@@ -118,26 +125,41 @@ HTML;
 
                 echo 'add menu---------<br/>';
                 $menu = Menu::where('table_name', $model->table)->first();
-                if ($menu) {}{
+                dump('bf',$menu);
+                if (!$menu){
                     $menu = new Menu();
+                    $menu->menu_position = 'LEFTSIDEBAR';
+                    $menu->group = '1';
+                    $menu->table_name = $model->table;
+                    $menu->label = $model->model;
+                    $menu->permalink = $this->cutword($model->table);
+                    $menu->component = 'Template';
+                    $menu->icon_class = 'settings_brightness';
+                    $menu->classname = 'material-icons text-default';
+                    $menu->status = '1';
+                    $menu->parent_id = '0';
+                    $menu->description = '';
+                    $menu->sort = '99';
+                    $menu->created_by = 'system';
+                    $menu->updated_by = 'system';
+                    $menu->save();
                 }
-                $menu->menu_position = 'LEFTSIDEBAR';
-                $menu->group = '1';
-                $menu->table_name = $model->table;
-                $menu->label = $model->model;
-                $menu->permalink = $this->cutword($model->table);
-                $menu->component = 'Template';
-                $menu->icon_class = 'settings_brightness';
-                $menu->classname = 'material-icons text-default';
-                $menu->status = '1';
-                $menu->parent_id = '0';
-                $menu->description = '';
-                $menu->sort = '99';
-                $menu->created_by = 'system';
-                $menu->updated_by = 'system';
-                $menu->save();
                 echo '</br>crete ---model----</br>';
-                $this->genmodel($tb);
+                $this->genmodel($model->table);
+                
+                echo '</br>crete ---route----</br>';
+                $routefile = __DIR__."/../../route/routebygen.php";
+                $controller = $tb.'Controller';
+                $route = Route::where('controller',$controller)->where('basepath',$basepath)->first();
+                if($route){}else{
+                    $route = new Route();
+                    $route->controller = $controller;
+                    $route->basepath = $basepath;
+                    $route->sort = Route::max('sort')+1;
+                    $route->type = 'php';
+                    $route->save();    
+                }
+                $this->makeroute();
                 echo "</br>successed<br/><a href='/system/routes'>Back</a>";
             } else {
                 throw new Exception('No Table: ' . $tb . ' please create', 1);
@@ -328,6 +350,21 @@ HTML;
         }
     }
 
+
+
+
+/**
+*@noAuth
+*@url POST /genapi/
+*/
+public function genapi(){
+    $basepath = $this->server->data->posts->basepath;
+    $ovr =$this->server->data->posts->ovr;
+    $this->genall($basepath,$ovr);
+}
+
+
+
 /**
  *@noAuth
  *@url GET /model/$table
@@ -389,46 +426,50 @@ HTML;
     public function genall($basepath = null, $ovr = 0)
     {
         if ($basepath == '$basepath') {
-            $basepath = 'v1/';
+            $basepath = '/api/v1/';
         } else {
-            if ($basepath) {
-                $basepath = $basepath . '/';
-            } else {
-                $basepath = 'v1/';
+            if ($basepath) { } else {
+                $basepath = '/api/v1/';
             }
         }
         if ($ovr == '$orv') {
             $ovr = 0;
         }
-
         // dump($basepath,$ovr);
         $this->index();
 
         echo '<br/>Gen Collumns<hr/>';
         if ($ovr) {
             Capsule::select('truncate _columns;');
+            Capsule::select('truncate _routes;');
         }
         $models = [];
         $tables = Capsule::select('show tables');
         // if($ovr) Capsule::select('truncate columns;');
+        $notdotables = [
+            '_routes',
+        ];
         foreach ($tables as $table) {
             $tb = $table->{'Tables_in_' . DB_NAME};
-            if ($ovr) {
-                Column::where('table_id', $tb)->delete();
-            } else {
-                $cols = Column::where('table_id', $tb)->get();
-                // dump($tb,$cols->count());
-                if ($cols->count() > 0) {
-                    echo "Table Columns is exists\n<br/>";
+            $ovvr = $ovr;
+            if(!in_array($tb,$notdotables)){
+                if ($ovvr) {
+                    Column::where('table_id', $tb)->delete();
                 } else {
-                    $ovr = 1;
+                    $cols = Column::where('table_id', $tb)->get();
+                    // dump($tb,$cols->count());
+                    if ($cols->count() > 0) {
+                        echo "Table Columns of $tb is exists\n<br/>";
+                    } else {
+                        $ovvr = 1;
+                    }
                 }
+                $t = $this->makecols($tb, $ovvr);
+                $t->modeldata = $this->makemodlefile($t);
+                $t->service = $this->makeserviefile($t);
+                $t->controller = $this->makecontroller($t);
+                $models[] = $t;
             }
-            $t = $this->makecols($tb, $ovr);
-            $t->modeldata = $this->makemodlefile($t);
-            $t->service = $this->makeserviefile($t);
-            $t->controller = $this->makecontroller($t);
-            $models[] = $t;
         }
         echo '<hr/>';
         $sort = 10;
@@ -448,7 +489,7 @@ HTML;
             $menu->parent_id = '0';
             $menu->description = '';
             $menu->sort = '0';
-            $menu->crated_by = 'system';
+            $menu->created_by = 'system';
             $menu->updated_by = 'system';
             $menu->save();
         }
@@ -468,7 +509,7 @@ HTML;
             $menu->parent_id = '0';
             $menu->description = '';
             $menu->sort = '98';
-            $menu->crated_by = 'system';
+            $menu->created_by = 'system';
             $menu->updated_by = 'system';
             $menu->save();
         }
@@ -489,7 +530,7 @@ HTML;
             $menu->parent_id = '0';
             $menu->description = '';
             $menu->sort = '99';
-            $menu->crated_by = 'system';
+            $menu->created_by = 'system';
             $menu->updated_by = 'system';
             $menu->save();
         }
@@ -531,69 +572,70 @@ HTML;
             $menu = Menu::where('table_name', $model->table)->first();
             // dump($menu);
 
-            if (!$menu) {$menu = new Menu();}
-            $menu->menu_position = 'LEFTSIDEBAR';
-            $menu->table_name = $model->table;
-            $menu->label = $model->model;
-            $menu->permalink = $this->cutword($model->table);
-            if (in_array($model->table, $systemtables)) {
-                $menu->component = ucfirst($this->cutword($model->table));
-            } else {
-                $menu->component = 'Crudtemplate';
-            }
-            $menu->icon_class = 'dashboard';
-            $menu->classname = 'material-icons text-default';
-            $menu->status = '1';
-            if (in_array($model->table, $admintables)) {
-                $menu->group = '2';
-                $menu->parent_id = $admingroup;
-            } elseif (in_array($model->table, $systemtables)) {
-                $menu->group = '2';
-                $menu->parent_id = $sysgroup;
-            } else {
-                $menu->group = '1';
-                $menu->parent_id = 0;
-            }
+            if (!$menu) {
+                $menu = new Menu();}
+                $menu->menu_position = 'LEFTSIDEBAR';
+                $menu->table_name = $model->table;
+                $menu->label = $model->model;
+                $menu->permalink = $this->cutword($model->table);
+                if (in_array($model->table, $systemtables)) {
+                    $menu->component = ucfirst($this->cutword($model->table));
+                } else {
+                    $menu->component = 'Crudtemplate';
+                }
+                $menu->icon_class = 'dashboard';
+                $menu->classname = 'material-icons text-default';
+                $menu->status = '1';
+                if (in_array($model->table, $admintables)) {
+                    $menu->group = '2';
+                    $menu->parent_id = $admingroup;
+                } elseif (in_array($model->table, $systemtables)) {
+                    $menu->group = '2';
+                    $menu->parent_id = $sysgroup;
+                } else {
+                    $menu->group = '1';
+                    $menu->parent_id = 0;
+                }
 
-            $menu->description = '';
-            $menu->sort = $sort;
-            $menu->crated_by = 'system';
-            $menu->updated_by = 'system';
-            $menu->save();
-            $sort++;
+                $menu->description = '';
+                $menu->sort = $sort;
+                $menu->created_by = 'system';
+                $menu->updated_by = 'system';
+                $menu->save();
+                $sort++;
 
-            $modelfile = __DIR__ . '/../../models/' . $model->model . '.php';
-            if (!class_exists($model->model) && !file_exists($modelfile)) {
-                echo 'create ' . $modelfile . "'\n<br/>";
-                $handle = fopen($modelfile, "w");
-                fwrite($handle, $model->modeldata);
-                fclose($handle);
-            } else {
-                echo $modelfile . " class or file exist\n<br/>";
-            }
+                $modelfile = __DIR__ . '/../../models/' . $model->model . '.php';
+                if (!class_exists($model->model) && !file_exists($modelfile)) {
+                    echo 'create ' . $modelfile . "'\n<br/>";
+                    $handle = fopen($modelfile, "w");
+                    fwrite($handle, $model->modeldata);
+                    fclose($handle);
+                } else {
+                    echo $modelfile . " class or file exist\n<br/>";
+                }
 
-            $servfile = __DIR__ . '/../../services/' . $model->model . 'Service.php';
-            if (!class_exists($model->model . 'Service') && !file_exists($servfile)) {
-                echo 'create ' . $servfile . "'\n<br/>";
-                $handle = fopen($servfile, "w");
-                fwrite($handle, $model->service);
-                fclose($handle);
-            } else {
-                echo $servfile . " class or file exist\n<br/>";
-            }
+                $servfile = __DIR__ . '/../../services/' . $model->model . 'Service.php';
+                if (!class_exists($model->model . 'Service') && !file_exists($servfile)) {
+                    echo 'create ' . $servfile . "'\n<br/>";
+                    $handle = fopen($servfile, "w");
+                    fwrite($handle, $model->service);
+                    fclose($handle);
+                } else {
+                    echo $servfile . " class or file exist\n<br/>";
+                }
 
-            $controllerfile = __DIR__ . "/../../controllers/" . $model->model . "Controller.php";
-            if (!class_exists($model->model . 'Controller') && !file_exists($controllerfile)) {
-                echo $model->model . "Controller\n<br/>";
-                echo '<textarea>', $model->controller, '</textarea><br/>';
-                dump($controllerfile);
-                $handle = fopen($controllerfile, 'w') or die('Cannot open file:  ' . $controllerfile);
-                fwrite($handle, $model->controller);
-                fclose($handle);
+                $controllerfile = __DIR__ . "/../../controllers/" . $model->model . "Controller.php";
+                if (!class_exists($model->model . 'Controller') && !file_exists($controllerfile)) {
+                    echo $model->model . "Controller\n<br/>";
+                    echo '<textarea>', $model->controller, '</textarea><br/>';
+                    dump($controllerfile);
+                    $handle = fopen($controllerfile, 'w') or die('Cannot open file:  ' . $controllerfile);
+                    fwrite($handle, $model->controller);
+                    fclose($handle);
 
-            } else {
-                echo $model->model . "Controller.php file is exists\n<br/><hr/>";
-            }
+                } else {
+                    echo $model->model . "Controller.php file is exists\n<br/><hr/>";
+                }
 
         }
         echo '<br/>gen Routers<br/>';
@@ -602,10 +644,38 @@ HTML;
         $routefile = __DIR__ . "/../../route/routebygen.php";
         $handle = fopen($routefile, "w");
         echo '<br/><hr/>';
+        $sorti = 1;
         foreach ($models as $model) {
             echo $model->model . "\n<br/>";
-            $path = '/api/' . $basepath . $model->table;
+            $baseath = rtrim($basepath,"/");
+            $basepaths = explode('/',$basepath);
+            $idx = -1;
+            foreach ($basepaths as $key => $value) {
+                if($value =='$table'){
+                    $idx = $key;
+                    break;
+                } 
+            }
+            if($idx == -1 ){
+                $path = $basepath .'/'. $this->cutword($model->table);
+            } else {
+                $basepaths[$idx] = $this->cutword($model->table);
+                $path = join($basepaths,'/');
+            }
+            
             $routedata .= " \$server->addClass('{$model->model}Controller','$path'); \n";
+            $path = rtrim($path,'/');
+            $path = trim($path);
+            $route = Route::where('controller',$model->model.'Controller')->where('basepath',$path)->first();
+            if($route){}else{
+                $route = new Route();
+                $route->controller = $model->model.'Controller';
+                $route->basepath = $path;
+                $route->sort = $sorti;
+                $route->type = 'php';
+                $route->save();
+            }
+            $sorti++;
         }
         fwrite($handle, $routedata);
         fclose($handle);
@@ -819,7 +889,18 @@ protected function model(){
 
     private function makeroute()
     {
-
+        $routes = Route::orderBy('sort','asc')->get();
+        $routedata = "<?php\n";
+        $routefile = __DIR__ . "/../../route/routebygen.php";
+        foreach ($routes as $route ) {
+            $controller = $route->controller;
+            $path = $route->basepath;
+            $routedata .= " \$server->addClass('$controller','$path'); \n";
+        }
+        $handle = fopen($routefile, "w");
+        fwrite($handle, $routedata);
+        fclose($handle);        
+        dump($routedata);
     }
 
     private function makecols($table, $ovr)
@@ -832,7 +913,9 @@ protected function model(){
         $timestamps = 0;
         $tb = $table;
         $t->table = $tb;
-        $notusedtb = [];
+        $notusedtb = [
+            '_routes',
+        ];
         if (!in_array($tb, $notusedtb)) {
             echo $this->cutword($tb), "<br/>\n";
 
@@ -1002,13 +1085,29 @@ protected function model(){
                     $table->unsignedInteger('parent_id');
                     $table->string('description')->nullable();
                     $table->unsignedInteger('sort')->default(0);
-                    $table->string('crated_by')->default('system');
+                    $table->string('created_by')->default('system');
                     $table->string('updated_by')->default('system');
                     $table->tinyInteger('level')->default(10);
                     $table->timestamps();
                 }
             );
         }
+
+        if (!Capsule::schema()->hasTable('_routes')) {
+            Capsule::schema()->create(
+                '_routes',
+                function ($table) {
+                    $table->increments('id');
+                    $table->string('controller');
+                    $table->string('basepath');
+                    $table->enum('type', array('php', 'vue','sys'))->default('php');
+                    $table->unsignedInteger('sort')->default(0);
+                    $table->boolean('status')->default(1);
+                    $table->timestamps();
+                }
+            );
+        }
+
         Capsule::schema()->enableForeignKeyConstraints();
     }
 
@@ -1253,6 +1352,7 @@ protected function model(){
         Capsule::schema()->dropIfExists('_dbinfos');
         Capsule::schema()->dropIfExists('_columns');
         Capsule::schema()->dropIfExists('_menus');
+        Capsule::schema()->dropIfExists('_routes');
         Capsule::schema()->enableForeignKeyConstraints();
     }
 

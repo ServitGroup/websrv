@@ -146,6 +146,12 @@ class Column extends BaseModel
     protected $primaryKey = 'id';
     public $timestamps = false;
 }
+class Route extends BaseModel
+{
+    protected $table = '_routes';
+    protected $primaryKey = 'id';
+    public $timestamps = true;
+}
 
 class Dbinfo extends BaseModel
 {
