@@ -5,8 +5,9 @@ use \Servit\Restsrv\RestServer\RestController as BaseController;
 
 class GentableController extends BaseController
 {
-    public function __construct(){
-        
+    public function __construct()
+    {
+
     }
 
 /**
@@ -17,186 +18,283 @@ class GentableController extends BaseController
     {
         echo '<center>';
         echo "Code gen system for Service Restful Api<br/>";
-        echo "<b>Database: </b><h2 style='display:inline'>".$this->server->config->dbconfig['database']."</h2><br/>";
-        echo '<hr/>';
-        echo '<a href="/system/generator/migrate">Migrate</a><br/>';
-        echo '<a href="/system/generator/migrate/clean">Migrate:clien</a><br/>';
-        echo '<a href="/system/generator/migrate/fresh">Migrate:fresh</a><br/>';
-        echo '<a href="/system/generator/migate/seeds">Seed Data</a><br/>';
-        echo '<a href="/system/generator/genall/v3/1">Gen All V3 Overwrite</a><br/>';
+        echo "<b>Database: </b><h2 style='display:inline'>" . $this->server->config->dbconfig['database'] . "</h2><br/>";
         echo '<a href="/">Home</a>';
+        echo '<hr/>';
+        echo '<b>Gen Menus Columns Dbinfo Routes </b><br/>';
+        echo '<a href="/system/generator/migrate">Migrate Menu Column Dbinfo</a><br/>';
+        echo '<a href="/system/generator/migrate/clean">Migrate:clien  Menu Column Dbinfo</a><br/>';
+        echo '<a href="/system/generator/migrate/fresh">Migrate:fresh  Menu Column Dbinfo</a><br/>';
+        echo '<hr/>';
+        echo '<b>Gen Role Permission Application System</b><br/>';
+        echo '<a href="/system/generator/migrateadmin">Migrate Role Permission Application System</a><br/>';
+        echo '<a href="/system/generator/migrate/cleanadmin">Migrate:clien  Role Permission Application System </a><br/>';
+        echo '<a href="/system/generator/migrate/freshadmin">Migrate:fresh  Role Permission Application System </a><br/>';
+        echo '<a href="/system/generator/migate/seeds">Seed Data Role Permission Application System</a><br/>';
+        echo '<hr/>';
+        echo '<a href="/system/generator/migrate/cleanall">Migrate:clien  All</a><br/>';
+        echo '<a href="/system/generator/migrate/freshall">Migrate:fresh  All</a><br/>';
+        echo '<a href="/system/generator/migrateall">Migrate All</a><br/>';
+        echo '<hr/>';
+        echo '<a href="/system/generator/genall/v3/1">Gen All V3 Overwrite</a><br/>';
+        echo '<a href="/system/generator/msccmd">Create MSCCMD :Model Service Controller Columns Menu  Dbindos From Table</a><br/>';
+        echo '<a href="/">Home</a><br/>';
         echo '</center>';
 
     }
 
-
-
 /**
-*@noAuth
-* model service controller columns menu  dbindos
-*@url GET /msccmd/
-*/
-public function msccmd(){
-    
-$html = <<<HTML
+ *@noAuth
+ * model service controller columns menu  dbindos
+ *@url GET /msccmd/
+ */
+    public function msccmd()
+    {
+
+        $html = <<<HTML
         <form action="/system/generator/mscmd" method="post">
-        
+
             tablename:<input type="text" name="tbname"   /><br/>
             basepath: <input type="text" name="basepath"  /><br/>
             timestamps: <input type="checkbox" name="timestamps" ><br/>
             pk: <input type="text" name="pk" value="id" /><br/>
-            <input type="submit" value="Submit">        
-            <input type="reset" value="reset">        
+            <input type="submit" value="Submit">
+            <input type="reset" value="reset">
         </form>
 HTML;
-    echo $html;   
-}
+        echo $html;
+    }
 
 /**
-*@noAuth
-*@url POST /mscmd/
-*/
-public function postmscmd(){
+ *@noAuth
+ *@url POST /mscmd/
+ */
+    public function postmscmd()
+    {
 
-try {
-    $model = new stdClass();
-    $tb = $this->server->data->posts->tbname;
-    $basepath = $this->server->data->posts->basepath;
-    $timestamps = $this->server->data->posts->timestamps;
-    $timestamps == 'on' ? $timestamps = true  :  $timestamps = false ;
-    $pk = $this->server->data->posts->pk;
-    
-    $model->table = $tb;
-    $tb = $this->depluralize($tb);
-    $tb = ucfirst($tb);
-    $model->model = $tb;
-    $model->timestamps = $timestamps;
-    $model->pk = $pk;
-    
-    echo 'crete --menucollumn----</br>';
-    $m = $this->columns($model->table,1);
-    dump($m);
-    echo 'crete ---service--</br>';
-    $model->service = $this->makeserviefile($model);
-    $servfile = __DIR__ . '/../../services/' . $model->model . 'Service.php';
-    if (!class_exists($model->model . 'Service') && !file_exists($servfile)) {
-        echo 'create ' . $servfile . "'\n<br/>";
-        $handle = fopen($servfile, "w");
-        fwrite($handle, $model->service);
-        fclose($handle);
-    } else {
-        echo $servfile . " class or file exist\n<br/>";
+        try {
+
+            $tb = $this->server->data->posts->tbname;
+            if (Capsule::schema()->hasTable($tb)) {
+
+                $model = new stdClass();
+                $basepath = $this->server->data->posts->basepath;
+                $timestamps = $this->server->data->posts->timestamps;
+                $timestamps == 'on' ? $timestamps = true : $timestamps = false;
+                $pk = $this->server->data->posts->pk;
+
+                $model->table = $tb;
+                $tb = $this->depluralize($tb);
+                $tb = ucfirst($tb);
+                $model->model = $tb;
+                $model->timestamps = $timestamps;
+                $model->pk = $pk;
+
+                echo 'crete --menucollumn----</b>';
+                $m = $this->columns($model->table, 1);
+                dump($m);
+                echo 'crete ---service--</br>';
+                $model->service = $this->makeserviefile($model);
+                $servfile = __DIR__ . '/../../services/' . $model->model . 'Service.php';
+                if (!class_exists($model->model . 'Service') && !file_exists($servfile)) {
+                    echo 'create ' . $servfile . "'\n<br/>";
+                    $handle = fopen($servfile, "w");
+                    fwrite($handle, $model->service);
+                    fclose($handle);
+                } else {
+                    echo $servfile . " class or file exist\n<br/>";
+                }
+                echo 'crete ---controller----</br>';
+                $this->gencontroller($tb);
+                echo 'crete --dbinfo--------</br>';
+                $dbinf = Dbinfo::where('table_name', $model->table)->first();
+                if ($dbinf) {} else {
+                    $dbinf = new Dbinfo();
+                }
+                $dbinf->table_name = $model->table;
+                $dbinf->title = $model->model;
+                $dbinf->sub_title = $model->model;
+                $dbinf->save();
+
+                echo 'add menu---------<br/>';
+                $menu = Menu::where('table_name', $model->table)->first();
+                if ($menu) {}{
+                    $menu = new Menu();
+                }
+                $menu->menu_position = 'LEFTSIDEBAR';
+                $menu->group = '1';
+                $menu->table_name = $model->table;
+                $menu->label = $model->model;
+                $menu->permalink = $this->cutword($model->table);
+                $menu->component = 'Template';
+                $menu->icon_class = 'settings_brightness';
+                $menu->classname = 'material-icons text-default';
+                $menu->status = '1';
+                $menu->parent_id = '0';
+                $menu->description = '';
+                $menu->sort = '99';
+                $menu->created_by = 'system';
+                $menu->updated_by = 'system';
+                $menu->save();
+                echo '</br>crete ---model----</br>';
+                $this->genmodel($tb);
+                echo "</br>successed<br/><a href='/system/routes'>Back</a>";
+            } else {
+                throw new Exception('No Table: ' . $tb . ' please create', 1);
+
+            }
+
+        } catch (Exception $e) {
+            echo $e->getMessage();
+            $this->index();
+        }
+
     }
-    echo 'crete ---controller----</br>';
-    $this->gencontroller($tb);
-    echo 'crete --dbinfo--------</br>';
-    $dbinf = Dbinfo::where('table_name',$model->table)->first();
-    if($dbinf){}else{ 
-        $dbinf = new Dbinfo();
-    }
-    $dbinf->table_name = $model->table;
-    $dbinf->title = $model->model;
-    $dbinf->sub_title = $model->model;
-    $dbinf->save();
-    
-    echo 'add menu---------<br/>';
-    $menu = Menu::where('table_name',$model->table)->first();
-    if($menu){} {
-        $menu = new Menu();
-    }
-    $menu->menu_position = 'LEFTSIDEBAR';
-    $menu->group = '1';
-    $menu->table_name = $model->table;
-    $menu->label = $model->model;
-    $menu->permalink = $model->table;
-    $menu->component = 'Template';
-    $menu->icon_class = 'settings_brightness';
-    $menu->classname = 'material-icons text-default';
-    $menu->status = '1';
-    $menu->parent_id = '0';
-    $menu->description = '';
-    $menu->sort = '99';
-    $menu->created_by = 'system';
-    $menu->updated_by = 'system';
-    $menu->save();
-    echo '</br>crete ---model----</br>';
-    $this->genmodel($tb);
-    echo "</br>successed<br/><a href='/system/routes'>Back</a>";
-    
-} catch (Exception $e) {
-    echo $e->getMessage();   
-}
-    
-}
 
 /**
  *@noAuth
  *@url GET /migrate/
  */
-public function migrate(){
-    $this->up();
-    echo 'Magration Successed!';
-    $this->index();
-}
-
-
-
-/**
-*@noAuth
-*@url GET /migrate/clean/
-*/
-public function migrateclean(){
-    $this->down();
-    echo 'Successed! clean all database system';
-    $this->index();
-}
-
-
+    public function migrate()
+    {
+        $this->up();
+        echo 'Magration Successed!';
+        $this->index();
+    }
 
 /**
-*@noAuth
-*@url GET /migrate/fresh/
-*/
-public function migaterefresh(){
-    $this->down();
-    $this->up();
-    echo 'Successed! You Dbs Now Fresh';
-    $this->index();
-
-}
-
-
+ *@noAuth
+ *@url GET /migrateadmin/
+ */
+    public function migrateadmin()
+    {
+        $this->upadmin();
+        echo 'Magration Successed!';
+        $this->index();
+    }
 
 /**
-*@noAuth
-*@url GET /migate/seeds/
-*/
-public function migateseed(){
-    $this->seeds();
-    echo 'Data Seeds Successed!';
-    $this->index();
-}
+ *@noAuth
+ *@url GET /migrateall/
+ */
+    public function migrateall()
+    {
+        $this->up();
+        $this->upadmin();
+        echo 'Magration Successed!';
+        $this->index();
+    }
 
+/**
+ *@noAuth
+ *@url GET /migrate/clean/
+ */
+    public function migrateclean()
+    {
+        $this->down();
+        echo 'Successed! clean all database system';
+        $this->index();
+    }
+
+/**
+ *@noAuth
+ *@url GET /migrate/cleanadmin/
+ */
+    public function migratecleanadmin()
+    {
+        $this->downadmin();
+        echo 'Successed! clean all database system';
+        $this->index();
+    }
+
+/**
+ *@noAuth
+ *@url GET /migrate/cleanall/
+ */
+    public function migratecleanall()
+    {
+        $this->down();
+        $this->downadmin();
+        echo 'Successed! clean all database system';
+        $this->index();
+    }
+
+/**
+ *@noAuth
+ *@url GET /migrate/fresh/
+ */
+    public function migaterefresh()
+    {
+        $this->down();
+        $this->up();
+        echo 'Successed! You Dbs Now Fresh';
+        $this->index();
+
+    }
+
+/**
+ *@noAuth
+ *@url GET /migrate/freshadmin/
+ */
+    public function migaterefreshadmin()
+    {
+        $this->downadmin();
+        $this->upadmin();
+        echo 'Successed! You Dbs Now Fresh';
+        $this->index();
+
+    }
+
+/**
+ *@noAuth
+ *@url GET /migrate/freshall/
+ */
+    public function migaterefreshall()
+    {
+        $this->down();
+        $this->downadmin();
+        $this->up();
+        $this->upadmin();
+        echo 'Successed! You Dbs Now Fresh';
+        $this->index();
+    }
+
+/**
+ *@noAuth
+ *@url GET /migate/seeds/
+ */
+    public function migateseed()
+    {
+        $this->seeds();
+        echo 'Data Seeds Successed!';
+        $this->index();
+    }
 
 /**
  *@noAuth
  *@url GET /columns/$table
  *@url GET /columns/$table/$ovr
  */
-    public function columns($table = null,$ovr=0)
+    public function columns($table = null, $ovr = 0)
     {
-        if($table == '$table') exit();
-        if($ovr=='$ovr') $ovr = 0;
+        if ($table == '$table') {
+            exit();
+        }
+
+        if ($ovr == '$ovr') {
+            $ovr = 0;
+        }
+
         if ($table) {
-            if($ovr){
+            if ($ovr) {
                 Column::where('table_id', $table)->delete();
             } else {
                 $cols = Column::where('table_id', $table)->get();
-                if($cols){
-                   throw new Exception('Table Columns is exists', 1);
+                if ($cols) {
+                    throw new Exception('Table Columns is exists', 1);
                 }
             }
-          return  $this->makecols($table,$ovr);
+            return $this->makecols($table, $ovr);
         }
 
     }
@@ -207,7 +305,10 @@ public function migateseed(){
  */
     public function gencontroller($table = null)
     {
-        if($table == '$table') exit();
+        if ($table == '$table') {
+            exit();
+        }
+
         if ($table) {
             dump($table);
             $model = new \stdClass();
@@ -216,7 +317,7 @@ public function migateseed(){
             $model->model = $modelname;
             $my_file = __DIR__ . '/../../controllers/' . $modelname . 'Controller.php';
             dump($my_file);
-            if (!class_exists($modelname.'Controller') || !file_exists($my_file)) {
+            if (!class_exists($modelname . 'Controller') || !file_exists($my_file)) {
                 $controller = $this->makecontroller($model);
                 $handle = fopen($my_file, 'w') or die('Cannot open file:  ' . $my_file);
                 fwrite($handle, $controller);
@@ -234,9 +335,9 @@ public function migateseed(){
  */
     public function genmodel($table = null)
     {
-        if($table== '$table' ) {
+        if ($table == '$table') {
             exit();
-        } 
+        }
         if ($table) {
             $modelname = ucfirst($this->depluralize($table));
             dump($table, $modelname);
@@ -285,24 +386,27 @@ public function migateseed(){
  *@url GET /genall/ovr/$ovr
  *@url GET /genall/$basepath/$ovr
  */
-    public function genall($basepath=null,$ovr=0)
+    public function genall($basepath = null, $ovr = 0)
     {
-        if($basepath == '$basepath') {
+        if ($basepath == '$basepath') {
             $basepath = 'v1/';
         } else {
-            if($basepath) {
-                $basepath = $basepath.'/';
+            if ($basepath) {
+                $basepath = $basepath . '/';
             } else {
                 $basepath = 'v1/';
             }
         }
-        if($ovr=='$orv') $ovr=0;
+        if ($ovr == '$orv') {
+            $ovr = 0;
+        }
+
         // dump($basepath,$ovr);
         $this->index();
 
         echo '<br/>Gen Collumns<hr/>';
-        if($ovr){
-            Capsule::select('truncate columns;');
+        if ($ovr) {
+            Capsule::select('truncate _columns;');
         }
         $models = [];
         $tables = Capsule::select('show tables');
@@ -314,23 +418,23 @@ public function migateseed(){
             } else {
                 $cols = Column::where('table_id', $tb)->get();
                 // dump($tb,$cols->count());
-                if ($cols->count() > 0 ) {
-                    echo  "Table Columns is exists\n<br/>";
+                if ($cols->count() > 0) {
+                    echo "Table Columns is exists\n<br/>";
                 } else {
                     $ovr = 1;
                 }
             }
-            $t = $this->makecols($tb,$ovr);
+            $t = $this->makecols($tb, $ovr);
             $t->modeldata = $this->makemodlefile($t);
             $t->service = $this->makeserviefile($t);
             $t->controller = $this->makecontroller($t);
             $models[] = $t;
-            }
+        }
         echo '<hr/>';
         $sort = 10;
 
-        $menu = Menu::where('label','Dashboard')->first();
-        if($menu){  } else {
+        $menu = Menu::where('label', 'Dashboard')->first();
+        if ($menu) {} else {
             $menu = new Menu();
             $menu->menu_position = 'LEFTSIDEBAR';
             $menu->group = '1';
@@ -350,7 +454,7 @@ public function migateseed(){
         }
 
         $menu = Menu::where('label', 'System')->first();
-        if($menu){} else {
+        if ($menu) {} else {
             $menu = new Menu();
             $menu->menu_position = 'LEFTSIDEBAR';
             $menu->group = '2';
@@ -368,10 +472,10 @@ public function migateseed(){
             $menu->updated_by = 'system';
             $menu->save();
         }
-           $sysgroup = $menu->id;   
-        
-        $menu = Menu::where('label','Admin')->first();
-        if($menu){} else {
+        $sysgroup = $menu->id;
+
+        $menu = Menu::where('label', 'Admin')->first();
+        if ($menu) {} else {
             $menu = new Menu();
             $menu->menu_position = 'LEFTSIDEBAR';
             $menu->group = '2';
@@ -392,31 +496,31 @@ public function migateseed(){
         $admingroup = $menu->id;
 
         $systemtables = [
-            'columns',
-            'menus',
-            'dbinfos',
+            '_columns',
+            '_menus',
+            '_dbinfos',
         ];
 
         $admintables = [
-            'apps',
-            'users',
-            'password_resets',
-            'profiles',
-            'companies',
-            'roles',
-            'permissions',
-            'model_has_permissions',
-            'model_has_roles',
-            'role_has_permissions',
-            'modules',
-            'packages',
-            'syspackages',
+            '_apps',
+            '_users',
+            '_password_resets',
+            '_profiles',
+            '_companies',
+            '_roles',
+            '_permissions',
+            '_model_has_permissions',
+            '_model_has_roles',
+            '_role_has_permissions',
+            '_modules',
+            '_packages',
+            '_syspackages',
         ];
 
         foreach ($models as $model) {
-            // dump($model);
-            $dbinfo = Dbinfo::where('table_name',$model->table)->first();
-            if(!$dbinfo){
+            // dump($model->table);
+            $dbinfo = Dbinfo::where('table_name', $model->table)->first();
+            if (!$dbinfo) {
                 $dbinf = new Dbinfo();
                 $dbinf->table_name = $model->table;
                 $dbinf->title = $model->model;
@@ -424,42 +528,39 @@ public function migateseed(){
                 $dbinf->save();
             }
 
-
-
-            
-            $menu = Menu::where('table_name',$model->table)->first();
+            $menu = Menu::where('table_name', $model->table)->first();
             // dump($menu);
-            
-            if(!$menu){  $menu = new Menu(); }
-                $menu->menu_position = 'LEFTSIDEBAR';
-                $menu->table_name = $model->table;
-                $menu->label = $model->model;
-                $menu->permalink = $model->table;
-                if(in_array($model->table,$systemtables)){
-                    $menu->component =  ucfirst($model->table);
-                }else{
-                    $menu->component = 'Crudtemplate';
-                }
-                $menu->icon_class = 'dashboard';
-                $menu->classname = 'material-icons text-default';
-                $menu->status = '1';
-                if(in_array($model->table, $admintables)){
-                    $menu->group = '2';
-                    $menu->parent_id = $admingroup;
-                } elseif(in_array($model->table,$systemtables)){
-                    $menu->group = '2';
-                    $menu->parent_id = $sysgroup;
-                } else {
-                    $menu->group = '1';
-                    $menu->parent_id =0;
-                }
-                
-                $menu->description = '';
-                $menu->sort = $sort;
-                $menu->crated_by = 'system';
-                $menu->updated_by = 'system';
-                $menu->save();
-                $sort++;
+
+            if (!$menu) {$menu = new Menu();}
+            $menu->menu_position = 'LEFTSIDEBAR';
+            $menu->table_name = $model->table;
+            $menu->label = $model->model;
+            $menu->permalink = $this->cutword($model->table);
+            if (in_array($model->table, $systemtables)) {
+                $menu->component = ucfirst($this->cutword($model->table));
+            } else {
+                $menu->component = 'Crudtemplate';
+            }
+            $menu->icon_class = 'dashboard';
+            $menu->classname = 'material-icons text-default';
+            $menu->status = '1';
+            if (in_array($model->table, $admintables)) {
+                $menu->group = '2';
+                $menu->parent_id = $admingroup;
+            } elseif (in_array($model->table, $systemtables)) {
+                $menu->group = '2';
+                $menu->parent_id = $sysgroup;
+            } else {
+                $menu->group = '1';
+                $menu->parent_id = 0;
+            }
+
+            $menu->description = '';
+            $menu->sort = $sort;
+            $menu->crated_by = 'system';
+            $menu->updated_by = 'system';
+            $menu->save();
+            $sort++;
 
             $modelfile = __DIR__ . '/../../models/' . $model->model . '.php';
             if (!class_exists($model->model) && !file_exists($modelfile)) {
@@ -470,9 +571,9 @@ public function migateseed(){
             } else {
                 echo $modelfile . " class or file exist\n<br/>";
             }
-            
-            $servfile = __DIR__.'/../../services/'.$model->model.'Service.php';
-            if (!class_exists($model->model.'Service') && !file_exists($servfile)) {
+
+            $servfile = __DIR__ . '/../../services/' . $model->model . 'Service.php';
+            if (!class_exists($model->model . 'Service') && !file_exists($servfile)) {
                 echo 'create ' . $servfile . "'\n<br/>";
                 $handle = fopen($servfile, "w");
                 fwrite($handle, $model->service);
@@ -482,7 +583,7 @@ public function migateseed(){
             }
 
             $controllerfile = __DIR__ . "/../../controllers/" . $model->model . "Controller.php";
-            if (!class_exists($model->model.'Controller') &&!file_exists($controllerfile)) {
+            if (!class_exists($model->model . 'Controller') && !file_exists($controllerfile)) {
                 echo $model->model . "Controller\n<br/>";
                 echo '<textarea>', $model->controller, '</textarea><br/>';
                 dump($controllerfile);
@@ -503,7 +604,7 @@ public function migateseed(){
         echo '<br/><hr/>';
         foreach ($models as $model) {
             echo $model->model . "\n<br/>";
-            $path = '/api/'.$basepath.$model->table;
+            $path = '/api/' . $basepath . $model->table;
             $routedata .= " \$server->addClass('{$model->model}Controller','$path'); \n";
         }
         fwrite($handle, $routedata);
@@ -512,54 +613,64 @@ public function migateseed(){
         echo '<hr/>';
     }
 
-    private function depluralize($word)
+    private function cutword($str)
     {
-            // Here is the list of rules. To add a scenario,
-                    // Add the plural ending as the key and the singular
-                    // ending as the value for that key. This could be
-                    // turned into a preg_replace and probably will be
-                    // eventually, but for now, this is what it is.
-                    //
-                    // Note: The first rule has a value of false since
-                    // we don't want to mess with words that end with
-                    // double 's'. We normally wouldn't have to create
-                    // rules for words we don't want to mess with, but
-                    // the last rule (s) would catch double (ss) words
-                    // if we didn't stop before it got to that rule.
-                    $rules = array(
-                        'ss' => false,
-                        'os' => 'o',
-                        'ies' => 'y',
-                        'xes' => 'x',
-                        'oes' => 'o',
-                        'ies' => 'y',
-                        'ves' => 'f',
-                        's' => '');
-            // Loop through all the rules and do the replacement.
-                    foreach (array_keys($rules) as $key) {
-            // If the end of the word doesn't match the key,
-                        // it's not a candidate for replacement. Move on
-                        // to the next plural ending.
-                        if (substr($word, (strlen($key) * -1)) != $key) {
-                            continue;
-                        }
-
-            // If the value of the key is false, stop looping
-                        // and return the original version of the word.
-                        if ($key === false) {
-                            return $word;
-                        }
-
-            // We've made it this far, so we can do the
-                        // replacement.
-                        return substr($word, 0, strlen($word) - strlen($key)) . $rules[$key];
-                    }
-                    return $word;
+        if ($str[0] == '_') {
+            $str = ltrim($str, '_');
+        }
+        return $str;
     }
 
+    private function depluralize($word)
+    {
 
-private function makemodlefile($model) {
-$modeldata = "<?php
+        // Here is the list of rules. To add a scenario,
+        // Add the plural ending as the key and the singular
+        // ending as the value for that key. This could be
+        // turned into a preg_replace and probably will be
+        // eventually, but for now, this is what it is.
+        //
+        // Note: The first rule has a value of false since
+        // we don't want to mess with words that end with
+        // double 's'. We normally wouldn't have to create
+        // rules for words we don't want to mess with, but
+        // the last rule (s) would catch double (ss) words
+        // if we didn't stop before it got to that rule.
+        $rules = array(
+            'ss' => false,
+            'os' => 'o',
+            'ies' => 'y',
+            'xes' => 'x',
+            'oes' => 'o',
+            'ies' => 'y',
+            'ves' => 'f',
+            's' => '');
+        // Loop through all the rules and do the replacement.
+        foreach (array_keys($rules) as $key) {
+            // If the end of the word doesn't match the key,
+            // it's not a candidate for replacement. Move on
+            // to the next plural ending.
+            if (substr($word, (strlen($key) * -1)) != $key) {
+                continue;
+            }
+
+            // If the value of the key is false, stop looping
+            // and return the original version of the word.
+            if ($key === false) {
+                return $this->cutword($word);
+            }
+
+            // We've made it this far, so we can do the
+            // replacement.
+            $words = substr($word, 0, strlen($word) - strlen($key)) . $rules[$key];
+            return $this->cutword($words);
+        }
+        return $this->cutword($word);
+    }
+
+    private function makemodlefile($model)
+    {
+        $modeldata = "<?php
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Servit\Restsrv\Model\BaseModel;\n\n
@@ -569,11 +680,12 @@ class " . $model->model . " extends BaseModel
 \tprotected \$primaryKey = '$model->pk';
 \tpublic \$timestamps = $model->timestamps;
 } \n\n";
-return $modeldata;
-}
+        return $modeldata;
+    }
 
-private function makeserviefile($model) {
-$servicedata = "<?php
+    private function makeserviefile($model)
+    {
+        $servicedata = "<?php
 use \Servit\Restsrv\RestServer\RestException as TestException;
 use \Servit\Restsrv\Traits\DbTrait as DbTrait;
 use \Servit\Restsrv\Service\BaseService as BaseService;
@@ -583,14 +695,14 @@ use Illuminate\Database\Capsule\Manager as Capsule;
 class " . $model->model . "Service extends BaseService
 {\n\n\n
 }\n";
-return $servicedata;
+        return $servicedata;
 
-}
+    }
 
-private function makecontroller($model)
-{
+    private function makecontroller($model)
+    {
 
-$controller = "<?php
+        $controller = "<?php
 use \Servit\Restsrv\RestServer\RestException;
 use \Servit\Restsrv\RestServer\RestController as BaseController;
 use Illuminate\Database\Capsule\Manager as Capsule;
@@ -701,18 +813,19 @@ protected function model(){
 }
 
 }";
-return $controller;
-
-}
-
-    private function makeroute(){
+        return $controller;
 
     }
 
-    private function makecols($table,$ovr) 
+    private function makeroute()
     {
 
-        $coldisable = ['id','created_at','updated_at','created_by','updated_by'];
+    }
+
+    private function makecols($table, $ovr)
+    {
+
+        $coldisable = ['id', 'created_at', 'updated_at', 'created_by', 'updated_by'];
 
         $t = new \stdClass();
         $pk = '';
@@ -721,7 +834,7 @@ return $controller;
         $t->table = $tb;
         $notusedtb = [];
         if (!in_array($tb, $notusedtb)) {
-            echo $tb, "<br/>\n";
+            echo $this->cutword($tb), "<br/>\n";
 
             $cols = Capsule::select("SELECT IS_NULLABLE,COLUMN_DEFAULT,TABLE_NAME,COLUMN_NAME,DATA_TYPE,CHARACTER_MAXIMUM_LENGTH,NUMERIC_PRECISION,NUMERIC_SCALE,COLUMN_TYPE,COLUMN_KEY,COLUMN_COMMENT FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME= ? AND Table_SCHEMA= ? ", [$tb, DB_NAME]);
             $i = 0;
@@ -748,15 +861,15 @@ return $controller;
                 if (in_array($col->DATA_TYPE, ['date', 'time', 'datetime', 'timestamp', 'year'])) {
                     $c->inputtype = 'datetime-local';
                 } else if (in_array($col->DATA_TYPE, ['tinyint', 'boolean', 'smallint', 'mediumint', 'int', 'integer', 'bigint', 'decimal', 'dec', 'numeric', 'fixed', 'float', 'double', 'bit'])) {
-                        // + "COLUMN_KEY"  : "int(10) unsigned"
-                    if($col->DATA_TYPE == 'tinyint' && $col->NUMERIC_PRECISION <=3 ) {
+                    // + "COLUMN_KEY"  : "int(10) unsigned"
+                    if ($col->DATA_TYPE == 'tinyint' && $col->NUMERIC_PRECISION <= 3) {
                         $c->inputtype = 'checkbox';
                     } else {
                         $c->inputtype = 'number';
                     }
                     $c->numscale = $col->NUMERIC_SCALE;
                     $c->datalenth = $col->NUMERIC_PRECISION;
-                        // $c->unsigned = 0;
+                    // $c->unsigned = 0;
                 } elseif (in_array($col->DATA_TYPE, ['blob', 'mediumblob', 'longblob', 'tinytext', 'text', 'mediumtext', 'longtext', 'enum', 'set'])) {
                     $c->inputtype = 'textarea';
                 } else {
@@ -772,23 +885,23 @@ return $controller;
                     $c->datalenth = $col->CHARACTER_MAXIMUM_LENGTH;
                 }
                 $c->datatype = $col->DATA_TYPE;
-                if(in_array($col->COLUMN_NAME,$coldisable)){
+                if (in_array($col->COLUMN_NAME, $coldisable)) {
                     $c->visible = 0;
                 } else {
                     $c->visible = 1;
                 }
-                    // $c->classname = '';
-                    // $c->width = '';
-                    // $c->height = '';
+                // $c->classname = '';
+                // $c->width = '';
+                // $c->height = '';
                 $c->searchable = 1;
                 $c->orderable = 1;
-                    // $c->search = '';
+                // $c->search = '';
                 $c->sort = $i;
                 $c->json = json_encode($col, JSON_UNESCAPED_UNICODE);
-                    // $c->datadic = '';
+                // $c->datadic = '';
                 $c->description = $col->COLUMN_COMMENT;
                 // dump($ovr);
-                if($ovr){
+                if ($ovr) {
                     $c->save();
                 }
                 $i++;
@@ -804,41 +917,14 @@ return $controller;
                 $t->timestamps = 'false';
             }
 
-
         }
 
         return $t;
     }
 
-    private function up() {
+    private function up()
+    {
         Capsule::schema()->disableForeignKeyConstraints();
-        if (!Capsule::schema()->hasTable('_users')) {
-            Capsule::schema()->create(
-                '_users',
-                function ($table) {
-                    $table->increments('id');
-                    $table->string('email');
-                    $table->string('password');
-                    $table->string('ref_token')->nullable();
-                    $table->unsignedInteger('profile_id');
-                    $table->integer('level')->unsigned()->default(10);
-                    $table->boolean('status')->default(1);
-                    $table->timestamps();
-                }
-            );
-        }
-
-        if (!Capsule::schema()->hasTable('_password_resets')) {
-            Capsule::schema()->create(
-                '_password_resets',
-                function ($table) {
-                    $table->string('email');
-                    $table->string('token');
-                    $table->timestamps();
-                }
-            );
-        }
-
         if (!Capsule::schema()->hasTable('_dbinfos')) {
             Capsule::schema()->create(
                 '_dbinfos',
@@ -862,8 +948,7 @@ return $controller;
         }
 
         if (!Capsule::schema()->hasTable('_columns')) {
-            Capsule::schema()->create ('_columns', function($table)
-            {
+            Capsule::schema()->create('_columns', function ($table) {
                 $table->increments('id');
                 $table->string('table_id');
                 $table->string('key');
@@ -924,6 +1009,38 @@ return $controller;
                 }
             );
         }
+        Capsule::schema()->enableForeignKeyConstraints();
+    }
+
+    private function upadmin()
+    {
+        Capsule::schema()->disableForeignKeyConstraints();
+        if (!Capsule::schema()->hasTable('_users')) {
+            Capsule::schema()->create(
+                '_users',
+                function ($table) {
+                    $table->increments('id');
+                    $table->string('email');
+                    $table->string('password');
+                    $table->string('ref_token')->nullable();
+                    $table->unsignedInteger('profile_id');
+                    $table->integer('level')->unsigned()->default(10);
+                    $table->boolean('status')->default(1);
+                    $table->timestamps();
+                }
+            );
+        }
+
+        if (!Capsule::schema()->hasTable('_password_resets')) {
+            Capsule::schema()->create(
+                '_password_resets',
+                function ($table) {
+                    $table->string('email');
+                    $table->string('token');
+                    $table->timestamps();
+                }
+            );
+        }
 
         if (!Capsule::schema()->hasTable('_permissions')) {
             Capsule::schema()->create('_permissions', function ($table) {
@@ -931,7 +1048,7 @@ return $controller;
                 $table->string('name');
                 $table->string('guard_name')->defaule('web');
                 $table->string('description')->nullable();
-                $table->integer('level')->unsigned()->default(10);                
+                $table->integer('level')->unsigned()->default(10);
                 $table->timestamps();
             });
         }
@@ -941,7 +1058,7 @@ return $controller;
                 $table->increments('id');
                 $table->string('name');
                 $table->string('guard_name')->default('web');
-                $table->integer('level')->unsigned()->default(10);                
+                $table->integer('level')->unsigned()->default(10);
                 $table->timestamps();
             });
         }
@@ -959,7 +1076,7 @@ return $controller;
                 $table->primary(['permission_id', 'model_id', 'model_type']);
             });
         }
-        
+
         if (!Capsule::schema()->hasTable('_model_has_roles')) {
             Capsule::schema()->create('_model_has_roles', function ($table) {
                 $table->integer('role_id')->unsigned();
@@ -973,9 +1090,9 @@ return $controller;
                 $table->primary(['role_id', 'model_id', 'model_type']);
             });
         }
-        
+
         if (!Capsule::schema()->hasTable('_role_has_permissions')) {
-            Capsule::schema()->create('_role_has_permissions', function ($table)  {
+            Capsule::schema()->create('_role_has_permissions', function ($table) {
                 $table->integer('permission_id')->unsigned();
                 $table->integer('role_id')->unsigned();
 
@@ -1011,14 +1128,14 @@ return $controller;
                     $table->string('showpublic');
                     $table->timestamp('deleted_at')->nullable();
                     $table->boolean('status')->default(1);
-                    $table->integer('level')->unsigned()->default(10);                    
+                    $table->integer('level')->unsigned()->default(10);
                     $table->string('created_by')->default('system');
-                    $table->string('updated_by')->default('system');                                        
+                    $table->string('updated_by')->default('system');
                     $table->timestamps();
                 }
             );
         }
-        
+
         if (!Capsule::schema()->hasTable('_companies')) {
             Capsule::schema()->create(
                 '_companies',
@@ -1031,9 +1148,9 @@ return $controller;
                     $table->boolean('status')->default(1);
                     $table->integer('sort');
                     $table->timestamp('deleted_at');
-                    $table->integer('level')->unsigned()->default(10);                    
+                    $table->integer('level')->unsigned()->default(10);
                     $table->string('created_by')->default('system');
-                    $table->string('updated_by')->default('system');                                        
+                    $table->string('updated_by')->default('system');
                     $table->timestamps();
                 }
             );
@@ -1051,15 +1168,15 @@ return $controller;
                     $table->string('email')->nullable();
                     $table->string('address1')->nullable();
                     $table->string('address2')->nullable();
-                    $table->string('district',100)->nullable();
-                    $table->string('provice',100)->nullable();
-                    $table->string('country',100)->nullable();
-                    $table->string('zipcode',20)->nullable();
-                    $table->string('tel',50)->nullable();
+                    $table->string('district', 100)->nullable();
+                    $table->string('provice', 100)->nullable();
+                    $table->string('country', 100)->nullable();
+                    $table->string('zipcode', 20)->nullable();
+                    $table->string('tel', 50)->nullable();
                     $table->timestamp('deleted_at')->nullable();
                     $table->string('created_by')->default('system');
                     $table->string('updated_by')->default('system');
-                    $table->integer('level')->unsigned()->default(10);                    
+                    $table->integer('level')->unsigned()->default(10);
                     $table->timestamps();
                 }
             );
@@ -1077,18 +1194,18 @@ return $controller;
                     $table->boolean('status')->default(1);
                     $table->integer('level')->default(10);
                     $table->string('created_by')->default('system');
-                    $table->string('updated_by')->default('system');                    
+                    $table->string('updated_by')->default('system');
                     $table->timestamps();
                 }
             );
         }
-        
+
         if (!Capsule::schema()->hasTable('_syspackages')) {
             Capsule::schema()->create(
                 '_syspackages',
                 function ($table) {
                     $table->increments('id');
-                    $table->integer('level')->unsigned()->default(10);                    
+                    $table->integer('level')->unsigned()->default(10);
                     $table->string('name');
                     $table->string('desc')->nullable();
                     $table->string('comp_db')->nullable();
@@ -1101,12 +1218,12 @@ return $controller;
                     $table->string('promotionid')->nullable();
                     $table->string('showpublic')->nullable();
                     $table->string('created_by')->default('system');
-                    $table->string('updated_by')->default('system');                    
+                    $table->string('updated_by')->default('system');
                     $table->timestamps();
                 }
             );
         }
-        
+
         if (!Capsule::schema()->hasTable('_apps')) {
             Capsule::schema()->create(
                 '_apps',
@@ -1122,7 +1239,7 @@ return $controller;
                     $table->text('v6')->nullable();
                     $table->boolean('status')->default(1);
                     $table->string('created_by')->default('system');
-                    $table->string('updated_by')->default('system');                    
+                    $table->string('updated_by')->default('system');
                     $table->timestamps();
                 }
             );
@@ -1130,21 +1247,27 @@ return $controller;
         Capsule::schema()->enableForeignKeyConstraints();
     }
 
-    private function down() {
+    private function down()
+    {
         Capsule::schema()->disableForeignKeyConstraints();
-        Capsule::schema()->dropIfExists('_users');
-        Capsule::schema()->dropIfExists('_password_resets');
-        
         Capsule::schema()->dropIfExists('_dbinfos');
         Capsule::schema()->dropIfExists('_columns');
         Capsule::schema()->dropIfExists('_menus');
-        
+        Capsule::schema()->enableForeignKeyConstraints();
+    }
+
+    private function downadmin()
+    {
+        Capsule::schema()->disableForeignKeyConstraints();
+        Capsule::schema()->dropIfExists('_users');
+        Capsule::schema()->dropIfExists('_password_resets');
+
         Capsule::schema()->dropIfExists('_permissions');
         Capsule::schema()->dropIfExists('_roles');
         Capsule::schema()->dropIfExists('_model_has_permissions');
         Capsule::schema()->dropIfExists('_model_has_roles');
         Capsule::schema()->dropIfExists('_role_has_permissions');
-        
+
         Capsule::schema()->dropIfExists('_packages');
         Capsule::schema()->dropIfExists('_companies');
         Capsule::schema()->dropIfExists('_profiles');
@@ -1153,13 +1276,14 @@ return $controller;
         Capsule::schema()->dropIfExists('_apps');
         Capsule::schema()->enableForeignKeyConstraints();
     }
-    
-    private function seeds() {
+
+    private function seeds()
+    {
         echo '<b>Start ----Seeding Data----</b>';
         //----------------apps--------------------
         echo '<hr/>Apps---Data<br/>';
-        $app = App::where('popkey','APP_NAME')->first();
-        if($app){}else{
+        $app = App::where('popkey', 'APP_NAME')->first();
+        if ($app) {} else {
             $app = new App();
         }
         $app->popkey = 'APP_NAME';
@@ -1167,18 +1291,17 @@ return $controller;
         $app->save();
 
         $app = App::where('popkey', 'Company')->first();
-        if($app){}else{
+        if ($app) {} else {
             $app = new App();
         }
         $app->popkey = 'Company';
         $app->pop_value = 'MONGKOL';
         $app->save();
 
-
         echo '<hr/>Add User Admin@admin.com/password---Data<br/>';
         $admin = new User();
         $admin->email = 'admin@admin.com';
-        $admin->password =  'password';
+        $admin->password = 'password';
         $admin->level = 99;
         $admin->save();
         //----------------permission--------------------
@@ -1187,58 +1310,58 @@ return $controller;
         $permission_created->name = 'created articles';
         $permission_created->guard_name = 'web';
         $permission_created->save();
-        $permission_edit    = new Permission();
+        $permission_edit = new Permission();
         $permission_edit->name = 'edit articles';
         $permission_edit->guard_name = 'web';
         $permission_edit->save();
-        $permission_delete  = new Permission();
+        $permission_delete = new Permission();
         $permission_delete->name = 'delete articles';
         $permission_delete->guard_name = 'web';
         $permission_delete->save();
-        $permission_read    = new Permission();
+        $permission_read = new Permission();
         $permission_read->name = 'read articles';
         $permission_read->guard_name = 'web';
         $permission_read->save();
-        $permission_export  = new Permission();
+        $permission_export = new Permission();
         $permission_export->name = 'export articles';
         $permission_export->guard_name = 'web';
         $permission_export->save();
-        $permission_print   = new Permission();
+        $permission_print = new Permission();
         $permission_print->name = 'print articles';
         $permission_print->guard_name = 'web';
         $permission_print->save();
-        $permission_auth    = new Permission();
+        $permission_auth = new Permission();
         $permission_auth->name = 'auth articles';
         $permission_auth->guard_name = 'web';
         $permission_auth->save();
         //----------------roles--------------------
         echo '<hr/>Role---Data<br/>';
         echo 'add employee role<br/>';
-        $role_emp    = new Role();
-        $role_emp->name ='employee';
+        $role_emp = new Role();
+        $role_emp->name = 'employee';
         $role_emp->save();
-        
+
         echo 'add leeder role<br/>';
         $role_leeder = new Role();
-        $role_leeder->name ='leeder';
+        $role_leeder->name = 'leeder';
         $role_leeder->save();
-        
+
         echo 'add owner role<br/>';
-        $role_owner  = new Role();
-        $role_owner->name ='owner';
+        $role_owner = new Role();
+        $role_owner->name = 'owner';
         $role_owner->save();
-        
+
         echo 'add admin role<br/>';
-        $role_admin  = new Role();
-        $role_admin->name ='admin';
+        $role_admin = new Role();
+        $role_admin->name = 'admin';
         $role_admin->save();
         $permissions = Permission::get();
 
-        $role_owner->syncPermissions($permissions);//----------------User--------------------
-        $role_admin->syncPermissions($permissions);//----------------User--------------------
+        $role_owner->syncPermissions($permissions); //----------------User--------------------
+        $role_admin->syncPermissions($permissions); //----------------User--------------------
         $role_emp->givePermissionTo($permission_read);
         $role_leeder->givePermissionTo($permission_read);
-        
+
         $role_emp->givePermissionTo($permission_created);
         $role_leeder->givePermissionTo($permission_created);
 
@@ -1246,16 +1369,14 @@ return $controller;
         $role_leeder->givePermissionTo($permission_edit);
         $role_emp->givePermissionTo($permission_print);
         $role_leeder->givePermissionTo($permission_print);
-        
+
         $role_leeder->givePermissionTo($permission_export);
         $role_leeder->givePermissionTo($permission_auth);
-
 
         echo '<hr/>User---Data<br/>';
         $admin->assignRole('admin');
         echo '<hr/>';
-        
-    }
 
+    }
 
 }

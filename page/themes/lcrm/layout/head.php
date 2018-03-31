@@ -1,6 +1,11 @@
 <?php 
-  $app = App::where('popkey', 'APP_NAME')->first();
-  $appname = $app ? $app->pop_value : 'SERVIT';
+  $appname = 'SERVIT';
+  try {
+    $app = App::where('popkey', 'APP_NAME')->first();
+    $appname = $app ? $app->pop_value : 'SERVIT';
+  } catch (Exception $e) {
+    
+  }
 ?>
 <html style="min-height: 1110px;">
 <head>
@@ -35,10 +40,10 @@
         [v-cloak] > * { display:none; }
         footer {
           position: fixed;
-          height: 50px;
+          /* height: 50px; */
           bottom: 0;
-          width: 100%;
-          padding:0 10 0 10;
+          /* width: 100%; */
+          /* padding:0 10 0 10; */
         }
         .is-danger {
             border-color: red;

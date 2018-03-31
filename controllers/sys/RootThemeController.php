@@ -27,6 +27,7 @@ class RootThemeController extends ThemeController
 
     public function handle404()
     {
+        try {
         $login = $_SESSION['login'];
         if($login){
             $phproute = Menu::where('permalink',$this->server->url)->first();
@@ -54,6 +55,10 @@ class RootThemeController extends ThemeController
         //     echo '<h2><b>Error:</b>404</h2>';
         // }
         // $this->get_footer();
+        } catch (Exception $e) {
+            //echo $e->getMessage();
+             Header('Location: /system/info');
+        }
     }
     
     public function handle401()
