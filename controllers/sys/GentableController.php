@@ -646,36 +646,40 @@ public function genapi(){
         echo '<br/><hr/>';
         $sorti = 1;
         foreach ($models as $model) {
-            echo $model->model . "\n<br/>";
-            $baseath = rtrim($basepath,"/");
-            $basepaths = explode('/',$basepath);
-            $idx = -1;
-            foreach ($basepaths as $key => $value) {
-                if($value =='$table'){
-                    $idx = $key;
-                    break;
-                } 
-            }
-            if($idx == -1 ){
-                $path = $basepath .'/'. $this->cutword($model->table);
+            if( in_array($model->table, $admintables) || in_array($model->table, $systemtables)){
+                echo 'system and admin table :'.$model->table.'<br/>';
             } else {
-                $basepaths[$idx] = $this->cutword($model->table);
-                $path = join($basepaths,'/');
-            }
-            
-            $routedata .= " \$server->addClass('{$model->model}Controller','$path'); \n";
-            $path = rtrim($path,'/');
-            $path = trim($path);
-            $route = Route::where('controller',$model->model.'Controller')->where('basepath',$path)->first();
-            if($route){}else{
-                $route = new Route();
-                $route->controller = $model->model.'Controller';
-                $route->basepath = $path;
-                $route->sort = $sorti;
-                $route->type = 'php';
-                $route->save();
-            }
-            $sorti++;
+                echo $model->model . "\n<br/>";
+                $baseath = rtrim($basepath,"/");
+                $basepaths = explode('/',$basepath);
+                $idx = -1;
+                foreach ($basepaths as $key => $value) {
+                    if($value =='$table'){
+                        $idx = $key;
+                        break;
+                    } 
+                }
+                if($idx == -1 ){
+                    $path = $basepath .'/'. $this->cutword($model->table);
+                } else {
+                    $basepaths[$idx] = $this->cutword($model->table);
+                    $path = join($basepaths,'/');
+                }
+                
+                $routedata .= " \$server->addClass('{$model->model}Controller','$path'); \n";
+                $path = rtrim($path,'/');
+                $path = trim($path);
+                $route = Route::where('controller',$model->model.'Controller')->where('basepath',$path)->first();
+                if($route){}else{
+                    $route = new Route();
+                    $route->controller = $model->model.'Controller';
+                    $route->basepath = $path;
+                    $route->sort = $sorti;
+                    $route->type = 'php';
+                    $route->save();
+                }
+                $sorti++;
+            }    
         }
         fwrite($handle, $routedata);
         fclose($handle);
