@@ -11,7 +11,7 @@ class Package extends BaseModel
 
     // use SoftDeletes;
     // protected $dates = ['deleted_at'];
-    protected $table='packages';
+    protected $table='_packages';
     protected $primaryKey='id';
 }
 
@@ -22,7 +22,7 @@ class User extends BaseModel
     // use SoftDeletes;
     // use LoadTrait;
     // protected $dates = ['deleted_at'];
-    protected $table='users';
+    protected $table='_users';
     protected $primaryKey='id';
     protected $hidden =   ["password"];
     protected $fillable = ['user','password','role_id'];
@@ -86,13 +86,13 @@ class User extends BaseModel
 
 class Syspackage extends BaseModel
 {
-    protected $table = 'sys_packages';
+    protected $table = '_sys_packages';
 }
 
 
 class Module extends BaseModel
 {
-    protected $table='modules';
+    protected $table= '_modules';
     protected $primaryKey='id';
 
     public function scopePermission($query, $role_id)
@@ -105,7 +105,7 @@ class Profile extends BaseModel
 {
     // use SoftDeletes;
     // protected $dates = ['deleted_at'];
-    protected $table='profiles';
+    protected $table='_profiles';
     protected $primaryKey='id';
 }
 
@@ -114,13 +114,13 @@ class Company extends BaseModel
 
     // use SoftDeletes;
     // protected $dates = ['deleted_at'];
-    protected $table='companies';
+    protected $table='_companies';
     protected $primaryKey='id';
 }
    
 class Menu extends BaseModel
 {
-    protected $table = 'menus';
+    protected $table = '_menus';
     protected $primaryKey = 'id';
     public $timestamps = true;
 
@@ -142,14 +142,14 @@ class Menu extends BaseModel
 
 class Column extends BaseModel
 {
-    protected $table = 'columns';
+    protected $table = '_columns';
     protected $primaryKey = 'id';
     public $timestamps = false;
 }
 
 class Dbinfo extends BaseModel
 {
-    protected $table = 'dbinfos';
+    protected $table = '_dbinfos';
     protected $primaryKey = 'id';
     public $timestamps = false;
 }
@@ -157,29 +157,36 @@ class Dbinfo extends BaseModel
 class Permission extends BaseModel
 {
     use HasRoles;
-    protected $table = 'permissions';
+    protected $table = '_permissions';
     protected $primaryKey = 'id';
     public $timestamps = true;
+}
+
+class Role_has_permissions extends BaseModel {
+    protected $table = "_role_has_permissions";
+}
+class Model_has_roles extends BaseModel {
+    protected $table = "_model_has_roles";
 }
 
 class Role extends BaseModel
 {
 
     use HasPermissions;
-    protected $table = 'roles';
+    protected $table = '_roles';
     protected $primaryKey = 'id';
     public $timestamps = true;
 
     public function permissions()
     {
-        return $this->belongsToMany('Permission', 'role_has_permissions');
+        return $this->belongsToMany('Permission', '_role_has_permissions');
     }
 
 }
 
 class App extends BaseModel
 {
-    protected $table = 'apps';
+    protected $table = '_apps';
     protected $primaryKey = 'id';
     public $timestamps = true;
 }

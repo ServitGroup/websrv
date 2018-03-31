@@ -15,11 +15,15 @@ class LcrmController extends RootThemeController
      */
     public function admin()
     {
-        $login = $_SESSION['login'];
-        if($login){
-            include_once __DIR__.'/../../page/themes/lcrm/index.php';
-        } else {
-            Header('Location: /login');
+        try {
+            $login = $_SESSION['login'];
+            if($login){
+                include_once __DIR__.'/../../page/themes/lcrm/index.php';
+            } else {
+                Header('Location: /login');
+            }
+        } catch (Exception $e) {
+            Header('Location: /system/info');
         }
     }
     

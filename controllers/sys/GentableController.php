@@ -812,9 +812,9 @@ return $controller;
 
     private function up() {
         Capsule::schema()->disableForeignKeyConstraints();
-        if (!Capsule::schema()->hasTable('users')) {
+        if (!Capsule::schema()->hasTable('_users')) {
             Capsule::schema()->create(
-                'users',
+                '_users',
                 function ($table) {
                     $table->increments('id');
                     $table->string('email');
@@ -828,9 +828,9 @@ return $controller;
             );
         }
 
-        if (!Capsule::schema()->hasTable('password_resets')) {
+        if (!Capsule::schema()->hasTable('_password_resets')) {
             Capsule::schema()->create(
-                'password_resets',
+                '_password_resets',
                 function ($table) {
                     $table->string('email');
                     $table->string('token');
@@ -839,9 +839,9 @@ return $controller;
             );
         }
 
-        if (!Capsule::schema()->hasTable('dbinfos')) {
+        if (!Capsule::schema()->hasTable('_dbinfos')) {
             Capsule::schema()->create(
-                'dbinfos',
+                '_dbinfos',
                 function ($table) {
                     $table->increments('id');
                     $table->string('title');
@@ -861,8 +861,8 @@ return $controller;
             );
         }
 
-        if (!Capsule::schema()->hasTable('columns')) {
-            Capsule::schema()->create ('columns', function($table)
+        if (!Capsule::schema()->hasTable('_columns')) {
+            Capsule::schema()->create ('_columns', function($table)
             {
                 $table->increments('id');
                 $table->string('table_id');
@@ -900,9 +900,9 @@ return $controller;
             });
         }
 
-        if (!Capsule::schema()->hasTable('menus')) {
+        if (!Capsule::schema()->hasTable('_menus')) {
             Capsule::schema()->create(
-                'menus',
+                '_menus',
                 function ($table) {
                     $table->increments('id');
                     $table->string('menu_position')->nullable();
@@ -925,8 +925,8 @@ return $controller;
             );
         }
 
-        if (!Capsule::schema()->hasTable('permissions')) {
-            Capsule::schema()->create('permissions', function ($table) {
+        if (!Capsule::schema()->hasTable('_permissions')) {
+            Capsule::schema()->create('_permissions', function ($table) {
                 $table->increments('id');
                 $table->string('name');
                 $table->string('guard_name')->defaule('web');
@@ -936,8 +936,8 @@ return $controller;
             });
         }
 
-        if (!Capsule::schema()->hasTable('roles')) {
-            Capsule::schema()->create('roles', function ($table) {
+        if (!Capsule::schema()->hasTable('_roles')) {
+            Capsule::schema()->create('_roles', function ($table) {
                 $table->increments('id');
                 $table->string('name');
                 $table->string('guard_name')->default('web');
@@ -946,56 +946,56 @@ return $controller;
             });
         }
 
-        if (!Capsule::schema()->hasTable('model_has_permissions')) {
-            Capsule::schema()->create('model_has_permissions', function ($table) {
+        if (!Capsule::schema()->hasTable('_model_has_permissions')) {
+            Capsule::schema()->create('_model_has_permissions', function ($table) {
                 $table->integer('permission_id')->unsigned();
                 $table->morphs('model');
 
                 $table->foreign('permission_id')
                     ->references('id')
-                    ->on('permissions')
+                    ->on('_permissions')
                     ->onDelete('cascade');
 
                 $table->primary(['permission_id', 'model_id', 'model_type']);
             });
         }
         
-        if (!Capsule::schema()->hasTable('model_has_roles')) {
-            Capsule::schema()->create('model_has_roles', function ($table) {
+        if (!Capsule::schema()->hasTable('_model_has_roles')) {
+            Capsule::schema()->create('_model_has_roles', function ($table) {
                 $table->integer('role_id')->unsigned();
                 $table->morphs('model');
 
                 $table->foreign('role_id')
                     ->references('id')
-                    ->on('roles')
+                    ->on('_roles')
                     ->onDelete('cascade');
 
                 $table->primary(['role_id', 'model_id', 'model_type']);
             });
         }
         
-        if (!Capsule::schema()->hasTable('role_has_permissions')) {
-            Capsule::schema()->create('role_has_permissions', function ($table)  {
+        if (!Capsule::schema()->hasTable('_role_has_permissions')) {
+            Capsule::schema()->create('_role_has_permissions', function ($table)  {
                 $table->integer('permission_id')->unsigned();
                 $table->integer('role_id')->unsigned();
 
                 $table->foreign('permission_id')
                     ->references('id')
-                    ->on('permissions')
+                    ->on('_permissions')
                     ->onDelete('cascade');
 
                 $table->foreign('role_id')
                     ->references('id')
-                    ->on('roles')
+                    ->on('_roles')
                     ->onDelete('cascade');
 
                 $table->primary(['permission_id', 'role_id']);
             });
         }
 
-        if (!Capsule::schema()->hasTable('packages')) {
+        if (!Capsule::schema()->hasTable('_packages')) {
             Capsule::schema()->create(
-                'packages',
+                '_packages',
                 function ($table) {
                     $table->increments('id');
                     $table->string('name');
@@ -1019,9 +1019,9 @@ return $controller;
             );
         }
         
-        if (!Capsule::schema()->hasTable('companies')) {
+        if (!Capsule::schema()->hasTable('_companies')) {
             Capsule::schema()->create(
-                'companies',
+                '_companies',
                 function ($table) {
                     $table->increments('id');
                     $table->string('companyname');
@@ -1039,9 +1039,9 @@ return $controller;
             );
         }
 
-        if (!Capsule::schema()->hasTable('profiles')) {
+        if (!Capsule::schema()->hasTable('_profiles')) {
             Capsule::schema()->create(
-                'profiles',
+                '_profiles',
                 function ($table) {
                     $table->increments('id');
                     $table->string('comp_code')->nullable();
@@ -1065,9 +1065,9 @@ return $controller;
             );
         }
 
-        if (!Capsule::schema()->hasTable('modules')) {
+        if (!Capsule::schema()->hasTable('_modules')) {
             Capsule::schema()->create(
-                'modules',
+                '_modules',
                 function ($table) {
                     $table->increments('id');
                     $table->string('name');
@@ -1083,9 +1083,9 @@ return $controller;
             );
         }
         
-        if (!Capsule::schema()->hasTable('syspackages')) {
+        if (!Capsule::schema()->hasTable('_syspackages')) {
             Capsule::schema()->create(
-                'syspackages',
+                '_syspackages',
                 function ($table) {
                     $table->increments('id');
                     $table->integer('level')->unsigned()->default(10);                    
@@ -1107,9 +1107,9 @@ return $controller;
             );
         }
         
-        if (!Capsule::schema()->hasTable('apps')) {
+        if (!Capsule::schema()->hasTable('_apps')) {
             Capsule::schema()->create(
-                'apps',
+                '_apps',
                 function ($table) {
                     $table->increments('id');
                     $table->string('popkey')->unique();
@@ -1132,25 +1132,25 @@ return $controller;
 
     private function down() {
         Capsule::schema()->disableForeignKeyConstraints();
-        Capsule::schema()->dropIfExists('users');
-        Capsule::schema()->dropIfExists('password_resets');
+        Capsule::schema()->dropIfExists('_users');
+        Capsule::schema()->dropIfExists('_password_resets');
         
-        Capsule::schema()->dropIfExists('dbinfos');
-        Capsule::schema()->dropIfExists('columns');
-        Capsule::schema()->dropIfExists('menus');
+        Capsule::schema()->dropIfExists('_dbinfos');
+        Capsule::schema()->dropIfExists('_columns');
+        Capsule::schema()->dropIfExists('_menus');
         
-        Capsule::schema()->dropIfExists('permissions');
-        Capsule::schema()->dropIfExists('roles');
-        Capsule::schema()->dropIfExists('model_has_permissions');
-        Capsule::schema()->dropIfExists('model_has_roles');
-        Capsule::schema()->dropIfExists('role_has_permissions');
+        Capsule::schema()->dropIfExists('_permissions');
+        Capsule::schema()->dropIfExists('_roles');
+        Capsule::schema()->dropIfExists('_model_has_permissions');
+        Capsule::schema()->dropIfExists('_model_has_roles');
+        Capsule::schema()->dropIfExists('_role_has_permissions');
         
-        Capsule::schema()->dropIfExists('packages');
-        Capsule::schema()->dropIfExists('companies');
-        Capsule::schema()->dropIfExists('profiles');
-        Capsule::schema()->dropIfExists('modules');
-        Capsule::schema()->dropIfExists('syspackages');
-        Capsule::schema()->dropIfExists('apps');
+        Capsule::schema()->dropIfExists('_packages');
+        Capsule::schema()->dropIfExists('_companies');
+        Capsule::schema()->dropIfExists('_profiles');
+        Capsule::schema()->dropIfExists('_modules');
+        Capsule::schema()->dropIfExists('_syspackages');
+        Capsule::schema()->dropIfExists('_apps');
         Capsule::schema()->enableForeignKeyConstraints();
     }
     
