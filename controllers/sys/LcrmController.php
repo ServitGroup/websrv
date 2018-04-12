@@ -20,10 +20,10 @@ class LcrmController extends RootThemeController
             if($login){
                 include_once __DIR__.'/../../page/themes/lcrm/index.php';
             } else {
-                Header('Location: /login');
+                Header('Location: ./login');
             }
         } catch (Exception $e) {
-            Header('Location: /system/info');
+            Header('Location: ./system/info');
         }
     }
     
@@ -45,19 +45,19 @@ $html = <<<HTML
                         <div class="col-md-12">
                             <h2 class="text-center">
                                 <!-- brand -->
-                                <img style="width: 225px;background-color:red" src="/page/themes/lcrm/img/mongkollogo.png" alt="LCRM">
+                                <img style="width: 225px;background-color:red" src="{$this->server->root}page/themes/lcrm/img/mongkollogo.png" alt="LCRM">
                                 <!-- / brand -->
                             </h2>
                         </div>
                     </div>
                 </div>
-                                    <div class="container-fluid">
+        <div class="container-fluid">
         <div class="row">
             <div class=" col-md-12">
                 <div class="box-color">
                     <h4>Sign in with your Account</h4>
                     <br>
-                    <form method="POST" action="/login" accept-charset="UTF-8" name="form"><input name="_token" type="hidden" value="$token">
+                    <form method="POST" action="{$this->server->root}login" accept-charset="UTF-8" name="form"><input name="_token" type="hidden" value="$token">
                     <div class="form-group ">
                         <label for="E-Mail Address">E-Mail Address</label> :
                         <span></span>
@@ -112,9 +112,9 @@ HTML;
         if($u){
             $_SESSION['login'] = 1;
             $_SESSION['user'] = $u;
-            Header('Location: /home');
+            Header('Location: '.$this->server->root.'home');
         } else {
-            Header('Location: /login');
+            Header('Location: '.$this->server->root.'login');
         }
     }
     
@@ -125,7 +125,7 @@ HTML;
     public function logout(){
         $_SESSION['login'] = null;
         $_SESSION['user'] = null;
-        Header('Location: /login');
+        Header('Location: '.$this->server->root.'/login');
     }
     
     

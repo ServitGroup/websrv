@@ -20,21 +20,21 @@
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-<script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+<script src="<?=$this->server->root.$this->get_themeurl()?>/jslibs/html5shiv.js"></script>
+<script src="<?=$this->server->root.$this->get_themeurl()?>/jslibs/respond.min.js"></script>
 <![endif]-->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.css">
-    <link href="<?=$this->themeurl?>/css/libs.css" rel="stylesheet" type="text/css">
-    <link href="<?=$this->themeurl?>/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-    <link href="<?=$this->themeurl?>/css/secure.css" rel="stylesheet" type="text/css">
-    <link href="<?=$this->themeurl?>/css/animate.css" rel="stylesheet" type="text/css">
-    <link href="<?=$this->themeurl?>/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-    <link href="<?=$this->themeurl?>/css/icheck.css" rel="stylesheet" type="text/css">
-    <link rel="shortcut icon" href="<?=$this->themeurl?>/img/fav.ico" type="image/x-icon">
-    <link rel="icon" href="<?= $this->themeurl ?>/img/fav.ico" type="image/x-icon">
+    <link rel="stylesheet" href="<?=$this->server->root.$this->get_themeurl()?>/csslibs/normalize.css">
+    <link href="<?=$this->server->root.$this->get_themeurl()?>/css/libs.css" rel="stylesheet" type="text/css">
+    <link href="<?=$this->server->root.$this->get_themeurl()?>/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="<?=$this->server->root.$this->get_themeurl()?>/css/secure.css" rel="stylesheet" type="text/css">
+    <link href="<?=$this->server->root.$this->get_themeurl()?>/css/animate.css" rel="stylesheet" type="text/css">
+    <link href="<?=$this->server->root.$this->get_themeurl()?>/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="<?=$this->server->root.$this->get_themeurl()?>/css/icheck.css" rel="stylesheet" type="text/css">
+    <link rel="shortcut icon" href="<?=$this->get_themeurl()?>/img/fav.ico" type="image/x-icon">
+    <link rel="icon" href="<?= $this->get_themeurl() ?>/img/fav.ico" type="image/x-icon">
     <!-- import CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
-    <link rel="stylesheet" href="<?=$this->themeurl?>/css/print.css">
+    <link rel="stylesheet" href="<?=$this->server->root.$this->get_themeurl()?>/csslibs/elementui.css">
+    <link rel="stylesheet" href="<?=$this->server->root.$this->get_themeurl()?>/css/print.css">
     <style type="text/css" media="screen">
         @-webkit-keyframes a{0%{opacity:0;bottom:-15px;max-height:0;max-width:0;margin-top:0}30%{opacity:.8;bottom:-3px}to{opacity:1;bottom:0;max-height:200px;margin-top:12px;max-width:400px}}@keyframes a{0%{opacity:0;bottom:-15px;max-height:0;max-width:0;margin-top:0}30%{opacity:.8;bottom:-3px}to{opacity:1;bottom:0;max-height:200px;margin-top:12px;max-width:400px}}@-webkit-keyframes b{0%{opacity:1;bottom:0}30%{opacity:.2;bottom:-3px}to{opacity:0;bottom:-15px}}@keyframes b{0%{opacity:1;bottom:0}30%{opacity:.2;bottom:-3px}to{opacity:0;bottom:-15px}}@-webkit-keyframes c{0%{opacity:0}30%{opacity:.5}to{opacity:.6}}@keyframes c{0%{opacity:0}30%{opacity:.5}to{opacity:.6}}@-webkit-keyframes d{0%{opacity:.6}30%{opacity:.1}to{opacity:0}}@keyframes d{0%{opacity:.6}30%{opacity:.1}to{opacity:0}}.notyf__icon--alert,.notyf__icon--confirm{height:21px;width:21px;background:#fff;border-radius:50%;display:block;margin:0 auto;position:relative}.notyf__icon--alert:after,.notyf__icon--alert:before{content:"";background:#ed3d3d;display:block;position:absolute;width:3px;border-radius:3px;left:9px}.notyf__icon--alert:after{height:3px;top:14px}.notyf__icon--alert:before{height:8px;top:4px}.notyf__icon--confirm:after,.notyf__icon--confirm:before{content:"";background:#3dc763;display:block;position:absolute;width:3px;border-radius:3px}.notyf__icon--confirm:after{height:6px;-webkit-transform:rotate(-45deg);transform:rotate(-45deg);top:9px;left:6px}.notyf__icon--confirm:before{height:11px;-webkit-transform:rotate(45deg);transform:rotate(45deg);top:5px;left:10px}.notyf__toast{display:block;overflow:hidden;-webkit-animation:a .3s forwards;animation:a .3s forwards;box-shadow:0 1px 3px 0 rgba(0,0,0,.45);position:relative;padding-right:13px}.notyf__toast.notyf--alert{background:#ed3d3d}.notyf__toast.notyf--confirm{background:#3dc763}.notyf__toast.notyf--disappear{-webkit-animation:b .3s 1 forwards;animation:b .3s 1 forwards;-webkit-animation-delay:.25s;animation-delay:.25s}.notyf__toast.notyf--disappear .notyf__message{opacity:1;-webkit-animation:b .3s 1 forwards;animation:b .3s 1 forwards;-webkit-animation-delay:.1s;animation-delay:.1s}.notyf__toast.notyf--disappear .notyf__icon{opacity:1;-webkit-animation:d .3s 1 forwards;animation:d .3s 1 forwards}.notyf__wrapper{display:table;width:100%;padding-top:20px;padding-bottom:20px;padding-right:15px;border-radius:3px}.notyf__icon{width:20%;text-align:center;font-size:1.3em;-webkit-animation:c .5s forwards;animation:c .5s forwards;-webkit-animation-delay:.25s;animation-delay:.25s}.notyf__icon,.notyf__message{display:table-cell;vertical-align:middle;opacity:0}.notyf__message{width:80%;position:relative;-webkit-animation:a .3s forwards;animation:a .3s forwards;-webkit-animation-delay:.15s;animation-delay:.15s}.notyf{position:fixed;bottom:20px;right:30px;width:20%;color:#fff;z-index:1}@media only screen and (max-width:736px){.notyf__container{width:90%;margin:0 auto;display:block;right:0;left:0}}
         [v-cloak] > * { display:none; }
@@ -303,26 +303,25 @@
     }
   </script>
     <!-- <script src="/jslibs/dist/vendor.js"></script> -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.26.0/polyfill.min.js"></script>
-    <script type="text/javascript" src="https://unpkg.com/vue@2.5.13/dist/vue.js"></script>
-    <script type="text/javascript" src="https://unpkg.com/vue-router@3.0.1/dist/vue-router.js"></script>
-    <script type="text/javascript" src="https://unpkg.com/vuex"></script>
-    <script type="text/javascript" src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script type="text/javascript" src="https://unpkg.com/vuejs-paginate@latest"></script>
-    <script type="text/javascript" src="https://unpkg.com/vee-validate@2.0.0/dist/vee-validate.min.js"></script>
-    <script type="text/javascript" src="https://unpkg.com/element-ui"></script>
-    <script type="text/javascript" src="https://unpkg.com/element-ui/lib/umd/locale/th.js"></script>
-    <script type="text/javascript" src="https://unpkg.com/vue-ls@2.3.3/dist/vue-ls.min.js"></script>
-    <script type="text/javascript" src="https://unpkg.com/moment@2.20.1/moment.js"></script>
-    <script type="text/javascript" src="/page/themes/lcrm/js/ga.js"></script>
+    <script src="<?=$this->server->root.$this->get_themeurl()?>/jslibs/polyfill.min.js"></script>
+    <script type="text/javascript" src="<?=$this->server->root.$this->get_themeurl()?>/jslibs/vue.min.js"></script>
+    <script type="text/javascript" src="<?=$this->server->root.$this->get_themeurl()?>/jslibs/vue-router.js"></script>
+    <script type="text/javascript" src="<?=$this->server->root.$this->get_themeurl()?>/jslibs/vuex.min.js"></script>
+    <script type="text/javascript" src="<?=$this->server->root.$this->get_themeurl()?>/jslibs/axios.min.js"></script>
+    <script type="text/javascript" src="<?=$this->server->root.$this->get_themeurl()?>/jslibs/vuepaginate.js"></script>
+    <script type="text/javascript" src="<?=$this->server->root.$this->get_themeurl()?>/jslibs/vee-validate.min.js"></script>
+    <script type="text/javascript" src="<?=$this->server->root.$this->get_themeurl()?>/jslibs/elementui.min.js"></script>
+    <script type="text/javascript" src="<?=$this->server->root.$this->get_themeurl()?>/jslibs/th.js"></script>
+    <script type="text/javascript" src="<?=$this->server->root.$this->get_themeurl()?>/jslibs/vue-ls.min.js"></script>
+    <script type="text/javascript" src="<?=$this->server->root.$this->get_themeurl()?>/jslibs/moment.min.js"></script>
+    <script type="text/javascript" src="<?=$this->server->root.$this->get_themeurl()?>/js/ga.js"></script>
     
-    <!-- <script type="text/javascript" src="https://unpkg.com/vue-i18n@7.3.3/dist/vue-i18n.js"></script> -->
-    <!-- <script type="text/javascript" src="https://unpkg.com/vue-resource/dist/vue-resource.min.js"></script> -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/lodash/4.17.4/lodash.min.js"></script>
-    <!-- <script type="text/javascript" src="https://unpkg.com/element-ui/lib/umd/locale/en.js"></script> -->
-    <!-- <script type="text/javascript" src="https://unpkg.com/vue2-filters@0.2.2/dist/vue2-filters.min.js"></script> -->
-    <script type="text/javascript" src="https://unpkg.com/downloadjs@1.4.7/download.js"></script>
-    <script type="text/javascript" src="<?=$this->themeurl?>/js/vue2-filters.js"></script>
+    <script type="text/javascript" src="<?=$this->server->root.$this->get_themeurl()?>/jslibs/vue-i18n.min.js"></script>
+    <script type="text/javascript" src="<?=$this->server->root.$this->get_themeurl()?>/jslibs/lodash.min.js"></script>
+    <script type="text/javascript" src="<?=$this->server->root.$this->get_themeurl()?>/jslibs/en.js"></script>
+    <script type="text/javascript" src="<?=$this->server->root.$this->get_themeurl()?>/jslibs/vue2-filters.min.js"></script>
+    <script type="text/javascript" src="<?=$this->server->root.$this->get_themeurl()?>/jslibs/download.min.js"></script>
+    <script type="text/javascript" src="<?=$this->server->root.$this->get_themeurl()?>/js/vue2-filters.js"></script>
     
 <script>
 //   ELEMENT.locale(ELEMENT.lang.en)

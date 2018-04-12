@@ -7,18 +7,19 @@ class RootThemeController extends ThemeController
 {
 
     protected $theme = '';
-    protected $themeurl = "/page/themes/lcrm";
+    protected $themeurl = "page/themes/lcrm";
 
+    
     protected function getthemepath(){
         return $this->themepath.'/lcrm';
     }
-
-
+    
+    
     protected function get_themeurl()
-    {
-        return '/page/themes/lcrm/';
+    {   
+        return $this->themeurl;
     }
-
+    
     public function __construct()
     {
         $this->themepath = __DIR__.'/../../page/themes/';
@@ -42,10 +43,13 @@ class RootThemeController extends ThemeController
                 //---- vue route----------
                 include_once __DIR__.'/../../page/themes/lcrm/index.php';
             } else {
-                Header('Location: /home');
+                Header('Location: ./home');
             }
         } else {
-            Header('Location: /login');
+            // dump($_SERVER);
+            // dump($this);
+            // Header('Location: '.$this->server->root.'login');
+            Header('Location: ./login');
         }
         // $this->get_header();
         // $path404 = $this->themepath.$this->theme.'/errors/404.php';
@@ -57,7 +61,7 @@ class RootThemeController extends ThemeController
         // $this->get_footer();
         } catch (Exception $e) {
             //echo $e->getMessage();
-             Header('Location: /system/info');
+             Header('Location: ./system/info');
         }
     }
     
