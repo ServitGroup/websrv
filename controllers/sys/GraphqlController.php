@@ -42,16 +42,16 @@ class GraphqlController extends BaseController {
     
     private function getquery(){
         $query = $this->input->input->query?:null;
-        $query = $this->input->gets->query?:null;
-        $query = $this->input->posts->query?:null;
+        if(empty($query)) $query = $this->input->gets->query?:null;
+        if(empty($query))  $query = $this->input->posts->query?:null;
         $query = $query ?:'{status}';
         return $query;
     }    
     
     private function getvars() {
         $variables = $this->input->input->variables?:null;
-        $variables = $this->input->gets->variables?:null;
-        $variables = $this->input->posts->variables?:null;
+        if(empty($variables))  $variables = $this->input->gets->variables?:null;
+        if(empty($variables))  $variables = $this->input->posts->variables?:null;
         $variables = $variables ?:[];
         return $variables;
     }
