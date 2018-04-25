@@ -44,6 +44,7 @@ $server->addClass('Role_has_permissionController', '/systemapi/v1/role_has_permi
 $server->addClass('RoleController', '/systemapi/v1/roles', 'sys');
 $server->addClass('SyspackageController', '/systemapi/v1/syspackages', 'sys');
 $server->addClass('UserController', '/systemapi/v1/users', 'sys');
+$server->addClass('GraphqlController', '/system/graphql', 'sys');
 
 // $server->addClass('RootController', '', 'sys'); // roottheme rootfile
 $server->addThemeClass('RootThemeController', 'sys'); 
