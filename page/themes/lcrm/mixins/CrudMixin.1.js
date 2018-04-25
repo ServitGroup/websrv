@@ -70,6 +70,7 @@ export default {
             return this.filtertxt;
         },
         getdatas() {
+            console.log("this.$store-->", this.$store);
             this.$store.commit("show");
             let url = "";
             console.log("checkajax", this.ajax);
@@ -86,7 +87,12 @@ export default {
                     "/" +
                     this.getkw();
             } else {
-                url = this.routepath + "/all";
+                if (this.routepath) {
+                    url = this.routepath + "/all";
+                } else {
+                    url = "/api/v3" + this.$route.path + "/all";
+                }
+                console.log("url----->", url);
             }
 
             console.log("route---->url-->", url);

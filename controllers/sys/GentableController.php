@@ -19,31 +19,31 @@ class GentableController extends BaseController
         echo '<center>';
         echo "Code gen system for Service Restful Api<br/>";
         echo "<b>Database: </b><h2 style='display:inline'>" . $this->server->config->dbconfig['database'] . "</h2><br/>";
-        echo '<a href="/">Home</a>';
+        echo '<a href="'.$this->server->root.'">Home</a>';
         echo '<hr/>';
         echo '<b>Gen Menus Columns Dbinfo Routes </b><br/>';
-        echo '<a href="/system/generator/migrate">Migrate Menu Column Dbinfo</a><br/>';
-        echo '<a href="/system/generator/migrate/clean">Migrate:clien  Menu Column Dbinfo</a><br/>';
-        echo '<a href="/system/generator/migrate/fresh">Migrate:fresh  Menu Column Dbinfo</a><br/>';
+        echo '<a href="'.$this->server->root.'system/generator/migrate">Migrate Menu Column Dbinfo</a><br/>';
+        echo '<a href="'.$this->server->root.'system/generator/migrate/clean">Migrate:clien  Menu Column Dbinfo</a><br/>';
+        echo '<a href="'.$this->server->root.'system/generator/migrate/fresh">Migrate:fresh  Menu Column Dbinfo</a><br/>';
         echo '<hr/>';
         echo '<b>Gen Role Permission Application System</b><br/>';
-        echo '<a href="/system/generator/migrateadmin">Migrate Role Permission Application System</a><br/>';
-        echo '<a href="/system/generator/migrate/cleanadmin">Migrate:clien  Role Permission Application System </a><br/>';
-        echo '<a href="/system/generator/migrate/freshadmin">Migrate:fresh  Role Permission Application System </a><br/>';
-        echo '<a href="/system/generator/migate/seeds">Seed Data Role Permission Application System</a><br/>';
+        echo '<a href="'.$this->server->root.'system/generator/migrateadmin">Migrate Role Permission Application System</a><br/>';
+        echo '<a href="'.$this->server->root.'system/generator/migrate/cleanadmin">Migrate:clien  Role Permission Application System </a><br/>';
+        echo '<a href="'.$this->server->root.'system/generator/migrate/freshadmin">Migrate:fresh  Role Permission Application System </a><br/>';
+        echo '<a href="'.$this->server->root.'system/generator/migate/seeds">Seed Data Role Permission Application System</a><br/>';
         echo '<hr/>';
-        echo '<a href="/system/generator/migrate/cleanall">Migrate:clien  All</a><br/>';
-        echo '<a href="/system/generator/migrate/freshall">Migrate:fresh  All</a><br/>';
-        echo '<a href="/system/generator/migrateall">Migrate All</a><br/>';
+        echo '<a href="'.$this->server->root.'system/generator/migrate/cleanall">Migrate:clien  All</a><br/>';
+        echo '<a href="'.$this->server->root.'system/generator/migrate/freshall">Migrate:fresh  All</a><br/>';
+        echo '<a href="'.$this->server->root.'system/generator/migrateall">Migrate All</a><br/>';
         echo '<hr/>';
         echo '<b>Generate All Api from Databases</b><br/>';
-        echo "<form method='post' action='/system/generator/genapi'>";
+        echo "<form method='post' action='".$this->server->root."system/generator/genapi'>";
         echo 'basepath: <input type="text" name="basepath" value="/api/$table/v1" placeholder="/api/$table/v1" /> &nbsp; $table in var for replace tablename<br/>
         overwrite: <input type="checkbox" name="ovr" /> &nbsp; overwrite for Remove all and new generate.<br/>';
         echo '<input type="submit"  value="Gen All" /><br/></form>';
         echo '<hr/>';
-        echo '<a href="/system/generator/msccmd">Create MSCCMD :Model Service Controller Columns Menu  Dbindos From Table</a><br/>';
-        echo '<a href="/">Home</a><br/>';
+        echo '<a href="'.$this->server->root.'system/generator/msccmd">Create MSCCMD :Model Service Controller Columns Menu  Dbindos From Table</a><br/>';
+        echo '<a href="'.$this->server->root.'">Home</a><br/>';
         echo '</center>';
 
     }
@@ -57,7 +57,7 @@ class GentableController extends BaseController
     {
 
         $html = <<<HTML
-        <form action="/system/generator/mscmd" method="post">
+        <form action={$this->server->root}system/generator/mscmd" method="post">
 
             tablename:<input type="text" name="tbname"   /> &nbsp;&nbsp;products,orders,users <br/>
             basepath: <input type="text" name="basepath"  />&nbsp;&nbsp;/aaa/bbb/ccc or /<br/>
@@ -100,7 +100,7 @@ HTML;
                 // dump($m);
                 echo 'crete ---service--</br>';
                 $model->service = $this->makeserviefile($model);
-                $servfile = __DIR__ . '/../../services/' . $model->model . 'Service.php';
+                $servfile = __DIR__ . '/.'.$this->server->root.'.'.$this->server->root.'services/' . $model->model . 'Service.php';
                 if (!class_exists($model->model . 'Service') && !file_exists($servfile)) {
                     echo 'create ' . $servfile . "'\n<br/>";
                     $handle = fopen($servfile, "w");
@@ -148,7 +148,7 @@ HTML;
                 $this->genmodel($model->table);
                 
                 echo '</br>crete ---route----</br>';
-                $routefile = __DIR__."/../../route/routebygen.php";
+                $routefile = __DIR__."/.'.$this->server->root.'.'.$this->server->root.'route/routebygen.php";
                 $controller = $tb.'Controller';
                 $route = Route::where('controller',$controller)->where('basepath',$basepath)->first();
                 if($route){}else{
@@ -160,7 +160,7 @@ HTML;
                     $route->save();    
                 }
                 $this->makeroute();
-                echo "</br>successed<br/><a href='/system/routes'>Back</a>";
+                echo "</br>successed<br/><a href='".$this->server->root."system/routes'>Back</a>";
             } else {
                 throw new Exception('No Table: ' . $tb . ' please create', 1);
 
@@ -337,7 +337,7 @@ HTML;
             $modelname = ucfirst($this->depluralize($table));
             $model->table = $table;
             $model->model = $modelname;
-            $my_file = __DIR__ . '/../../controllers/' . $modelname . 'Controller.php';
+            $my_file = __DIR__ . '/.'.$this->server->root.'.'.$this->server->root.'controllers/' . $modelname . 'Controller.php';
             dump($my_file);
             if (!class_exists($modelname . 'Controller') || !file_exists($my_file)) {
                 $controller = $this->makecontroller($model);
@@ -378,7 +378,7 @@ public function genapi(){
         if ($table) {
             $modelname = ucfirst($this->depluralize($table));
             dump($table, $modelname);
-            $my_file = __DIR__ . '/../../models/' . $modelname . '.php';
+            $my_file = __DIR__ . '/.'.$this->server->root.'.'.$this->server->root.'models/' . $modelname . '.php';
             $class_exists = (!class_exists($modelname));
             if (!file_exists($my_file) && $class_exists) {
                 $cols = Capsule::select("SELECT IS_NULLABLE,COLUMN_DEFAULT,TABLE_NAME,COLUMN_NAME,DATA_TYPE,CHARACTER_MAXIMUM_LENGTH,NUMERIC_PRECISION,NUMERIC_SCALE,COLUMN_TYPE,COLUMN_KEY,COLUMN_COMMENT FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME= ? AND Table_SCHEMA= ? ", [$table, DB_NAME]);
@@ -604,7 +604,7 @@ public function genapi(){
                 $menu->save();
                 $sort++;
 
-                $modelfile = __DIR__ . '/../../models/' . $model->model . '.php';
+                $modelfile = __DIR__ . '/.'.$this->server->root.'.'.$this->server->root.'models/' . $model->model . '.php';
                 if (!class_exists($model->model) && !file_exists($modelfile)) {
                     echo 'create ' . $modelfile . "'\n<br/>";
                     $handle = fopen($modelfile, "w");
@@ -614,7 +614,7 @@ public function genapi(){
                     echo $modelfile . " class or file exist\n<br/>";
                 }
 
-                $servfile = __DIR__ . '/../../services/' . $model->model . 'Service.php';
+                $servfile = __DIR__ . '/.'.$this->server->root.'.'.$this->server->root.'services/' . $model->model . 'Service.php';
                 if (!class_exists($model->model . 'Service') && !file_exists($servfile)) {
                     echo 'create ' . $servfile . "'\n<br/>";
                     $handle = fopen($servfile, "w");
@@ -624,7 +624,7 @@ public function genapi(){
                     echo $servfile . " class or file exist\n<br/>";
                 }
 
-                $controllerfile = __DIR__ . "/../../controllers/" . $model->model . "Controller.php";
+                $controllerfile = __DIR__ . "/.'.$this->server->root.'.'.$this->server->root.'controllers/" . $model->model . "Controller.php";
                 if (!class_exists($model->model . 'Controller') && !file_exists($controllerfile)) {
                     echo $model->model . "Controller\n<br/>";
                     echo '<textarea>', $model->controller, '</textarea><br/>';
@@ -641,7 +641,7 @@ public function genapi(){
         echo '<br/>gen Routers<br/>';
         echo '<hr/>';
         $routedata = "<?php\n";
-        $routefile = __DIR__ . "/../../route/routebygen.php";
+        $routefile = __DIR__ . "/.'.$this->server->root.'.'.$this->server->root.'route/routebygen.php";
         $handle = fopen($routefile, "w");
         echo '<br/><hr/>';
         $sorti = 1;
@@ -895,7 +895,7 @@ protected function model(){
     {
         $routes = Route::orderBy('sort','asc')->get();
         $routedata = "<?php\n";
-        $routefile = __DIR__ . "/../../route/routebygen.php";
+        $routefile = __DIR__ . "/.'.$this->server->root.'.'.$this->server->root.'route/routebygen.php";
         foreach ($routes as $route ) {
             $controller = $route->controller;
             $path = $route->basepath;
